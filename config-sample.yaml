@@ -1,0 +1,51 @@
+%YAML 1.2
+# Copyright © 2014–5 Brad Ackerman.
+#
+# Licensed under the Apache License, Version 2.0  the "License";
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# This is a sample configuration file. The configuration is read from
+# (/etc/eveindy|$HOME/.eveindy)/config.(yaml|toml|json) or from environment
+# variables as indicated.
+
+# DevMode (env: EVEINDY_DEVMODE)
+# Iff true, this is a development instance. Third-party dependencies are served
+# locally rather than from a CDN.
+# Default: false
+DevMode: false
+
+# DBDriver (env: EVEINDY_DBDRIVER)
+# The database driver to use. Supported drivers are:
+# - sqlite3
+# - postgres (PostgreSQL; TODO)
+# Default: sqlite3
+DBDriver: sqlite3
+
+# DBPath (env: EVEINDY_DBPATH)
+# The resource path for the database; the format is driver-dependent.
+# Examples:
+# - /var/lib/something/else/db.sqlite
+# - postgres://username:password@hostname/dbname?sslmode=verify-full
+# - user=foo host=bar dbname=baz
+# No default; you must specify this option explicitly.
+DBPath: /tmp/foo/bar.sqlite
+
+# Bind (env: EVEINDY_BIND)
+# The address and port to listen on (in the format required by net.Listen)
+# Default: *:8888
+Bind: *:8888
+
+# XMLAPIEndpoint (env: EVEINDY_XMLAPIENDPOINT)
+# The base endpoint for calls to the EVE XML API.
+# Default: https://api.eveonline.com
+# Possible alternative: https://api.testeveonline.com/ (Singularity)
+XMLAPIEndpoint: https://api.eveonline.com

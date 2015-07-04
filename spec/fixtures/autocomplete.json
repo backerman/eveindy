@@ -1,0 +1,112 @@
+[
+    {
+        "constellation": "6I-3VX",
+        "id": 61000904,
+        "isOutpost": true,
+        "name": "0P-U0Q VII - Mirko's palace of bodom",
+        "owner": "The Kadeshi Alliance Holding Corp",
+        "region": "Tenerifis",
+        "reprocessingEfficiency": 0.5,
+        "security": -0.482774,
+        "systemName": "0P-U0Q"
+    },
+    {
+        "constellation": "Pezarba",
+        "id": 60011488,
+        "isOutpost": false,
+        "name": "Hiremir VIII - Moon 2 - Pend Insurance Vault",
+        "owner": "Pend Insurance",
+        "region": "Kador",
+        "reprocessingEfficiency": 0.5,
+        "security": 0.321715,
+        "systemName": "Hiremir"
+    },
+    {
+        "constellation": "5HN-S5",
+        "id": 61000748,
+        "isOutpost": true,
+        "name": "I6-SYN I - MegaAdmiral respect obelisk",
+        "owner": "Legion of xXDEATHXx Support",
+        "region": "Cache",
+        "reprocessingEfficiency": 0.5,
+        "security": -0.349317,
+        "systemName": "I6-SYN"
+    },
+    {
+        "constellation": "W-3E44",
+        "id": 60014881,
+        "isOutpost": true,
+        "name": "JV1V-O IV - Moon 1 - Mirko has a small you know what",
+        "owner": "The Kadeshi Alliance Holding Corp",
+        "region": "Tenerifis",
+        "reprocessingEfficiency": 0.5,
+        "security": -1,
+        "systemName": "JV1V-O"
+    },
+    {
+        "constellation": "Nadire",
+        "id": 60012496,
+        "isOutpost": false,
+        "name": "Lermireve VIII - Moon 15 - CONCORD Treasury",
+        "owner": "CONCORD",
+        "region": "Sinq Laison",
+        "reprocessingEfficiency": 0.5,
+        "security": 0.270577,
+        "systemName": "Lermireve"
+    },
+    {
+        "constellation": "Ambrye",
+        "id": 60011854,
+        "isOutpost": false,
+        "name": "Mirilene IV - Moon 1 - Federation Navy Logistic Support",
+        "owner": "Federation Navy",
+        "region": "Sinq Laison",
+        "reprocessingEfficiency": 0.5,
+        "security": 0.779691,
+        "systemName": "Mirilene"
+    },
+    {
+        "constellation": "Ambrye",
+        "id": 60002479,
+        "isOutpost": false,
+        "name": "Mirilene VII - Moon 3 - Expert Distribution Warehouse",
+        "owner": "Expert Distribution",
+        "region": "Sinq Laison",
+        "reprocessingEfficiency": 0.5,
+        "security": 0.779691,
+        "systemName": "Mirilene"
+    },
+    {
+        "constellation": "Ambrye",
+        "id": 60010930,
+        "isOutpost": false,
+        "name": "Mirilene VIII - Moon 9 - Duvolle Laboratories Factory",
+        "owner": "Duvolle Laboratories",
+        "region": "Sinq Laison",
+        "reprocessingEfficiency": 0.3,
+        "security": 0.779691,
+        "systemName": "Mirilene"
+    },
+    {
+        "constellation": "Aeman",
+        "id": 60010318,
+        "isOutpost": false,
+        "name": "Miroitem I - Roden Shipyards Factory",
+        "owner": "Roden Shipyards",
+        "region": "Sinq Laison",
+        "reprocessingEfficiency": 0.5,
+        "security": 0.305192,
+        "systemName": "Miroitem"
+    },
+    {
+        "constellation": "Aeman",
+        "id": 60009346,
+        "isOutpost": false,
+        "name": "Miroitem VII - Moon 14 - Federal Freight Storage",
+        "owner": "Federal Freight",
+        "region": "Sinq Laison",
+        "reprocessingEfficiency": 0.5,
+        "security": 0.305192,
+        "systemName": "Miroitem"
+    }
+]

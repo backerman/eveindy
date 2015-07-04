@@ -1,0 +1,275 @@
+{
+  "Isogen": {
+    "itemID": 37,
+    "itemName": "Isogen",
+    "quantityAvailable": 434819751,
+    "bestBuy": 136.33,
+    "bestSell": 139.53,
+    "buyInfo": {
+      "quantity": 290806,
+      "minQuantity": 1,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    },
+    "sellInfo": {
+      "quantity": 53920981,
+      "minQuantity": 0,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    }
+  },
+  "Megacyte": {
+    "itemID": 40,
+    "itemName": "Megacyte",
+    "quantityAvailable": 109878123,
+    "bestBuy": 704.03,
+    "bestSell": 729.96,
+    "buyInfo": {
+      "quantity": 100000,
+      "minQuantity": 1,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    },
+    "sellInfo": {
+      "quantity": 21369886,
+      "minQuantity": 0,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    }
+  },
+  "Mexallon": {
+    "itemID": 36,
+    "itemName": "Mexallon",
+    "quantityAvailable": 1017612299,
+    "bestBuy": 59.36,
+    "bestSell": 60.41,
+    "buyInfo": {
+      "quantity": 999590,
+      "minQuantity": 1,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    },
+    "sellInfo": {
+      "quantity": 18188783,
+      "minQuantity": 0,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    }
+  },
+  "Nocxium": {
+    "itemID": 38,
+    "itemName": "Nocxium",
+    "quantityAvailable": 113525257,
+    "bestBuy": 642.17,
+    "bestSell": 688.97,
+    "buyInfo": {
+      "quantity": 106732,
+      "minQuantity": 1,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    },
+    "sellInfo": {
+      "quantity": 23274045,
+      "minQuantity": 0,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    }
+  },
+  "Pyerite": {
+    "itemID": 35,
+    "itemName": "Pyerite",
+    "quantityAvailable": 3585260130,
+    "bestBuy": 12.18,
+    "bestSell": 12.25,
+    "buyInfo": {
+      "quantity": 1701603,
+      "minQuantity": 1,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    },
+    "sellInfo": {
+      "quantity": 11619057,
+      "minQuantity": 0,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    }
+  },
+  "Tritanium": {
+    "itemID": 34,
+    "itemName": "Tritanium",
+    "quantityAvailable": 19414140799,
+    "bestBuy": 5.72,
+    "bestSell": 5.99,
+    "buyInfo": {
+      "quantity": 954283010,
+      "minQuantity": 1,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    },
+    "sellInfo": {
+      "quantity": 4048739,
+      "minQuantity": 0,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    }
+  },
+  "Zydrine": {
+    "itemID": 39,
+    "itemName": "Zydrine",
+    "quantityAvailable": 182049450,
+    "bestBuy": 400.01,
+    "bestSell": 414.2,
+    "buyInfo": {
+      "quantity": 1011490,
+      "minQuantity": 1,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    },
+    "sellInfo": {
+      "quantity": 40267563,
+      "minQuantity": 0,
+      "station": {
+        "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+        "id": 60003760,
+        "systemName": "Jita",
+        "security": 0.945913,
+        "constellation": "Kimotoro",
+        "region": "The Forge",
+        "isOutpost": false,
+        "owner": "Caldari Navy",
+        "reprocessingEfficiency": 0.5
+      },
+      "within": "station"
+    }
+  }
+}

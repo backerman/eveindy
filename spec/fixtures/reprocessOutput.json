@@ -1,0 +1,165 @@
+{
+    "FZ-3 Subversive Spatial Destabilizer ECM": [
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 36,
+                "Name": "Mexallon",
+                "Type": 2
+            },
+            "Quantity": 14
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 37,
+                "Name": "Isogen",
+                "Type": 2
+            },
+            "Quantity": 33
+        }
+    ],
+    "FZ-3a Disruptive Spatial Destabilizer ECM": [
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 34,
+                "Name": "Tritanium",
+                "Type": 2
+            },
+            "Quantity": 1233
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 35,
+                "Name": "Pyerite",
+                "Type": 2
+            },
+            "Quantity": 392
+        }
+    ],
+    "Fleeting Progressive Warp Scrambler I": [
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 34,
+                "Name": "Tritanium",
+                "Type": 2
+            },
+            "Quantity": 322
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 35,
+                "Name": "Pyerite",
+                "Type": 2
+            },
+            "Quantity": 189
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 36,
+                "Name": "Mexallon",
+                "Type": 2
+            },
+            "Quantity": 214
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 37,
+                "Name": "Isogen",
+                "Type": 2
+            },
+            "Quantity": 125
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 39,
+                "Name": "Zydrine",
+                "Type": 2
+            },
+            "Quantity": 1
+        }
+    ],
+    "Fried Interface Circuit": [],
+    "Hammerhead I": [
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 34,
+                "Name": "Tritanium",
+                "Type": 2
+            },
+            "Quantity": 6485
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 35,
+                "Name": "Pyerite",
+                "Type": 2
+            },
+            "Quantity": 4
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 36,
+                "Name": "Mexallon",
+                "Type": 2
+            },
+            "Quantity": 426
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 37,
+                "Name": "Isogen",
+                "Type": 2
+            },
+            "Quantity": 21
+        },
+        {
+            "Item": {
+                "BatchSize": 1,
+                "Category": "Material",
+                "Group": "Mineral",
+                "ID": 39,
+                "Name": "Zydrine",
+                "Type": 2
+            },
+            "Quantity": 4
+        }
+    ]
+}

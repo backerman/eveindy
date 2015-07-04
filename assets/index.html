@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EVE Industrial Calcuthingy</title>
+    <% if (development) { %>
+      <!-- Run local Bootstrap, Angular, etc. for development; in production,
+           use CDN. -->
+    <link rel="stylesheet"
+      href="/bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet"
+      href="/bower_components/bootstrap/dist/css/bootstrap-theme.css">
+    <% } else { %>
+      <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+      <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <% } %>
+    <!-- build:css(temp) css/site.css -->
+    <link rev="stylesheet" href="css/site.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-app="eveindy">
+    <div class="container-fluid">
+      <nav class="navbar navbar-default" ng-controller="MenubarCtrl as mctrl">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed"
+            ng-click="isShown = !isShown">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse" collapse="!isShown">
+          <ul class="nav navbar-nav">
+            <li ng-class="{active: view==='reprocess'}" id="navReprocess">
+              <a href="#/">Reprocess</a>
+            </li>
+            <li ng-class="{active: view==='blueprints'}" id="navBlueprints">
+              <a href="#/blueprints">Blueprints</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <!-- icons version iff navbar is shown -->
+            <li><a href="#/settings" class="glyphicon glyphicon-cog" ng-hide="isShown"></a></li>
+            <!-- text version iff navbar is collapsed -->
+            <li><a href="#/settings" ng-show="isShown">Settings</a></li>
+          </ul>
+        </div>
+      </nav>
+      <div ng-view></div>
+      <div class="row">
+        <footer class="col-md-12 footer">
+          <small>
+            Price data from <a href="http://www.eve-central.com/">EVE Central</a>.
+            Game data © 2014 CCP hf. All rights reserved. "EVE", "EVE Online", "CCP",
+            and all related logos and images are trademarks or registered trademarks of CCP hf.
+          </small>
+        </footer>
+      </div>
+    </div> <!-- container-fluid -->
+    <% if (development) { %>
+      <script src="../bower_components/angular/angular.js"></script>
+      <script src="../bower_components/jquery/dist/jquery.js"></script>
+      <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <% } else { %>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js">
+    </script>
+    <script
+      src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <% } %>
+    <!-- build:js js/thirdparty.js -->
+    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+    <!-- endbuild -->
+    <script src="js/site.js"></script>
+  </body>
+</html>

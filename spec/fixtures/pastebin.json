@@ -1,0 +1,57 @@
+[
+    {
+        "Item": {
+            "BatchSize": 1,
+            "Category": "Module",
+            "Group": "Warp Scrambler",
+            "ID": 5441,
+            "Name": "Fleeting Progressive Warp Scrambler I",
+            "Type": 2
+        },
+        "Quantity": 3
+    },
+    {
+        "Item": {
+            "BatchSize": 1,
+            "Category": "Material",
+            "Group": "Salvaged Materials",
+            "ID": 25601,
+            "Name": "Fried Interface Circuit",
+            "Type": 2
+        },
+        "Quantity": 36
+    },
+    {
+        "Item": {
+            "BatchSize": 1,
+            "Category": "Module",
+            "Group": "ECM",
+            "ID": 9519,
+            "Name": "FZ-3 Subversive Spatial Destabilizer ECM",
+            "Type": 2
+        },
+        "Quantity": 2
+    },
+    {
+        "Item": {
+            "BatchSize": 1,
+            "Category": "Module",
+            "Group": "ECM",
+            "ID": 19942,
+            "Name": "FZ-3a Disruptive Spatial Destabilizer ECM",
+            "Type": 2
+        },
+        "Quantity": 1
+    },
+    {
+        "Item": {
+            "BatchSize": 1,
+            "Category": "Drone",
+            "Group": "Combat Drone",
+            "ID": 2183,
+            "Name": "Hammerhead I",
+            "Type": 2
+        },
+        "Quantity": 4
+    }
+]

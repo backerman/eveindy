@@ -1,0 +1,109 @@
+@base: #f938ab;
+
+.box-shadow(@style, @c) when (iscolor(@c)) {
+  -webkit-box-shadow: @style @c;
+  box-shadow:         @style @c;
+}
+.box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {
+  .box-shadow(@style, rgba(0, 0, 0, @alpha));
+}
+.box {
+  color: saturate(@base, 5%);
+  border-color: lighten(@base, 30%);
+  div { .box-shadow(0 0 5px, 30%) }
+}
+
+span.security-low {
+  color: orange !important;
+}
+
+span.security-high {
+  color: green !important;
+}
+
+span.security-null {
+  color: red !important;
+}
+
+td.isk {
+  text-align: right;
+}
+
+td.no-sale {
+  color: red;
+}
+
+td.better-price {
+  font-weight: bold;
+}
+
+div.bg-info {
+  padding: 1em 5em;
+}
+
+// Tooltip table
+table.orderinfo th {
+  text-align: left;
+  vertical-align: top;
+}
+
+table.orderinfo td {
+  padding-left: 1em;
+  text-align: left;
+  vertical-align: top;
+}
+
+// Footer
+footer {
+  padding-top: 0.5em;
+}
+
+// Spinner — lovingly ripped off from Patternfly, minus IE8/9 support.
+// https://github.com/patternfly/patternfly/blob/master/less/spinner.less
+@-webkit-keyframes rotation {
+  from {-webkit-transform: rotate(0deg);}
+  to {-webkit-transform: rotate(359deg);}
+}
+
+@keyframes rotation {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(359deg);}
+}
+
+
+// Copy this value from Bootstrap source; remove this line once we switch to
+// using the Boostrap less source directly rather than the precompiled copy.
+@font-size-base: 14px;
+
+.spinner {
+  -webkit-animation: rotation .6s infinite linear;
+  animation: rotation .6s infinite linear;
+  border-bottom: 4px solid rgba(0,0,0,.25);
+  border-left: 4px solid rgba(0,0,0,.25);
+  border-right: 4px solid rgba(0,0,0,.25);
+  border-radius: 100%;
+  border-top: 4px solid rgba(0,0,0,.75);
+  height: @font-size-base*2;
+  margin: 0 auto;
+  position: relative;
+  width: @font-size-base*2;
+  &.spinner-inline {
+    display: inline-block;
+    margin-right: 3px;
+  }
+  &.spinner-lg {
+    border-width: 5px;
+    height: @font-size-base*2.5;
+    width: @font-size-base*2.5;
+  }
+  &.spinner-sm {
+    border-width: 3px;
+    height: @font-size-base*1.5;
+    width: @font-size-base*1.5;
+  }
+  &.spinner-xs {
+    border-width: 2px;
+    height: @font-size-base;
+    width: @font-size-base;
+  }
+}

@@ -1,0 +1,197 @@
+{
+    "FZ-3 Subversive Spatial Destabilizer ECM": {
+        "bestBuy": 1239.39,
+        "bestSell": 0.0,
+        "buyInfo": {
+            "minQuantity": 1,
+            "quantity": 50,
+            "station": {
+                "constellation": "Coriault",
+                "id": 60011866,
+                "isOutpost": false,
+                "name": "Dodixie IX - Moon 20 - Federation Navy Assembly Plant",
+                "owner": "Federation Navy",
+                "region": "Sinq Laison",
+                "reprocessingEfficiency": 0.5,
+                "security": 0.868407,
+                "systemName": "Dodixie"
+            },
+            "within": "5 jumps"
+        },
+        "itemID": 9519,
+        "itemName": "FZ-3 Subversive Spatial Destabilizer ECM",
+        "quantityAvailable": 0,
+        "sellInfo": {
+            "minQuantity": 0,
+            "quantity": 0,
+            "station": {
+                "constellation": "",
+                "id": 0,
+                "isOutpost": false,
+                "name": "",
+                "owner": "",
+                "region": "",
+                "reprocessingEfficiency": 0,
+                "security": 0,
+                "systemName": ""
+            },
+            "within": ""
+        }
+    },
+    "FZ-3a Disruptive Spatial Destabilizer ECM": {
+        "bestBuy": 0.0,
+        "bestSell": 0.0,
+        "buyInfo": {
+            "minQuantity": 0,
+            "quantity": 0,
+            "station": {
+                "constellation": "",
+                "id": 0,
+                "isOutpost": false,
+                "name": "",
+                "owner": "",
+                "region": "",
+                "reprocessingEfficiency": 0,
+                "security": 0,
+                "systemName": ""
+            },
+            "within": ""
+        },
+        "itemID": 19942,
+        "itemName": "FZ-3a Disruptive Spatial Destabilizer ECM",
+        "quantityAvailable": 0,
+        "sellInfo": {
+            "minQuantity": 0,
+            "quantity": 0,
+            "station": {
+                "constellation": "",
+                "id": 0,
+                "isOutpost": false,
+                "name": "",
+                "owner": "",
+                "region": "",
+                "reprocessingEfficiency": 0,
+                "security": 0,
+                "systemName": ""
+            },
+            "within": ""
+        }
+    },
+    "Fleeting Progressive Warp Scrambler I": {
+        "bestBuy": 502.16,
+        "bestSell": 0.0,
+        "buyInfo": {
+            "minQuantity": 1,
+            "quantity": 894,
+            "station": {
+                "constellation": "Ambrye",
+                "id": 60011851,
+                "isOutpost": false,
+                "name": "Fricoure VIII - Moon 2 - Federation Navy Assembly Plant",
+                "owner": "Federation Navy",
+                "region": "Sinq Laison",
+                "reprocessingEfficiency": 0.5,
+                "security": 0.809249,
+                "systemName": "Fricoure"
+            },
+            "within": "5 jumps"
+        },
+        "itemID": 5441,
+        "itemName": "Fleeting Progressive Warp Scrambler I",
+        "quantityAvailable": 0,
+        "sellInfo": {
+            "minQuantity": 0,
+            "quantity": 0,
+            "station": {
+                "constellation": "",
+                "id": 0,
+                "isOutpost": false,
+                "name": "",
+                "owner": "",
+                "region": "",
+                "reprocessingEfficiency": 0,
+                "security": 0,
+                "systemName": ""
+            },
+            "within": ""
+        }
+    },
+    "Fried Interface Circuit": {
+        "bestBuy": 2202.16,
+        "bestSell": 0.0,
+        "buyInfo": {
+            "minQuantity": 1,
+            "quantity": 8954,
+            "station": {
+                "constellation": "Coriault",
+                "id": 60011866,
+                "isOutpost": false,
+                "name": "Dodixie IX - Moon 20 - Federation Navy Assembly Plant",
+                "owner": "Federation Navy",
+                "region": "Sinq Laison",
+                "reprocessingEfficiency": 0.5,
+                "security": 0.868407,
+                "systemName": "Dodixie"
+            },
+            "within": "5 jumps"
+        },
+        "itemID": 25601,
+        "itemName": "Fried Interface Circuit",
+        "quantityAvailable": 0,
+        "sellInfo": {
+            "minQuantity": 0,
+            "quantity": 0,
+            "station": {
+                "constellation": "",
+                "id": 0,
+                "isOutpost": false,
+                "name": "",
+                "owner": "",
+                "region": "",
+                "reprocessingEfficiency": 0,
+                "security": 0,
+                "systemName": ""
+            },
+            "within": ""
+        }
+    },
+    "Hammerhead I": {
+        "bestBuy": 16102.0,
+        "bestSell": 41500.0,
+        "buyInfo": {
+            "minQuantity": 1,
+            "quantity": 355,
+            "station": {
+                "constellation": "Ambrye",
+                "id": 60015016,
+                "isOutpost": false,
+                "name": "Trossere VII - Moon 3 - University of Caille",
+                "owner": "University of Caille",
+                "region": "Sinq Laison",
+                "reprocessingEfficiency": 0.5,
+                "security": 0.91441,
+                "systemName": "Trossere"
+            },
+            "within": "3 jumps"
+        },
+        "itemID": 2183,
+        "itemName": "Hammerhead I",
+        "quantityAvailable": 589,
+        "sellInfo": {
+            "minQuantity": 0,
+            "quantity": 304,
+            "station": {
+                "constellation": "Ambrye",
+                "id": 60011854,
+                "isOutpost": false,
+                "name": "Mirilene IV - Moon 1 - Federation Navy Logistic Support",
+                "owner": "Federation Navy",
+                "region": "Sinq Laison",
+                "reprocessingEfficiency": 0.5,
+                "security": 0.779691,
+                "systemName": "Mirilene"
+            },
+            "within": "station"
+        }
+    }
+}
