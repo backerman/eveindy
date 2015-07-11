@@ -46,12 +46,12 @@ CREATE TABLE eveindy.characters (
 CREATE UNLOGGED TABLE eveindy.sessions (
   id SERIAL PRIMARY KEY,
   -- state and cookie are 256 bits of random, which is 44 characters of base64.
-  state char(44),
+  state char(44) NOT NULL UNIQUE,
   -- user will be null if this session hasn't authenticated yet
   userid integer REFERENCES eveindy.users(id) ON DELETE CASCADE,
-  cookie char(44) UNIQUE,
+  cookie char(44) NOT NULL UNIQUE,
   -- lastSeen is the last time this session's user was active.
-  lastSeen timestamp with time zone,
+  lastSeen timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
   -- Just in case something isn't set to Zulu, we'll also save the timezone.
   tokenExpiry timestamp with time zone,
   token jsonb

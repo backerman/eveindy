@@ -123,7 +123,7 @@ func mainCommand(cmd *cobra.Command, args []string) {
 		router = routing.EveCentralRouter(
 			"http://api.eve-central.com/api/route", myCache)
 	case "sql":
-		router = routing.SQLRouter(c.RouterDbDriver, c.RouterDbPath)
+		router = routing.SQLRouter(c.RouterDbDriver, c.RouterDbPath, myCache)
 	default:
 		log.Fatalf(
 			"The Router configuration option must be set to \"evecentral\" (default) or \"sql\".")
