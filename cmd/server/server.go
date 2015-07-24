@@ -33,6 +33,7 @@ import (
 	"github.com/backerman/evego/pkg/market"
 	"github.com/backerman/evego/pkg/routing"
 	"github.com/backerman/eveindy/pkg/api"
+	"github.com/backerman/eveindy/pkg/db"
 	"github.com/backerman/eveindy/pkg/server"
 
 	"github.com/spf13/cobra"
@@ -47,14 +48,14 @@ var c config
 var rootCmd *cobra.Command
 
 type config struct {
-	Dev                          bool
-	DbDriver, DbPath             string
-	Bind                         string
-	XMLAPIEndpoint               string
-	Router                       string
-	RouterDbDriver, RouterDbPath string
-	Cache                        string
-	RedisHost, RedisPassword     string
+	Dev                      bool
+	DbDriver, DbPath         string
+	Bind                     string
+	XMLAPIEndpoint           string
+	Router                   string
+	Cache                    string
+	RedisHost, RedisPassword string
+	CookieDomain, CookiePath string
 }
 
 func setRoutes(sde evego.Database, xmlAPI evego.XMLAPI, eveCentral evego.Market) {
@@ -84,11 +85,16 @@ func mainCommand(cmd *cobra.Command, args []string) {
 		log.Fatalf("Please set the dbpath configuration option or EVEINDY_DBPATH " +
 			"environment variable to the database's path.")
 	}
+
+	if !(viper.IsSet("CookieDomain") && viper.IsSet("CookiePath")) {
+		log.Fatalf("Please set the CookieDomain and CookiePath configuration options.")
+	}
+
 	if c.Dev {
 		log.Printf("Configuration is: %+v", c)
 	}
 
-	db := dbaccess.SQLDatabase(c.DbDriver, c.DbPath)
+	sde := dbaccess.SQLDatabase(c.DbDriver, c.DbPath)
 	if c.Dev {
 		ts := httptest.NewServer(
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -115,7 +121,7 @@ func mainCommand(cmd *cobra.Command, args []string) {
 			"The Cache configuration option must be set to \"inproc\" (default) or \"redis\".")
 	}
 
-	xmlAPI := eveapi.XML(c.XMLAPIEndpoint, db, myCache)
+	xmlAPI := eveapi.XML(c.XMLAPIEndpoint, sde, myCache)
 	var router evego.Router
 
 	switch c.Router {
@@ -123,16 +129,16 @@ func mainCommand(cmd *cobra.Command, args []string) {
 		router = routing.EveCentralRouter(
 			"http://api.eve-central.com/api/route", myCache)
 	case "sql":
-		router = routing.SQLRouter(c.RouterDbDriver, c.RouterDbPath, myCache)
+		router = routing.SQLRouter(c.DbDriver, c.DbPath, myCache)
 	default:
 		log.Fatalf(
 			"The Router configuration option must be set to \"evecentral\" (default) or \"sql\".")
 	}
 
-	eveCentralMarket := market.EveCentral(db, router, xmlAPI,
+	eveCentralMarket := market.EveCentral(sde, router, xmlAPI,
 		"http://api.eve-central.com/api/quicklook", myCache)
 
-	setRoutes(db, xmlAPI, eveCentralMarket)
+	setRoutes(sde, xmlAPI, eveCentralMarket)
 	// We like magic, but fix the magic some.
 	bindArg := fmt.Sprintf("-bind=%s", c.Bind)
 	if len(os.Args) > 1 {
@@ -142,6 +148,14 @@ func mainCommand(cmd *cobra.Command, args []string) {
 		os.Args = append(os.Args, bindArg)
 	}
 
+	// Configure local database.
+	localDB, err := db.Interface(c.DbDriver, c.DbPath)
+	if err != nil {
+		log.Fatalf("Unable to acquire connection to local database.")
+	}
+	sessionizer := server.SessionHandler(localDB, c.CookieDomain, c.CookiePath, !c.Dev)
+
+	goji.Use(sessionizer)
 	goji.Serve()
 }
 
@@ -167,10 +181,11 @@ func main() {
 	viper.SetDefault("XMLAPIEndpoint", "https://api.eveonline.com")
 	// Routing
 	// Router: either "evecentral" or "sql".
-	// If "sql", set RouterDBPath and RouterDBDriver.
 	viper.SetDefault("Router", "evecentral")
-	viper.SetDefault("RouterDBDriver", "")
-	viper.SetDefault("RouterDBPath", "")
+
+	// Session cookies - you must set these explicitly.
+	// viper.SetDefault("CookieDomain", "localhost")
+	// viper.SetDefault("CookiePath", "/")
 
 	// Cache
 	// The default is an in-process cache, but you should probably use Redis

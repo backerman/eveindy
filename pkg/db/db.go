@@ -35,7 +35,7 @@ type dbInterface struct {
 // path, so you'll need to ensure that it's set in the provided resource.
 //
 // Example resource: "user=enoch dbname=evetool search_path=eveindy"
-func Interface(driver, resource string) (interface{}, error) {
+func Interface(driver, resource string) (LocalDB, error) {
 	dbConn, err := sqlx.Connect(driver, resource)
 	if err != nil {
 		return nil, err

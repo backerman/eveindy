@@ -17,13 +17,17 @@ limitations under the License.
 
 package db
 
-import "golang.org/x/oauth2"
+import (
+	"time"
+
+	"golang.org/x/oauth2"
+)
 
 // Session is a user's session (logged in or otherwise).
 type Session struct {
 	// User is the application user's ID. (This is a local identifier and is not
 	// related to the authenticating account or character.)
-	User int `db:"userid"`
+	User *int `db:"userid"`
 
 	// State is a random value that will be passed to CCP's servers when making
 	// an OAuth request.
@@ -36,4 +40,7 @@ type Session struct {
 	// Token is the OAuth token returned from CCP's servers and can be used to
 	// access the CREST API.
 	Token *oauth2.Token `db:"token"`
+
+	// LastSeen is the time at which the session owner used this website.
+	LastSeen time.Time `db:"lastseen"`
 }

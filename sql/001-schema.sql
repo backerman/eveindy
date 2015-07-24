@@ -44,7 +44,6 @@ CREATE TABLE eveindy.characters (
 
 -- sessions: SSO sessions
 CREATE UNLOGGED TABLE eveindy.sessions (
-  id SERIAL PRIMARY KEY,
   -- state and cookie are 256 bits of random, which is 44 characters of base64.
   state char(44) NOT NULL UNIQUE,
   -- user will be null if this session hasn't authenticated yet

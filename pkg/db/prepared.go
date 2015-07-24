@@ -23,7 +23,7 @@ const (
 	// Find an existing session; return it if it still exists or a new session
 	// otherwise.
 	getSessionStmt = `
-  SELECT * FROM getSession($1)
+  SELECT userid, state, cookie, token, lastseen FROM getSession($1)
   `
 
 	// Associate a token with a session. The first argument should be the
