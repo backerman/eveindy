@@ -13,15 +13,14 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .config ['$routeProvider', ($routeProvider) ->
-    $routeProvider.when '/',
-      templateUrl: 'view/reprocess.html'
-      controller: 'ReprocessCtrl as ctrl'
-    .when '/blueprints',
-      templateUrl: 'view/blueprints.html'
-    .when '/settings',
-      templateUrl: 'view/settings.html'
-      controller: 'SettingsCtrl as ctrl'
-    .otherwise
-      redirectTo: '/'
-    ]
+  .controller 'SettingsCtrl', [ 'Server',
+    class SettingsCtrl
+      constructor: (@Server) ->
+        @apikeys = {}
+        @getApiKeys()
+
+      getApiKeys: () ->
+        @Server.apiForUser()
+          .then (response) =>
+            @apikeys = response.data
+  ]

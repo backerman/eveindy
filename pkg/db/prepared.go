@@ -27,8 +27,22 @@ const (
   `
 
 	// Associate a token with a session. The first argument should be the
-	// session's cookie value, and the second the token (JSON text).
+	// session's cookie value, the second the token (JSON text), and the third
+	// the character's information object as returned from the SSO API (JSON text).
 	setTokenStmt = `
-  SELECT associateToken($1, $2)
+  SELECT associateToken($1, $2, $3)
   `
+
+	// Get all API keys that have been registered for a user.
+	getAPIKeysStmt = `
+	SELECT userid, id, vcode, label
+	FROM   apikeys
+	WHERE  userid = $1
+	`
+
+	// Delete user's sessions.
+	logoutSessionStmt = `
+	DELETE FROM sessions
+	WHERE userid IN (SELECT userid FROM sessions WHERE cookie = $1)
+	`
 )

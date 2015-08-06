@@ -44,6 +44,20 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="/authenticate" target="_blank" ng-hide="mctrl.authenticated">
+              <img src="image/EVE_SSO_Login_Buttons_Small_White.png"
+              alt="Sign on (EVE SSO)" />
+            </a></li>
+            <li class="dropdown" ng-show="mctrl.authenticated">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                  role="button" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-user"></span>
+                <span class="caret"</span>
+                <ul class="dropdown-menu">
+                  <li><a href="#" ng-click="mctrl.logout()">Log out</a></li>
+                </ul>
+              </a>
+            </li>
             <!-- icons version iff navbar is shown -->
             <li><a href="#/settings" class="glyphicon glyphicon-cog" ng-hide="isShown"></a></li>
             <!-- text version iff navbar is collapsed -->

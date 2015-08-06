@@ -27,7 +27,7 @@ import (
 type Session struct {
 	// User is the application user's ID. (This is a local identifier and is not
 	// related to the authenticating account or character.)
-	User *int `db:"userid"`
+	User int `db:"userid"`
 
 	// State is a random value that will be passed to CCP's servers when making
 	// an OAuth request.
@@ -39,8 +39,25 @@ type Session struct {
 
 	// Token is the OAuth token returned from CCP's servers and can be used to
 	// access the CREST API.
-	Token *oauth2.Token `db:"token"`
+	Token *oauth2.Token `db:"-"`
 
 	// LastSeen is the time at which the session owner used this website.
 	LastSeen time.Time `db:"lastseen"`
+}
+
+// XMLAPIKey is a user-provided key for the EVE XML API.
+type XMLAPIKey struct {
+	// User is the application user's ID. (This is a local identifier and is not
+	// related to the authenticating account or character.)
+	User int `db:"userid" json:"userid"`
+
+	// ID is the key's ID assigned by CCP.
+	ID int `db:"id" json:"id"`
+
+	// VerificationCode is the key's verification code assigned by CCP.
+	VerificationCode string `db:"vcode" json:"vcode"`
+
+	// Description is a user-entered label for the key; it is not the one that
+	// the user entered in EVE's API managment interface.
+	Description string `db:"label" json:"label"`
 }

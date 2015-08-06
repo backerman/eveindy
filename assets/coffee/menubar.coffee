@@ -13,11 +13,17 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .controller 'MenubarCtrl', [ '$scope'
+  .controller 'MenubarCtrl', [ '$scope', 'Server', '$route'
     class MenubarCtrl
-      constructor: (@$scope) ->
+      constructor: (@$scope, @Server, @$route) ->
         @$scope.$on '$routeChangeSuccess', @updateMenubar
+        @$scope.$on '$routeChangeStart', @preventNullRoute
         @$scope.view = "reprocess"
+        @Server.getLoginStatus()
+          .then (response) =>
+            @authenticated = response.data.authenticated
+        @$route.reload()
+
       updateMenubar: (_, thisRoute, prevRoute) =>
         # Set menu bar active element to the current page.
         switch thisRoute.templateUrl
@@ -26,4 +32,17 @@ angular.module 'eveindy'
           when "view/blueprints.html"
             @$scope.view = "blueprints"
           else
-            @$scope.view = "settings" ]
+            @$scope.view = "settings"
+
+      preventNullRoute: (evt, next, current) ->
+        if !next?.templateUrl?
+          # Undefined route - block change.
+          evt.preventDefault()
+
+      logout: () =>
+        @Server.logoutSessions()
+          .then (response) =>
+            # FIXME: Should display error if error returned from server,
+            # even though that's unlikely and we really can't do anything.
+            @authenticated = false
+      ]

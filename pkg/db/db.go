@@ -19,15 +19,20 @@ limitations under the License.
 package db
 
 import (
+	"encoding/json"
 	"log"
 
+	"github.com/backerman/evego/pkg/evesso"
 	"github.com/jmoiron/sqlx"
+	"golang.org/x/oauth2"
 )
 
 type dbInterface struct {
-	db             *sqlx.DB
-	getSessionStmt *sqlx.Stmt
-	setTokenStmt   *sqlx.Stmt
+	db                *sqlx.DB
+	getSessionStmt    *sqlx.Stmt
+	getAPIKeysStmt    *sqlx.Stmt
+	setTokenStmt      *sqlx.Stmt
+	logoutSessionStmt *sqlx.Stmt
 }
 
 // Interface returns an interface to the local data store. Currently, it assumes
@@ -51,6 +56,8 @@ func Interface(driver, resource string) (LocalDB, error) {
 		// Pointer magic, stage 1: Pass the address of the pointer.
 		{&d.getSessionStmt, getSessionStmt},
 		{&d.setTokenStmt, setTokenStmt},
+		{&d.getAPIKeysStmt, getAPIKeysStmt},
+		{&d.logoutSessionStmt, logoutSessionStmt},
 	}
 
 	for _, s := range stmts {
@@ -75,7 +82,42 @@ func (d *dbInterface) NewSession() (Session, error) {
 
 func (d *dbInterface) FindSession(cookie string) (Session, error) {
 	row := d.getSessionStmt.QueryRowx(cookie)
-	newSession := Session{}
-	err := row.StructScan(&newSession)
-	return newSession, err
+	s := Session{
+		// Initialize pointers in struct.
+		Token: &oauth2.Token{},
+	}
+	// err := row.StructScan(&newSession)
+	var tokenJSON []byte
+	nullableUser := new(int)
+	err := row.Scan(&nullableUser, &s.State, &s.Cookie, &tokenJSON, &s.LastSeen)
+	if err != nil {
+		return s, err
+	}
+	if nullableUser != nil {
+		s.User = *nullableUser
+	}
+	json.Unmarshal(tokenJSON, s.Token)
+	return s, err
+}
+
+func (d *dbInterface) AuthenticateSession(
+	cookie string, token *oauth2.Token, charInfo *evesso.CharacterInfo) error {
+	tokenJSON, err := json.Marshal(*token)
+	if err != nil {
+		return err
+	}
+	charInfoJSON, err := json.Marshal(*charInfo)
+	if err != nil {
+		return err
+	}
+	if err == nil {
+		_, err = d.setTokenStmt.Exec(cookie, tokenJSON, charInfoJSON)
+	}
+	return err
+}
+
+func (d *dbInterface) LogoutSession(cookie string) error {
+	// TODO: Update table, remove login.
+	_, err := d.logoutSessionStmt.Exec(cookie)
+	return err
 }

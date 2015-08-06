@@ -62,6 +62,9 @@ do (path = (extn) ->
 # html isn't in its own directory.
 config.htmlSrc = config.assets + '/**/*.html'
 
+# images are copied over unaltered.
+config.images = config.assets + '/image/**/*'
+
 gulp.task 'gobuild', ->
   gulp.src ''
     .pipe shell 'go build ./cmd/...'
@@ -135,6 +138,10 @@ gulp.task 'html', ['less'], ->
     .pipe useref()
     .pipe gulp.dest config.dest
 
+gulp.task 'images', ->
+  gulp.src config.images, {base: config.assets }
+    .pipe gulp.dest config.dest
+
 gulp.task 'set-development', ->
   config.development = true
 
@@ -189,4 +196,4 @@ gulp.task 'watch', ['dev', 'gobuild'], ->
 
   startServer()
 
-gulp.task 'default', ['html', 'scripts']
+gulp.task 'default', ['html', 'scripts', 'images']

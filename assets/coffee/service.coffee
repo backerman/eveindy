@@ -59,4 +59,13 @@ angular.module 'eveindy'
         # Can't put this in do binding - bug in compiler? PEBCAK?
         query.items = @_queryFromItems items
         @$http.post "/reprocess", query
+
+      getLoginStatus: () ->
+        @$http.get "/session"
+
+      apiForUser: () ->
+        @$http.get "/apikeys/list"
+
+      logoutSessions: () ->
+        @$http.post "/logout"
       ]

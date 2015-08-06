@@ -17,9 +17,7 @@ CREATE SCHEMA eveindy;
 -- users: accounts on this system.
 CREATE TABLE eveindy.users (
   id SERIAL PRIMARY KEY,
-  email text,
-  authToon integer NOT NULL,
-  authToonName text
+  email text
 );
 
 -- apikeys: keys used to retrieve character information from the XML API.
@@ -33,11 +31,11 @@ CREATE TABLE eveindy.apikeys (
 -- characters: EVE toons
 CREATE TABLE eveindy.characters (
   userid integer NOT NULL REFERENCES eveindy.users(id) ON DELETE CASCADE,
-  apikey integer NOT NULL REFERENCES eveindy.apikeys(id) ON DELETE CASCADE,
+  apikey integer REFERENCES eveindy.apikeys(id) ON DELETE CASCADE,
   name text NOT NULL,
   id integer NOT NULL,
-  corp text NOT NULL,
-  corpid integer NOT NULL,
+  corp text,
+  corpid integer,
   alliance text,
   allianceid integer
 );

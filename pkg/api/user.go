@@ -1,0 +1,45 @@
+/*
+Copyright © 2014 Brad Ackerman.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
+
+package api
+
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/backerman/eveindy/pkg/db"
+	"github.com/backerman/eveindy/pkg/server"
+	"github.com/zenazn/goji/web"
+)
+
+// XMLAPIKeysHandler returns a web handler function that provides information on
+// the user's API keys that have been registered with this application.
+func XMLAPIKeysHandler(localdb db.LocalDB) web.HandlerFunc {
+	return func(c web.C, w http.ResponseWriter, r *http.Request) {
+		// TODO: Support operations other than just listing them.
+		s := server.GetSession(&c)
+		userKeys, err := localdb.APIKeys(s.User)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		userKeysJSON, err := json.Marshal(userKeys)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		w.Write(userKeysJSON)
+	}
+}

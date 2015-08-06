@@ -72,3 +72,12 @@ func SessionHandler(d db.LocalDB, cookieDomain, cookiePath string, isProduction 
 	}
 	return aHandler
 }
+
+// GetSession returns the context's application session information.
+func GetSession(c *web.C) *db.Session {
+	userSession, ok := c.Env["session"].(db.Session)
+	if !ok {
+		return nil
+	}
+	return &userSession
+}

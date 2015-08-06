@@ -73,14 +73,36 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Associate a token with a session.
-CREATE OR REPLACE FUNCTION eveindy.associateToken(aCookie text, jsonToken text)
+CREATE OR REPLACE FUNCTION eveindy.associateToken(
+  aCookie text,
+  jsonToken text,
+  charInfo text)
 RETURNS VOID AS $$
 DECLARE
   myToken jsonb;
+  charJson jsonb;
+  charID integer;
+  siteuser integer;
 BEGIN
   myToken := jsonToken::json;
+  charJson := charInfo::json;
+  charID := (charJson ->> 'CharacterID')::integer;
+  -- Do we have a site user for this toon? If not, create one.
+  SELECT userid
+  FROM   eveindy.characters
+  WHERE  id = charID
+  INTO   siteuser;
+  IF siteuser IS NULL
+  THEN
+    -- Create a new site user and add this toon to it.
+    INSERT INTO eveindy.users(email) VALUES(null)
+    RETURNING id INTO siteuser;
+    INSERT INTO eveindy.characters(userid, name, id)
+    VALUES (siteuser, charJson ->> 'CharacterName', charID);
+  END IF;
   UPDATE eveindy.sessions
-  SET    token = myToken, tokenExpiry = eveindy.tokenExpiry(myToken)
+  SET    token = myToken, tokenExpiry = eveindy.tokenExpiry(myToken),
+         userid = siteuser
   WHERE  cookie = aCookie;
 END;
 $$ LANGUAGE plpgsql;

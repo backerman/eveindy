@@ -3,6 +3,35 @@
     <p class="well">
       And here we're going to have settings!
     </p>
+    <h2>API keys</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="col-sm-2" scope="col">
+            Key ID
+          </th>
+          <th class="col-sm-6" scope="col">
+            Verification code
+          </th>
+          <th class="col-sm-3" scope="col">
+            Label
+          </th>
+          <th class="col-sm-1" scope="col">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="key in ctrl.apikeys">
+          <td ng-bind="key.id"></td>
+          <td ng-bind="key.vcode"></td>
+          <td ng-bind="key.label"></td>
+          <td>
+            ????
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   <div class="col-md-4">
     <p>

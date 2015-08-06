@@ -30,6 +30,7 @@ import (
 	"github.com/backerman/evego/pkg/cache"
 	"github.com/backerman/evego/pkg/dbaccess"
 	"github.com/backerman/evego/pkg/eveapi"
+	"github.com/backerman/evego/pkg/evesso"
 	"github.com/backerman/evego/pkg/market"
 	"github.com/backerman/evego/pkg/routing"
 	"github.com/backerman/eveindy/pkg/api"
@@ -56,9 +57,11 @@ type config struct {
 	Cache                    string
 	RedisHost, RedisPassword string
 	CookieDomain, CookiePath string
+	ClientID, ClientSecret   string
+	RedirectURL              string
 }
 
-func setRoutes(sde evego.Database, xmlAPI evego.XMLAPI, eveCentral evego.Market) {
+func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI, eveCentral evego.Market) {
 	assets := http.FileServer(http.Dir("dist"))
 	bower := http.FileServer(http.Dir("bower_components"))
 	if c.Dev {
@@ -73,6 +76,16 @@ func setRoutes(sde evego.Database, xmlAPI evego.XMLAPI, eveCentral evego.Market)
 	goji.Post("/market/system/:location", marketHandler)
 	goji.Post("/market/station/:id", marketHandler)
 	goji.Post("/reprocess", api.ReprocessItems(sde))
+	// SSO!
+	auth := evesso.MakeAuthenticator(evesso.Endpoint, c.ClientID, c.ClientSecret,
+		c.RedirectURL, evesso.PublicData)
+	goji.Get("/crestcallback", api.CRESTCallbackListener(localdb, auth))
+	goji.Get("/authenticate", api.AuthenticateHandler(auth))
+	goji.Get("/session", api.SessionInfo(auth))
+	goji.Post("/logout", api.LogoutHandler(localdb, auth))
+
+	// API keys
+	goji.Get("/apikeys/list", api.XMLAPIKeysHandler(localdb))
 	goji.Get("/*", assets)
 }
 
@@ -90,11 +103,21 @@ func mainCommand(cmd *cobra.Command, args []string) {
 		log.Fatalf("Please set the CookieDomain and CookiePath configuration options.")
 	}
 
+	if !(viper.IsSet("ClientID") && viper.IsSet("ClientSecret") &&
+		viper.IsSet("RedirectURL")) {
+		log.Fatalf("Please set the ClientID, ClientSecret, and RedirectURL configuration " +
+			"options as registered with CCP.")
+	}
+
 	if c.Dev {
 		log.Printf("Configuration is: %+v", c)
 	}
 
 	sde := dbaccess.SQLDatabase(c.DbDriver, c.DbPath)
+	localdb, err := db.Interface(c.DbDriver, c.DbPath)
+	if err != nil {
+		log.Fatalf("Unable to connect to local database: %v", err)
+	}
 	if c.Dev {
 		ts := httptest.NewServer(
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -138,7 +161,7 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	eveCentralMarket := market.EveCentral(sde, router, xmlAPI,
 		"http://api.eve-central.com/api/quicklook", myCache)
 
-	setRoutes(sde, xmlAPI, eveCentralMarket)
+	setRoutes(sde, localdb, xmlAPI, eveCentralMarket)
 	// We like magic, but fix the magic some.
 	bindArg := fmt.Sprintf("-bind=%s", c.Bind)
 	if len(os.Args) > 1 {
