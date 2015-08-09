@@ -102,7 +102,7 @@
           <tr ng-repeat="item in ctrl.inventory">
             <td ng-bind="item.Quantity"></td>
             <td ng-bind="item.Item.Name"></td>
-            <td class="isk" tooltip-html-unsafe="{{item.buyInfo}}" tooltip-append-to-body="true" ng-bind="ctrl.formatPrice(item)"
+            <td class="isk" tooltip-html="item.buyInfo" tooltip-append-to-body="true" ng-bind="ctrl.formatPrice(item)"
             ng-class="{'no-sale': item.noSale, 'better-price': item.buyPrice >= item.reproValue }"></td>
             <td class="isk" ng-bind="ctrl.formatRepro(item)"
             ng-class="{'no-sale': item.noReprocess, 'better-price': item.buyPrice <= item.reproValue }"></td>

@@ -42,9 +42,9 @@ midpointCalc = (item, mult) ->
     else undefined
 
 angular.module 'eveindy'
-  .controller 'ReprocessCtrl',['Server', 'numberFilter', '$timeout',
+  .controller 'ReprocessCtrl',['Server', 'numberFilter', '$timeout', '$sce',
     class ReprocessCtrl
-      constructor: (@Server, @numberFilter, @$timeout) ->
+      constructor: (@Server, @numberFilter, @$timeout, @$sce) ->
         @standing = 0.0
         @taxRate = 0.0
         @scrapSkill = 0
@@ -123,7 +123,7 @@ angular.module 'eveindy'
                   if result and result.bestBuy > 0
                     bi = result.buyInfo
                     i.buyPrice = result.bestBuy * i.Quantity
-                    i.buyInfo = "<table class=\"orderinfo\">
+                    i.buyInfo = @$sce.trustAsHtml "<table class=\"orderinfo\">
                         <tr>
                           <th>\# units:</th>
                           <td>#{bi.quantity}</td>
