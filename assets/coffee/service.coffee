@@ -16,9 +16,19 @@
 jitaID = 60003760 # Jita IV - Moon 4 - Caldari Navy Assembly Plant
 
 angular.module 'eveindy'
-  .service 'Server', [ '$http',
+  .service 'Server', [ '$http', '$rootScope', '$window'
     class ServerService
-      constructor: (@$http) ->
+      constructor: (@$http, @$rootScope, @$window) ->
+        @getLoginStatus()
+          .then (response) =>
+            @authenticated = response.data.authenticated
+            @$rootScope.$broadcast('login-status', @authenticated)
+
+        # Put function on window to be called by authentication success screen.
+        @$window.hasAuthenticated = () =>
+          @$rootScope.$apply () =>
+            @authenticated = true
+            @$rootScope.$broadcast('login-status', true)
 
       getAutocomplete: (searchTerm) ->
         @$http.get "/autocomplete/station/" + encodeURIComponent searchTerm
@@ -66,6 +76,9 @@ angular.module 'eveindy'
       apiForUser: () ->
         @$http.get "/apikeys/list"
 
-      logoutSessions: () ->
+      logoutSessions: () =>
         @$http.post "/logout"
+          .then (response) =>
+            @authenticated = false
+            @$rootScope.$broadcast('login-status', @authenticated)
       ]

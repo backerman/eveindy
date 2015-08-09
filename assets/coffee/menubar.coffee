@@ -18,16 +18,13 @@ angular.module 'eveindy'
       constructor: (@$scope, @Server, @$route, @$window) ->
         @$scope.$on '$routeChangeSuccess', @updateMenubar
         @$scope.$on '$routeChangeStart', @preventNullRoute
+        @$scope.$on 'login-status', @_updateLoginStatus
         @$scope.view = "reprocess"
-        @Server.getLoginStatus()
-          .then (response) =>
-            @authenticated = response.data.authenticated
+        @authenticated = false
         @$route.reload()
 
-        # Put function on window to be called by authentication success screen.
-        @$window.hasAuthenticated = () =>
-          @$scope.$apply () =>
-            @authenticated = true
+      _updateLoginStatus: (_, newStatus) =>
+        @authenticated = newStatus
 
       updateMenubar: (_, thisRoute, prevRoute) =>
         # Set menu bar active element to the current page.
@@ -46,8 +43,4 @@ angular.module 'eveindy'
 
       logout: () =>
         @Server.logoutSessions()
-          .then (response) =>
-            # FIXME: Should display error if error returned from server,
-            # even though that's unlikely and we really can't do anything.
-            @authenticated = false
       ]
