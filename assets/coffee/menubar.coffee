@@ -13,9 +13,9 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .controller 'MenubarCtrl', [ '$scope', 'Server', '$route'
+  .controller 'MenubarCtrl', [ '$scope', 'Server', '$route', '$window'
     class MenubarCtrl
-      constructor: (@$scope, @Server, @$route) ->
+      constructor: (@$scope, @Server, @$route, @$window) ->
         @$scope.$on '$routeChangeSuccess', @updateMenubar
         @$scope.$on '$routeChangeStart', @preventNullRoute
         @$scope.view = "reprocess"
@@ -23,6 +23,11 @@ angular.module 'eveindy'
           .then (response) =>
             @authenticated = response.data.authenticated
         @$route.reload()
+
+        # Put function on window to be called by authentication success screen.
+        @$window.hasAuthenticated = () =>
+          @$scope.$apply () =>
+            @authenticated = true
 
       updateMenubar: (_, thisRoute, prevRoute) =>
         # Set menu bar active element to the current page.

@@ -116,6 +116,21 @@ func CRESTCallbackListener(localdb db.LocalDB, auth evesso.Authenticator) web.Ha
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("<html><head><title>Authenticated</title></head><body><p>OK.</p></body>"))
+		w.Write([]byte(`
+			<html>
+				<head>
+					<title>Authenticated</title>
+				</head>
+				<body>
+					<p>OK.</p>
+					<script type="text/javascript">
+						window.onload = function() {
+							window.opener.hasAuthenticated();
+							window.close();
+						}
+					</script>
+				</body>
+			</html>
+			`))
 	}
 }
