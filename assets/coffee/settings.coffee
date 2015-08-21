@@ -46,7 +46,6 @@ angular.module 'eveindy'
               key.id != keyID
 
       addKey: () =>
-        console.log "Got request to add key", @newkey
         @Server.addApiKey @newkey
           .then (response) =>
             @apikeys.push @newkey
