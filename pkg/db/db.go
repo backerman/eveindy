@@ -31,6 +31,7 @@ type dbInterface struct {
 	db                *sqlx.DB
 	getSessionStmt    *sqlx.Stmt
 	getAPIKeysStmt    *sqlx.Stmt
+	deleteAPIKeyStmt  *sqlx.Stmt
 	setTokenStmt      *sqlx.Stmt
 	logoutSessionStmt *sqlx.Stmt
 }
@@ -57,6 +58,7 @@ func Interface(driver, resource string) (LocalDB, error) {
 		{&d.getSessionStmt, getSessionStmt},
 		{&d.setTokenStmt, setTokenStmt},
 		{&d.getAPIKeysStmt, getAPIKeysStmt},
+		{&d.deleteAPIKeyStmt, deleteAPIKeyStmt},
 		{&d.logoutSessionStmt, logoutSessionStmt},
 	}
 

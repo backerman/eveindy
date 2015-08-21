@@ -13,14 +13,38 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .controller 'SettingsCtrl', [ 'Server',
+  .controller 'SettingsCtrl', [ 'Server', '$scope'
     class SettingsCtrl
-      constructor: (@Server) ->
+      constructor: (@Server, @$scope) ->
         @apikeys = {}
-        @getApiKeys()
+        @newkey = {}
+        @$scope.$on 'login-status', @_updateLoginStatus
+        if @Server.authenticated
+          @authenticated = true
+          @getApiKeys()
+
+      _updateLoginStatus: (_, isLoggedIn) =>
+        if isLoggedIn
+          @authenticated = true
+          @getApiKeys()
+        else
+          # Logged out - clear keys
+          @authenticated = false
+          @apikeys = {}
 
       getApiKeys: () ->
         @Server.apiForUser()
           .then (response) =>
             @apikeys = response.data
+
+      deleteKey: (keyID) ->
+        @Server.deleteApiKey keyID
+          .then (response) =>
+            # We don't actually care about the response; just drop the key
+            # from our model.
+            @apikeys = @apikeys.filter (key) ->
+              key.id != keyID
+
+      addKey: () =>
+        console.log "Got request to add key", @newkey
   ]

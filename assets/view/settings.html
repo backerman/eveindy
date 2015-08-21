@@ -1,37 +1,61 @@
 <div class="row">
   <div class="col-md-8">
-    <p class="well">
-      And here we're going to have settings!
+    <p class="alert alert-info" ng-show="!ctrl.authenticated">
+      To access account settings, please log in.
     </p>
-    <h2>API keys</h2>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th class="col-sm-2" scope="col">
-            Key ID
-          </th>
-          <th class="col-sm-6" scope="col">
-            Verification code
-          </th>
-          <th class="col-sm-3" scope="col">
-            Label
-          </th>
-          <th class="col-sm-1" scope="col">
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="key in ctrl.apikeys">
-          <td ng-bind="key.id"></td>
-          <td ng-bind="key.vcode"></td>
-          <td ng-bind="key.label"></td>
-          <td>
-            ????
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div ng-show="ctrl.authenticated">
+      <h2>API keys</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th class="col-sm-2" scope="col">
+              Key ID
+            </th>
+            <th class="col-sm-6" scope="col">
+              Verification code
+            </th>
+            <th class="col-sm-3" scope="col">
+              Label
+            </th>
+            <th class="col-sm-1" scope="col">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="key in ctrl.apikeys">
+            <td ng-bind="key.id"></td>
+            <td ng-bind="key.vcode"></td>
+            <td ng-bind="key.label"></td>
+            <td>
+              <button type="button" class="btn btn-sm btn-danger"
+              name="delete-key-{{key.id}}"
+              ng-click="ctrl.deleteKey(key.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <form name="newkey" class="form-inline">
+        <div class="form-group">
+        <label for="id">ID:</label>
+          <input class="apikeyid" type="number" name="id" value="" ng-model="ctrl.newkey.id"
+
+            min="0" step="1" class="form-control" required>
+        </div>
+        <div class="form-group">
+        <label for="vcode">Verification code:</label>
+          <input type="text" name="vcode" value="" ng-model="ctrl.newkey.vcode"
+            pattern="[a-zA-Z0-9]+" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="label">Label:</label>
+          <input type="text" name="label" value="" ng-model="ctrl.newkey.label"
+            class="form-control">
+        </div>
+        <button name="newkey-add" class="btn btn-sm btn-default"
+        ng-click="ctrl.addKey()">Add</button>
+      </form>
+    </div>
   </div>
   <div class="col-md-4">
     <p>

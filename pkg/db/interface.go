@@ -40,4 +40,7 @@ type LocalDB interface {
 
 	// LogoutSession deletes all of a user's sessions.
 	LogoutSession(cookie string) error
+
+	// DeleteAPIKey deletes the specified API key.
+	DeleteAPIKey(userID, keyID int) error
 }

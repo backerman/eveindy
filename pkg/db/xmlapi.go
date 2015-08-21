@@ -34,3 +34,8 @@ func (d *dbInterface) APIKeys(userID int) ([]*XMLAPIKey, error) {
 	}
 	return results, nil
 }
+
+func (d *dbInterface) DeleteAPIKey(userID, keyID int) error {
+	_, err := d.deleteAPIKeyStmt.Exec(userID, keyID)
+	return err
+}

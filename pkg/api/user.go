@@ -20,17 +20,17 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/backerman/eveindy/pkg/db"
 	"github.com/backerman/eveindy/pkg/server"
 	"github.com/zenazn/goji/web"
 )
 
-// XMLAPIKeysHandler returns a web handler function that provides information on
+// XMLAPIKeysHandlers returns web handler functions that provide information on
 // the user's API keys that have been registered with this application.
-func XMLAPIKeysHandler(localdb db.LocalDB) web.HandlerFunc {
-	return func(c web.C, w http.ResponseWriter, r *http.Request) {
-		// TODO: Support operations other than just listing them.
+func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete web.HandlerFunc) {
+	list = func(c web.C, w http.ResponseWriter, r *http.Request) {
 		s := server.GetSession(&c)
 		userKeys, err := localdb.APIKeys(s.User)
 		if err != nil {
@@ -42,4 +42,21 @@ func XMLAPIKeysHandler(localdb db.LocalDB) web.HandlerFunc {
 		}
 		w.Write(userKeysJSON)
 	}
+
+	delete = func(c web.C, w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "This funcition must be called with the POST method",
+				http.StatusMethodNotAllowed)
+			return
+		}
+		s := server.GetSession(&c)
+		keyID, _ := strconv.Atoi(c.URLParams["keyid"])
+		err := localdb.DeleteAPIKey(s.User, keyID)
+		if err != nil {
+			http.Error(w, "Database connection error", http.StatusInternalServerError)
+		}
+		w.Write([]byte(`{"status": "OK"}`))
+	}
+
+	return
 }

@@ -85,7 +85,11 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI, eveC
 	goji.Post("/logout", api.LogoutHandler(localdb, auth))
 
 	// API keys
-	goji.Get("/apikeys/list", api.XMLAPIKeysHandler(localdb))
+	listHandler, deleteHander := api.XMLAPIKeysHandlers(localdb)
+	goji.Get("/apikeys/list", listHandler)
+	goji.Post("/apikeys/delete/:keyid", deleteHander)
+
+	// Static assets
 	goji.Get("/*", assets)
 }
 

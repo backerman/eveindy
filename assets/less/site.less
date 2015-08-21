@@ -107,3 +107,33 @@ footer {
     width: @font-size-base;
   }
 }
+
+// Don't show validation feedback until submission.
+:invalid {
+  box-shadow: none;
+}
+
+:-moz-submit-invalid {
+  box-shadow: none;
+}
+
+:-moz-ui-invalid {
+  box-shadow:none;
+}
+
+form.ng-submitted .ng-invalid {
+  border-color: red;
+  border-width: 2px;
+}
+
+// Don't put number-input spinner on API key ID input because it's silly.
+input.apikeyid {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

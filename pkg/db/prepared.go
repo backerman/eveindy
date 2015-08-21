@@ -40,6 +40,13 @@ const (
 	WHERE  userid = $1
 	`
 
+	// Delete an API key.
+	deleteAPIKeyStmt = `
+	DELETE
+	FROM   apikeys
+	WHERE  userid = $1 AND id = $2
+	`
+
 	// Delete user's sessions.
 	logoutSessionStmt = `
 	DELETE FROM sessions

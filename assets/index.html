@@ -59,9 +59,9 @@
               </ul>
             </li>
             <!-- icons version iff navbar is shown -->
-            <li><a href="#/settings" class="glyphicon glyphicon-cog" ng-hide="isShown"></a></li>
+            <li><a href="#/settings" class="glyphicon glyphicon-cog" ng-show="!isShown && mctrl.authenticated"></a></li>
             <!-- text version iff navbar is collapsed -->
-            <li><a href="#/settings" ng-show="isShown">Settings</a></li>
+            <li><a href="#/settings" ng-show="isShown && mctrl.authenticated">Settings</a></li>
           </ul>
         </div>
       </nav>
