@@ -32,44 +32,44 @@ describe 'Controller: ReproController', () ->
       $scope = _$rootScope_
       jitaMinerals = fixture.load('jitaMinerals.json')
       spyOn Server, 'getJitaPrices'
-        .and.returnValue {
+        .and.returnValue
           then: (callback) ->
             response =
               data: JSON.parse JSON.stringify jitaMinerals
             callback response
-        }
+
       autocomplete = fixture.load('autocomplete.json')
       spyOn Server, 'getAutocomplete'
-        .and.returnValue {
+        .and.returnValue
           then: (callback) ->
             response =
               data: JSON.parse JSON.stringify autocomplete
             callback response
-        }
+
       pastebinTest = fixture.load('pastebin.json')
       spyOn Server, 'parsePastebin'
-        .and.returnValue {
+        .and.returnValue
           then: (callback) ->
             response =
               data: JSON.parse JSON.stringify pastebinTest
             callback response
-        }
+
       marketOutput = fixture.load('marketOutput.json')
       spyOn Server, 'searchStationMarket'
-        .and.returnValue {
+        .and.returnValue
           then: (callback) ->
             response =
               data: JSON.parse JSON.stringify marketOutput
             callback response
-        }
+
       reprocessOutput = fixture.load('reprocessOutput.json')
       spyOn Server, 'reprocessItems'
-        .and.returnValue {
+        .and.returnValue
           then: (callback) ->
             response =
               data: reprocessOutput
             callback response
-        }
+
       serverService = Server
       ctrl = $controller 'ReprocessCtrl'
 
