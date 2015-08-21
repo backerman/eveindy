@@ -39,3 +39,8 @@ func (d *dbInterface) DeleteAPIKey(userID, keyID int) error {
 	_, err := d.deleteAPIKeyStmt.Exec(userID, keyID)
 	return err
 }
+
+func (d *dbInterface) AddAPIKey(key XMLAPIKey) error {
+	_, err := d.addAPIKeyStmt.Exec(key.User, key.ID, key.VerificationCode, key.Description)
+	return err
+}

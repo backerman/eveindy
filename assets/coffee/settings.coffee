@@ -37,7 +37,7 @@ angular.module 'eveindy'
           .then (response) =>
             @apikeys = response.data
 
-      deleteKey: (keyID) ->
+      deleteKey: (keyID) =>
         @Server.deleteApiKey keyID
           .then (response) =>
             # We don't actually care about the response; just drop the key
@@ -47,4 +47,8 @@ angular.module 'eveindy'
 
       addKey: () =>
         console.log "Got request to add key", @newkey
+        @Server.addApiKey @newkey
+          .then (response) =>
+            @apikeys.push @newkey
+            newkey = {}
   ]

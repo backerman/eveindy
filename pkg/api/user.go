@@ -19,6 +19,7 @@ package api
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -29,7 +30,7 @@ import (
 
 // XMLAPIKeysHandlers returns web handler functions that provide information on
 // the user's API keys that have been registered with this application.
-func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete web.HandlerFunc) {
+func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete, add web.HandlerFunc) {
 	list = func(c web.C, w http.ResponseWriter, r *http.Request) {
 		s := server.GetSession(&c)
 		userKeys, err := localdb.APIKeys(s.User)
@@ -45,7 +46,7 @@ func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete web.HandlerFunc) {
 
 	delete = func(c web.C, w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
-			http.Error(w, "This funcition must be called with the POST method",
+			http.Error(w, "This function must be called with the POST method",
 				http.StatusMethodNotAllowed)
 			return
 		}
@@ -54,8 +55,43 @@ func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete web.HandlerFunc) {
 		err := localdb.DeleteAPIKey(s.User, keyID)
 		if err != nil {
 			http.Error(w, "Database connection error", http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
+			return
 		}
 		w.Write([]byte(`{"status": "OK"}`))
+		return
+	}
+
+	add = func(c web.C, w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "This function must be called with the POST method",
+				http.StatusMethodNotAllowed)
+			return
+		}
+		s := server.GetSession(&c)
+		keyJSON, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Unable to read key", http.StatusBadRequest)
+			return
+		}
+		key := db.XMLAPIKey{}
+		err = json.Unmarshal(keyJSON, &key)
+		if err != nil {
+			http.Error(w, "Unable to unmarshal key", http.StatusBadRequest)
+			return
+		}
+		// Ensure that this key is added under the session's user's account.
+		key.User = s.User
+
+		err = localdb.AddAPIKey(key)
+		if err != nil {
+			http.Error(w, "Database connection error", http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
+			return
+		}
+
+		w.Write([]byte(`{"status": "OK"}`))
+		return
 	}
 
 	return

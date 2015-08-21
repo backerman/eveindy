@@ -43,4 +43,7 @@ type LocalDB interface {
 
 	// DeleteAPIKey deletes the specified API key.
 	DeleteAPIKey(userID, keyID int) error
+
+	// AddAPIKey adds the specified API key.
+	AddAPIKey(key XMLAPIKey) error
 }

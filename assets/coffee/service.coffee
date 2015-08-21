@@ -79,6 +79,9 @@ angular.module 'eveindy'
       deleteApiKey: (keyID) ->
         @$http.post "/apikeys/delete/#{keyID}"
 
+      addApiKey: (key) ->
+        @$http.post "/apikeys/add", key
+
       logoutSessions: () =>
         @$http.post "/logout"
           .then (response) =>

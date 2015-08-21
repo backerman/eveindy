@@ -40,6 +40,13 @@ const (
 	WHERE  userid = $1
 	`
 
+	// Add an API key to the database.
+	addAPIKeyStmt = `
+	INSERT
+	INTO   apikeys(userid, id, vcode, label)
+	VALUES ($1, $2, $3, $4)
+	`
+
 	// Delete an API key.
 	deleteAPIKeyStmt = `
 	DELETE
