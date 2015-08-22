@@ -13,9 +13,9 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .controller 'MenubarCtrl', [ '$scope', 'Server', '$route', '$window'
+  .controller 'MenubarCtrl', [ '$scope', 'Server', '$route',
     class MenubarCtrl
-      constructor: (@$scope, @Server, @$route, @$window) ->
+      constructor: (@$scope, @Server, @$route) ->
         @$scope.$on '$routeChangeSuccess', @updateMenubar
         @$scope.$on '$routeChangeStart', @preventNullRoute
         @$scope.$on 'login-status', @_updateLoginStatus
