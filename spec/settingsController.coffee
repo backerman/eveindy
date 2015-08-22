@@ -46,19 +46,17 @@ describe 'Controller: SettingsCtrl', () ->
         $scope: scope
       scope.$broadcast('login-status', true)
 
-  it 'should get a user\'s API keys', (done) ->
+  it 'should get a user\'s API keys', () ->
     expect(serverService.apiForUser).toHaveBeenCalled()
     expect(serverService.apiForUser.calls.count()).toEqual 1
     expect((k.id for k in ctrl.apikeys).sort()).toEqual [123456, 234567, 345678]
-    done()
 
-  it 'should remove a deleted key from its local model', (done) ->
+  it 'should remove a deleted key from its local model', () ->
     ctrl.deleteKey 234567
     expect(k.id for k in ctrl.apikeys).not.toContain 234567
     expect(ctrl.apikeys.length).toEqual 2
-    done()
 
-  it 'should add keys to the user\'s account', (done) ->
+  it 'should add keys to the user\'s account', () ->
     ctrl.newkey =
       id: 666
       userid: 101
@@ -67,4 +65,14 @@ describe 'Controller: SettingsCtrl', () ->
     ctrl.addKey()
     expect(ctrl.apikeys.length).toEqual 4
     expect(k.id for k in ctrl.apikeys).toContain 666
-    done()
+    expect(ctrl.newkey).toEqual {}
+
+  it 'should correctly handle login', () ->
+    ctrl._updateLoginStatus "", true
+    expect(ctrl.authenticated).toBeTruthy()
+    expect(ctrl.apikeys.length).toEqual 3
+
+  it 'should correctly handle logout', () ->
+    ctrl._updateLoginStatus "", false
+    expect(ctrl.authenticated).toBeFalsy()
+    expect(ctrl.apikeys.length).toEqual 0

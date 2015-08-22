@@ -18,6 +18,7 @@ angular.module 'eveindy'
       constructor: (@Server, @$scope) ->
         @apikeys = {}
         @newkey = {}
+        @forms = {}
         @$scope.$on 'login-status', @_updateLoginStatus
         if @Server.authenticated
           @authenticated = true
@@ -30,7 +31,7 @@ angular.module 'eveindy'
         else
           # Logged out - clear keys
           @authenticated = false
-          @apikeys = {}
+          @apikeys = []
 
       getApiKeys: () ->
         @Server.apiForUser()
@@ -49,5 +50,7 @@ angular.module 'eveindy'
         @Server.addApiKey @newkey
           .then (response) =>
             @apikeys.push @newkey
-            newkey = {}
+            @newkey = {}
+            # Ignore nonexistent FormController (for tests)
+            @forms.newkey?.$setPristine()
   ]
