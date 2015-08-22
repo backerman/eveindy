@@ -1,0 +1,20 @@
+[
+  {
+    "userid": 101,
+    "id": 123456,
+    "vcode": "abc123abc123",
+    "label": "Test key 1"
+  },
+  {
+    "userid": 101,
+    "id": 234567,
+    "vcode": "bcdbcdbcd345543",
+    "label": "Test key 1"
+  },
+  {
+    "userid": 101,
+    "id": 345678,
+    "vcode": "0123456789abcdefg",
+    "label": "Test key 1"
+  }
+]
