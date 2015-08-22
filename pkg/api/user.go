@@ -36,10 +36,14 @@ func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete, add web.HandlerFunc) 
 		userKeys, err := localdb.APIKeys(s.User)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
+			return
 		}
 		userKeysJSON, err := json.Marshal(userKeys)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
+			return
 		}
 		w.Write(userKeysJSON)
 	}
@@ -48,6 +52,7 @@ func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete, add web.HandlerFunc) 
 		if r.Method != "POST" {
 			http.Error(w, "This function must be called with the POST method",
 				http.StatusMethodNotAllowed)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		s := server.GetSession(&c)
@@ -66,18 +71,21 @@ func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete, add web.HandlerFunc) 
 		if r.Method != "POST" {
 			http.Error(w, "This function must be called with the POST method",
 				http.StatusMethodNotAllowed)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		s := server.GetSession(&c)
 		keyJSON, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Unable to read key", http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		key := db.XMLAPIKey{}
 		err = json.Unmarshal(keyJSON, &key)
 		if err != nil {
 			http.Error(w, "Unable to unmarshal key", http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		// Ensure that this key is added under the session's user's account.

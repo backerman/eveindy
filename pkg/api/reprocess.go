@@ -49,21 +49,25 @@ func ReprocessItems(db evego.Database) web.HandlerFunc {
 		contentType, _, err := mime.ParseMediaType(contentType)
 		if err != nil {
 			http.Error(w, "Bad request content type", http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		if contentType != "application/json" {
 			http.Error(w, "Request must be of type application/json", http.StatusUnsupportedMediaType)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		reqBody, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Unable to process request body", http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		var req reproQuery
 		err = json.Unmarshal(reqBody, &req)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 
@@ -82,6 +86,7 @@ func ReprocessItems(db evego.Database) web.HandlerFunc {
 			itemResults, err := industry.ReprocessItem(db, item, i.Quantity, stationYield, taxRate, reproSkills)
 			if err != nil {
 				http.Error(w, "Unable to compute reprocessing output", http.StatusInternalServerError)
+				w.Write([]byte(`{"status": "Error"}`))
 				return
 			}
 			results[item.Name] = itemResults

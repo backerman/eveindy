@@ -91,6 +91,7 @@ func CRESTCallbackListener(localdb db.LocalDB, auth evesso.Authenticator) web.Ha
 			// CSRF attempt or session expired; reject.
 			http.Error(w, "Returned state not valid for this user.", http.StatusBadRequest)
 			log.Printf("Got state %#v, expected state %#v", passedState, session.State)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		// Extract code from query parameters.
@@ -99,12 +100,14 @@ func CRESTCallbackListener(localdb db.LocalDB, auth evesso.Authenticator) web.Ha
 		tok, err := auth.Exchange(code)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		// Get character information.
 		charInfo, err := auth.CharacterInfo(tok)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 
@@ -112,6 +115,7 @@ func CRESTCallbackListener(localdb db.LocalDB, auth evesso.Authenticator) web.Ha
 		err = localdb.AuthenticateSession(session.Cookie, tok, charInfo)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

@@ -73,6 +73,7 @@ func ParseItems(db evego.Database) web.HandlerFunc {
 		pasteContents, err := getFormData(r, "paste", &parseItemsQuery{})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		items := parsing.ParseInventory(pasteContents, db)

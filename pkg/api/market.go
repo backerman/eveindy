@@ -146,21 +146,25 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 		contentType, _, err := mime.ParseMediaType(contentType)
 		if err != nil {
 			http.Error(w, "Bad request content type", http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		if contentType != "application/json" {
 			http.Error(w, "Request must be of type application/json", http.StatusUnsupportedMediaType)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		reqBody, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Unable to process request body", http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		var req []queryItem
 		err = json.Unmarshal(reqBody, &req)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Unable to process request JSON: %v", err), http.StatusBadRequest)
+			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		respItems := make(map[string]responseItem)
@@ -176,6 +180,7 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 				station, err = xmlAPI.OutpostForID(stationID)
 				if err != nil {
 					http.Error(w, fmt.Sprintf("Unable to identify location: %v", err), http.StatusBadRequest)
+					w.Write([]byte(`{"status": "Error"}`))
 					return
 				}
 			}
