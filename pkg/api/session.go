@@ -38,9 +38,9 @@ type sessionInfo struct {
 
 // SessionInfo returns a web handler function that returns information about the
 // current session.
-func SessionInfo(auth evesso.Authenticator) web.HandlerFunc {
+func SessionInfo(auth evesso.Authenticator, sess server.Sessionizer) web.HandlerFunc {
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
-		curSession := server.GetSession(&c)
+		curSession := sess.GetSession(&c, w, r)
 		returnInfo := sessionInfo{
 			Authenticated: curSession.User != 0,
 			OAuthURL:      auth.URL(curSession.State),
@@ -55,21 +55,21 @@ func SessionInfo(auth evesso.Authenticator) web.HandlerFunc {
 
 // AuthenticateHandler returns a web handler function that redirects to a
 // session-specific authentication link.
-func AuthenticateHandler(auth evesso.Authenticator) web.HandlerFunc {
+func AuthenticateHandler(auth evesso.Authenticator, sess server.Sessionizer) web.HandlerFunc {
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
-		sess := server.GetSession(&c)
-		url := auth.URL(sess.State)
+		s := sess.GetSession(&c, w, r)
+		url := auth.URL(s.State)
 		http.Redirect(w, r, url, http.StatusFound)
 	}
 }
 
 // LogoutHandler returns a web handler function that deletes the user's
 // sessions.
-func LogoutHandler(localdb db.LocalDB, auth evesso.Authenticator) web.HandlerFunc {
+func LogoutHandler(localdb db.LocalDB, auth evesso.Authenticator, sess server.Sessionizer) web.HandlerFunc {
 	successMsg := []byte("{ \"success\": true }")
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
-		sess := server.GetSession(&c)
-		err := localdb.LogoutSession(sess.Cookie)
+		s := sess.GetSession(&c, w, r)
+		err := localdb.LogoutSession(s.Cookie)
 		if err != nil {
 			http.Error(w, "Unable to find session", http.StatusTeapot)
 			log.Printf("Error logging out: %v", err)
@@ -82,15 +82,15 @@ func LogoutHandler(localdb db.LocalDB, auth evesso.Authenticator) web.HandlerFun
 
 // CRESTCallbackListener returns a web handler function that listens for a CREST
 // SSO callback and accepts the results of authentication.
-func CRESTCallbackListener(localdb db.LocalDB, auth evesso.Authenticator) web.HandlerFunc {
+func CRESTCallbackListener(localdb db.LocalDB, auth evesso.Authenticator, sess server.Sessionizer) web.HandlerFunc {
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// Verify state value.
-		session := server.GetSession(&c)
+		s := sess.GetSession(&c, w, r)
 		passedState := r.FormValue("state")
-		if passedState != session.State {
+		if passedState != s.State {
 			// CSRF attempt or session expired; reject.
 			http.Error(w, "Returned state not valid for this user.", http.StatusBadRequest)
-			log.Printf("Got state %#v, expected state %#v", passedState, session.State)
+			log.Printf("Got state %#v, expected state %#v", passedState, s.State)
 			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
@@ -112,7 +112,7 @@ func CRESTCallbackListener(localdb db.LocalDB, auth evesso.Authenticator) web.Ha
 		}
 
 		// Update session in database.
-		err = localdb.AuthenticateSession(session.Cookie, tok, charInfo)
+		err = localdb.AuthenticateSession(s.Cookie, tok, charInfo)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			w.Write([]byte(`{"status": "Error"}`))

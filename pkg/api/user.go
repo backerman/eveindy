@@ -30,9 +30,9 @@ import (
 
 // XMLAPIKeysHandlers returns web handler functions that provide information on
 // the user's API keys that have been registered with this application.
-func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete, add web.HandlerFunc) {
+func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, delete, add web.HandlerFunc) {
 	list = func(c web.C, w http.ResponseWriter, r *http.Request) {
-		s := server.GetSession(&c)
+		s := sess.GetSession(&c, w, r)
 		userKeys, err := localdb.APIKeys(s.User)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -55,7 +55,7 @@ func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete, add web.HandlerFunc) 
 			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
-		s := server.GetSession(&c)
+		s := sess.GetSession(&c, w, r)
 		keyID, _ := strconv.Atoi(c.URLParams["keyid"])
 		err := localdb.DeleteAPIKey(s.User, keyID)
 		if err != nil {
@@ -74,7 +74,7 @@ func XMLAPIKeysHandlers(localdb db.LocalDB) (list, delete, add web.HandlerFunc) 
 			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
-		s := server.GetSession(&c)
+		s := sess.GetSession(&c, w, r)
 		keyJSON, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Unable to read key", http.StatusBadRequest)

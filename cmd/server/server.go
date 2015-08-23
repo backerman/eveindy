@@ -61,7 +61,8 @@ type config struct {
 	RedirectURL              string
 }
 
-func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI, eveCentral evego.Market) {
+func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
+	eveCentral evego.Market, sessionizer server.Sessionizer) {
 	assets := http.FileServer(http.Dir("dist"))
 	bower := http.FileServer(http.Dir("bower_components"))
 	if c.Dev {
@@ -79,13 +80,13 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI, eveC
 	// SSO!
 	auth := evesso.MakeAuthenticator(evesso.Endpoint, c.ClientID, c.ClientSecret,
 		c.RedirectURL, evesso.PublicData)
-	goji.Get("/crestcallback", api.CRESTCallbackListener(localdb, auth))
-	goji.Get("/authenticate", api.AuthenticateHandler(auth))
-	goji.Get("/session", api.SessionInfo(auth))
-	goji.Post("/logout", api.LogoutHandler(localdb, auth))
+	goji.Get("/crestcallback", api.CRESTCallbackListener(localdb, auth, sessionizer))
+	goji.Get("/authenticate", api.AuthenticateHandler(auth, sessionizer))
+	goji.Get("/session", api.SessionInfo(auth, sessionizer))
+	goji.Post("/logout", api.LogoutHandler(localdb, auth, sessionizer))
 
 	// API keys
-	listHandler, deleteHander, addHandler := api.XMLAPIKeysHandlers(localdb)
+	listHandler, deleteHander, addHandler := api.XMLAPIKeysHandlers(localdb, sessionizer)
 	goji.Get("/apikeys/list", listHandler)
 	goji.Post("/apikeys/delete/:keyid", deleteHander)
 	goji.Post("/apikeys/add", addHandler)
@@ -166,7 +167,9 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	eveCentralMarket := market.EveCentral(sde, router, xmlAPI,
 		"http://api.eve-central.com/api/quicklook", myCache)
 
-	setRoutes(sde, localdb, xmlAPI, eveCentralMarket)
+	sessionizer := server.GetSessionizer(c.CookieDomain, c.CookiePath, !c.Dev, localdb)
+
+	setRoutes(sde, localdb, xmlAPI, eveCentralMarket, sessionizer)
 	// We like magic, but fix the magic some.
 	bindArg := fmt.Sprintf("-bind=%s", c.Bind)
 	if len(os.Args) > 1 {
@@ -176,14 +179,6 @@ func mainCommand(cmd *cobra.Command, args []string) {
 		os.Args = append(os.Args, bindArg)
 	}
 
-	// Configure local database.
-	localDB, err := db.Interface(c.DbDriver, c.DbPath)
-	if err != nil {
-		log.Fatalf("Unable to acquire connection to local database.")
-	}
-	sessionizer := server.SessionHandler(localDB, c.CookieDomain, c.CookiePath, !c.Dev)
-
-	goji.Use(sessionizer)
 	goji.Serve()
 }
 

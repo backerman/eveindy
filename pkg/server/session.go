@@ -27,57 +27,60 @@ import (
 
 const cookieName = "EVEINDY_SESSION"
 
-// SessionHandler is a middleware that maps the request to its corresponding
-// session.
-func SessionHandler(d db.LocalDB, cookieDomain, cookiePath string, isProduction bool) func(*web.C, http.Handler) http.Handler {
-	aHandler := func(c *web.C, h http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-			// Get my session cookie.
-			var session db.Session
-			var newSession bool
-			sessionCookie, err := r.Cookie(cookieName)
-			if err == nil {
-				// Got a cookie; check to see if the corresponding session is available.
-				oldCookie := sessionCookie.Value
-				session, err = d.FindSession(oldCookie)
-				if err == nil && session.Cookie != oldCookie {
-					// This session didn't exist, so a new session has been created.
-					newSession = true
-				}
-			} else {
-				// The session cookie did not exist.
-				session, err = d.NewSession()
-				newSession = true
-			}
-			if err != nil {
-				panic("OMG! " + err.Error())
-			}
-			if newSession {
-				// Store a cookie.
-				sessionCookie = &http.Cookie{
-					Name:    cookieName,
-					Value:   session.Cookie,
-					Domain:  cookieDomain,
-					Path:    cookiePath,
-					Expires: time.Now().Add(168 * time.Hour), // 1 week
-					Secure:  isProduction,                    // HTTPS-only iff production system
-				}
-				http.SetCookie(w, sessionCookie)
-			}
-			c.Env["session"] = session
-			h.ServeHTTP(w, r)
-		}
-
-		return http.HandlerFunc(fn)
-	}
-	return aHandler
+type sessionizer struct {
+	cookieDomain, cookiePath string
+	isProduction             bool
+	db                       db.LocalDB
 }
 
-// GetSession returns the context's application session information.
-func GetSession(c *web.C) *db.Session {
-	userSession, ok := c.Env["session"].(db.Session)
-	if !ok {
-		return nil
+// GetSessionizer returns a Sessionizer to be passed to handlers.
+func GetSessionizer(cookieDomain, cookiePath string, isProduction bool, db db.LocalDB) Sessionizer {
+	return &sessionizer{
+		cookieDomain: cookieDomain,
+		cookiePath:   cookiePath,
+		isProduction: isProduction,
+		db:           db,
 	}
-	return &userSession
+}
+
+func (s *sessionizer) setCookie(w http.ResponseWriter, cookie string) {
+	sessionCookie := &http.Cookie{
+		Name:    cookieName,
+		Value:   cookie,
+		Domain:  s.cookieDomain,
+		Path:    s.cookiePath,
+		Expires: time.Now().Add(168 * time.Hour), // 1 week
+		Secure:  s.isProduction,                  // HTTPS-only iff production system
+	}
+	http.SetCookie(w, sessionCookie)
+}
+
+func (s *sessionizer) GetSession(c *web.C, w http.ResponseWriter, r *http.Request) *db.Session {
+	// Get my session cookie.
+	var session db.Session
+	var newSession bool
+	sessionCookie, err := r.Cookie(cookieName)
+	if err == nil {
+		// Got a cookie; check to see if the corresponding session is available.
+		oldCookie := sessionCookie.Value
+		session, err = s.db.FindSession(oldCookie)
+		if err == nil && session.Cookie != oldCookie {
+			// This session didn't exist, so a new session has been created.
+			newSession = true
+		}
+	} else {
+		// The session cookie did not exist.
+		session, err = s.db.NewSession()
+		newSession = true
+	}
+	if err != nil {
+		panic("OMG! " + err.Error())
+	}
+	if newSession {
+		// Store a cookie.
+		s.setCookie(w, session.Cookie)
+	}
+	c.Env["session"] = session
+
+	return &session
 }
