@@ -12,7 +12,7 @@
               Key ID
             </th>
             <th class="col-sm-6" scope="col">
-              Verification code
+              Characters
             </th>
             <th class="col-sm-3" scope="col">
               Label
@@ -25,7 +25,15 @@
         <tbody>
           <tr ng-repeat="key in ctrl.apikeys">
             <td ng-bind="key.id"></td>
-            <td ng-bind="key.vcode"></td>
+            <td>
+              <table>
+                <tbody>
+                  <tr ng-repeat="char in key.characters">
+                    <td ng-bind="char.name"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
             <td ng-bind="key.label"></td>
             <td>
               <button type="button" class="btn btn-sm btn-danger"

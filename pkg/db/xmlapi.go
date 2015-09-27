@@ -17,18 +17,44 @@ limitations under the License.
 
 package db
 
-func (d *dbInterface) APIKeys(userID int) ([]*XMLAPIKey, error) {
-	rows, err := d.getAPIKeysStmt.Queryx(userID)
+import (
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/backerman/evego"
+)
+
+func (d *dbInterface) APIKeys(userID int) ([]XMLAPIKey, error) {
+	// Use the unsafe statement - our key object has a list of characters,
+	// which would otherwise trigger an error because it's not in this SQL
+	// statement.
+	unsafeStmt := d.getAPIKeysStmt.Unsafe()
+	rows, err := unsafeStmt.Queryx(userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	results := make([]*XMLAPIKey, 0, 2)
+	results := make([]XMLAPIKey, 0, 2)
 	for rows.Next() {
-		key := &XMLAPIKey{}
-		err = rows.StructScan(key)
+		key := XMLAPIKey{}
+		err = rows.StructScan(&key)
 		if err != nil {
 			return nil, err
+		}
+		// Get the characters on this key.
+		charRows, err := d.apiKeyListToonsStmt.Queryx(userID, key.ID)
+		if err != nil {
+			return nil, err
+		}
+		defer charRows.Close()
+		for charRows.Next() {
+			char := evego.Character{}
+			err = charRows.StructScan(&char)
+			if err != nil {
+				return nil, err
+			}
+			key.Characters = append(key.Characters, char)
 		}
 		results = append(results, key)
 	}
@@ -43,4 +69,91 @@ func (d *dbInterface) DeleteAPIKey(userID, keyID int) error {
 func (d *dbInterface) AddAPIKey(key XMLAPIKey) error {
 	_, err := d.addAPIKeyStmt.Exec(key.User, key.ID, key.VerificationCode, key.Description)
 	return err
+}
+
+func (d *dbInterface) GetAPICharacters(userid int, key XMLAPIKey) ([]evego.Character, error) {
+	k := &evego.XMLKey{
+		KeyID:            key.ID,
+		VerificationCode: key.VerificationCode,
+	}
+	// Using the EVE XML API, get the characters on this account.
+	toons, err := d.xmlAPI.AccountCharacters(k)
+	if err != nil {
+		return nil, err
+	}
+	tx, err := d.db.Beginx()
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	// Defer constraints until end of transaction - this only affects those that
+	// have been declared DEFERRABLE, and prevents API-derived skill information
+	// from being deleted if the character is still on the key.
+	_, err = tx.Exec("SET CONSTRAINTS ALL DEFERRED")
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	// Delete the toons returned by this key—avoid attempting to add a toon that's
+	// already there. (PostgreSQL doesn't support upsert until 9.5 is released.)
+	toonIDs := make([]string, 0, 3)
+	for _, toon := range toons {
+		toonIDs = append(toonIDs, strconv.Itoa(toon.ID))
+	}
+	// toonIDs is an array of toon IDs in string format; make it into a SQL
+	// array string representation (which will be cast to an array by the
+	// prepared statement).
+	toonIDsString := fmt.Sprintf("{%s}", strings.Join(toonIDs, ", "))
+	deleteStmt := tx.Stmtx(d.deleteToonsStmt)
+	_, err = deleteStmt.Exec(userid, k.KeyID, toonIDsString)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	// Now insert them list.
+	insertStmt := tx.Stmtx(d.apiKeyInsertToonStmt)
+	for _, toon := range toons {
+		_, err := insertStmt.Exec(
+			userid,
+			key.ID,
+			toon.Name,
+			toon.ID,
+			toon.Corporation,
+			toon.CorporationID,
+			toon.Alliance,
+			toon.AllianceID)
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+	}
+	return toons, tx.Commit()
+}
+
+func (d *dbInterface) GetAPISkills(key XMLAPIKey, charID int) error {
+	k := &evego.XMLKey{
+		KeyID:            key.ID,
+		VerificationCode: key.VerificationCode,
+	}
+	charsheet, err := d.xmlAPI.CharacterSheet(k, charID)
+	if err != nil {
+		return err
+	}
+	tx, err := d.db.Beginx()
+	if err != nil {
+		return err
+	}
+	_, err = d.apiKeyClearSkillsStmt.Exec(charID)
+	if err != nil {
+		return err
+	}
+	insertStmt := tx.Stmtx(d.apiKeyInsertSkillStmt)
+	for _, skill := range charsheet.Skills {
+		_, err := insertStmt.Exec(charID, skill.TypeID, skill.GroupID, skill.Level)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	return tx.Commit()
 }

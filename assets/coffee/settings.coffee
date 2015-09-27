@@ -49,6 +49,7 @@ angular.module 'eveindy'
       addKey: () =>
         @Server.addApiKey @newkey
           .then (response) =>
+            @newkey.characters = response.data.characters
             @apikeys.push @newkey
             @newkey = {}
             # Ignore nonexistent FormController (for tests)

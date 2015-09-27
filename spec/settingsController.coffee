@@ -39,7 +39,9 @@ describe 'Controller: SettingsCtrl', () ->
         .and.callFake (key) ->
           then: (callback) ->
             callback
-              status: 'OK'
+              data:
+                status: 'OK'
+                characters: []
 
       serverService = Server
       ctrl = $controller 'SettingsCtrl',

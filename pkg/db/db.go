@@ -22,19 +22,28 @@ import (
 	"encoding/json"
 	"log"
 
+	"github.com/backerman/evego"
 	"github.com/backerman/evego/pkg/evesso"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/oauth2"
 )
 
 type dbInterface struct {
-	db                *sqlx.DB
-	getSessionStmt    *sqlx.Stmt
-	getAPIKeysStmt    *sqlx.Stmt
-	addAPIKeyStmt     *sqlx.Stmt
-	deleteAPIKeyStmt  *sqlx.Stmt
-	setTokenStmt      *sqlx.Stmt
-	logoutSessionStmt *sqlx.Stmt
+	db                    *sqlx.DB
+	getSessionStmt        *sqlx.Stmt
+	getAPIKeysStmt        *sqlx.Stmt
+	addAPIKeyStmt         *sqlx.Stmt
+	deleteAPIKeyStmt      *sqlx.Stmt
+	setTokenStmt          *sqlx.Stmt
+	logoutSessionStmt     *sqlx.Stmt
+	apiKeyInsertToonStmt  *sqlx.Stmt
+	apiKeyListToonsStmt   *sqlx.Stmt
+	apiKeyInsertSkillStmt *sqlx.Stmt
+	apiKeyClearSkillsStmt *sqlx.Stmt
+	deleteToonsStmt       *sqlx.Stmt
+
+	// Need access to EVE APIs.
+	xmlAPI evego.XMLAPI
 }
 
 // Interface returns an interface to the local data store. Currently, it assumes
@@ -42,14 +51,17 @@ type dbInterface struct {
 // path, so you'll need to ensure that it's set in the provided resource.
 //
 // Example resource: "user=enoch dbname=evetool search_path=eveindy"
-func Interface(driver, resource string) (LocalDB, error) {
+func Interface(driver, resource string, xmlAPI evego.XMLAPI) (LocalDB, error) {
 	dbConn, err := sqlx.Connect(driver, resource)
 	if err != nil {
 		return nil, err
 	}
 	// Is resource a URL or the other thing?
 	// Find out, then add/modify search_path parameter.
-	d := &dbInterface{db: dbConn}
+	d := &dbInterface{
+		db:     dbConn,
+		xmlAPI: xmlAPI,
+	}
 	// Prepare statements
 	stmts := []struct {
 		preparedStatement **sqlx.Stmt
@@ -62,6 +74,11 @@ func Interface(driver, resource string) (LocalDB, error) {
 		{&d.addAPIKeyStmt, addAPIKeyStmt},
 		{&d.deleteAPIKeyStmt, deleteAPIKeyStmt},
 		{&d.logoutSessionStmt, logoutSessionStmt},
+		{&d.apiKeyInsertToonStmt, apiKeyInsertToonStmt},
+		{&d.apiKeyListToonsStmt, apiKeyListToonsStmt},
+		{&d.apiKeyInsertSkillStmt, apiKeyInsertSkillStmt},
+		{&d.apiKeyClearSkillsStmt, apiKeyClearSkillsStmt},
+		{&d.deleteToonsStmt, deleteToonsStmt},
 	}
 
 	for _, s := range stmts {

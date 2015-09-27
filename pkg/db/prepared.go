@@ -59,4 +59,35 @@ const (
 	DELETE FROM sessions
 	WHERE userid IN (SELECT userid FROM sessions WHERE cookie = $1)
 	`
+
+	// Add an API key's characters to the database.
+	apiKeyInsertToonStmt = `
+	INSERT INTO characters(userid, apikey, name, id, corp, corpid, alliance, allianceid)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	`
+
+	apiKeyListToonsStmt = `
+	SELECT name, id, corp AS corporation, corpid AS corporationid, alliance, allianceid
+	FROM characters
+	WHERE userid = $1 and apikey = $2
+	`
+
+	apiKeyClearSkillsStmt = `
+	DELETE FROM skills
+	WHERE charid = $1
+	`
+
+	apiKeyInsertSkillStmt = `
+	INSERT INTO skills(charid, id, groupid, level)
+	VALUES ($1, $2, $3, $4)
+	`
+
+	// Delete all characters that either came from this API key or are in the
+	// provided list. (The former condition is required to handle the case where
+	// an API key previously, but no longer, provided access to a given character.)
+	deleteToonsStmt = `
+	DELETE FROM characters
+	WHERE userid = $1
+	AND   (apikey = $2 OR id = ANY ($3::int[]))
+	`
 )

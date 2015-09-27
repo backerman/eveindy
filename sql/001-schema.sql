@@ -31,13 +31,37 @@ CREATE TABLE eveindy.apikeys (
 -- characters: EVE toons
 CREATE TABLE eveindy.characters (
   userid integer NOT NULL REFERENCES eveindy.users(id) ON DELETE CASCADE,
-  apikey integer REFERENCES eveindy.apikeys(id) ON DELETE CASCADE,
-  name text NOT NULL,
-  id integer NOT NULL,
-  corp text,
-  corpid integer,
+  apikey integer REFERENCES eveindy.apikeys(id) ON DELETE CASCADE DEFERRABLE,
+  name text NOT NULL UNIQUE,
+  id integer NOT NULL UNIQUE,
+  corp text NOT NULL,
+  corpid integer NOT NULL,
   alliance text,
   allianceid integer
+);
+
+-- skills: a character's trained skills
+CREATE TABLE eveindy.skills (
+  charid integer NOT NULL REFERENCES eveindy.characters(id) ON DELETE CASCADE DEFERRABLE,
+  id integer NOT NULL REFERENCES "invTypes"("typeID"),
+  groupid integer NOT NULL REFERENCES "invGroups"("groupID"),
+  level integer NOT NULL CHECK (level >= 0 AND level <= 5)
+);
+
+-- corpStandings: a character's standings with NPC corporations (before skills)
+CREATE TABLE eveindy.corpStandings (
+  charid integer REFERENCES eveindy.characters(id) ON DELETE CASCADE,
+  corp integer REFERENCES "crpNPCCorporations"("corporationID"),
+  standing float NOT NULL CHECK (standing >= -10.0 AND standing <= 10.0),
+  PRIMARY KEY (charid, corp)
+);
+
+-- facStandings: a character's standings with NPC factions (before skills)
+CREATE TABLE eveindy.facStandings (
+  charid integer REFERENCES eveindy.characters(id) ON DELETE CASCADE,
+  faction integer REFERENCES "chrFactions"("factionID"),
+  standing float NOT NULL CHECK (standing >= -10.0 AND standing <= 10.0),
+  PRIMARY KEY (charid, faction)
 );
 
 -- sessions: SSO sessions

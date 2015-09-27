@@ -20,6 +20,8 @@ package db
 import (
 	"time"
 
+	"github.com/backerman/evego"
+
 	"golang.org/x/oauth2"
 )
 
@@ -60,4 +62,7 @@ type XMLAPIKey struct {
 	// Description is a user-entered label for the key; it is not the one that
 	// the user entered in EVE's API managment interface.
 	Description string `db:"label" json:"label"`
+
+	// Characters is a list of characters that are accessible using this API key.
+	Characters []evego.Character `json:"characters"`
 }

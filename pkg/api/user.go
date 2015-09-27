@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/backerman/evego"
 	"github.com/backerman/eveindy/pkg/db"
 	"github.com/backerman/eveindy/pkg/server"
 	"github.com/zenazn/goji/web"
@@ -93,12 +94,27 @@ func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, dele
 
 		err = localdb.AddAPIKey(key)
 		if err != nil {
-			http.Error(w, "Database connection error", http.StatusInternalServerError)
+			http.Error(w, "Database connection error (add key)", http.StatusInternalServerError)
 			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 
-		w.Write([]byte(`{"status": "OK"}`))
+		// Get this account's characters.
+		toons, err := localdb.GetAPICharacters(s.User, key)
+		if err != nil {
+			http.Error(w, "Database connection error (add characters)", http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
+			return
+		}
+		response := struct {
+			Status     string            `json:"status"`
+			Characters []evego.Character `json:"characters"`
+		}{
+			Status:     "OK",
+			Characters: toons,
+		}
+		responseJSON, err := json.Marshal(response)
+		w.Write(responseJSON)
 		return
 	}
 

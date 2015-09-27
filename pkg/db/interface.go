@@ -18,6 +18,7 @@ limitations under the License.
 package db
 
 import (
+	"github.com/backerman/evego"
 	"github.com/backerman/evego/pkg/evesso"
 	"golang.org/x/oauth2"
 )
@@ -36,7 +37,7 @@ type LocalDB interface {
 	AuthenticateSession(cookie string, token *oauth2.Token, charInfo *evesso.CharacterInfo) error
 
 	// APIKeys returns the user's API keys that have been registered in this application.
-	APIKeys(userID int) ([]*XMLAPIKey, error)
+	APIKeys(userID int) ([]XMLAPIKey, error)
 
 	// LogoutSession deletes all of a user's sessions.
 	LogoutSession(cookie string) error
@@ -46,4 +47,10 @@ type LocalDB interface {
 
 	// AddAPIKey adds the specified API key.
 	AddAPIKey(key XMLAPIKey) error
+
+	// GetAPICharacters adds the characters on an API key to the database.
+	GetAPICharacters(userid int, key XMLAPIKey) ([]evego.Character, error)
+
+	// GetAPISkills adds the skills on a character to the database.
+	GetAPISkills(key XMLAPIKey, charID int) error
 }

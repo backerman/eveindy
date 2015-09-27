@@ -18,12 +18,9 @@ limitations under the License.
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"os"
 
 	"github.com/backerman/evego"
@@ -96,7 +93,7 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
 }
 
 func mainCommand(cmd *cobra.Command, args []string) {
-	err := viper.Marshal(&c)
+	err := viper.Unmarshal(&c)
 	if err != nil {
 		log.Fatalf("Unable to marshal configuration: %v", err)
 	}
@@ -120,21 +117,17 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	}
 
 	sde := dbaccess.SQLDatabase(c.DbDriver, c.DbPath)
-	localdb, err := db.Interface(c.DbDriver, c.DbPath)
-	if err != nil {
-		log.Fatalf("Unable to connect to local database: %v", err)
-	}
-	if c.Dev {
-		ts := httptest.NewServer(
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				respFile, _ := os.Open("./conquerable-stations.xml")
-				defer respFile.Close()
-				responseBytes, _ := ioutil.ReadAll(respFile)
-				responseBuf := bytes.NewBuffer(responseBytes)
-				responseBuf.WriteTo(w)
-			}))
-		c.XMLAPIEndpoint = ts.URL
-	}
+	// if c.Dev {
+	// 	ts := httptest.NewServer(
+	// 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 			respFile, _ := os.Open("./conquerable-stations.xml")
+	// 			defer respFile.Close()
+	// 			responseBytes, _ := ioutil.ReadAll(respFile)
+	// 			responseBuf := bytes.NewBuffer(responseBytes)
+	// 			responseBuf.WriteTo(w)
+	// 		}))
+	// 	c.XMLAPIEndpoint = ts.URL
+	// }
 	var myCache evego.Cache
 	switch c.Cache {
 	case "inproc":
@@ -151,6 +144,10 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	}
 
 	xmlAPI := eveapi.XML(c.XMLAPIEndpoint, sde, myCache)
+	localdb, err := db.Interface(c.DbDriver, c.DbPath, xmlAPI)
+	if err != nil {
+		log.Fatalf("Unable to connect to local database: %v", err)
+	}
 	var router evego.Router
 
 	switch c.Router {
