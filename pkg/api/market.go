@@ -104,14 +104,14 @@ func makeOrderInfo(db evego.Database, order *evego.Order) orderInfo {
 
 // summarizeOrders takes as input the orders for a given type in a region/station
 // and returns the corresponding responseItem struct filled out.
-func summarizeOrders(db evego.Database, orders *[]evego.Order, dbItem *evego.Item) responseItem {
+func summarizeOrders(db evego.Database, orders []evego.Order, dbItem *evego.Item) responseItem {
 	var (
 		quantity          int
 		bestBuy, bestSell float64
 		buyInfo, sellInfo orderInfo
 	)
 
-	for _, ord := range *orders {
+	for _, ord := range orders {
 		if ord.Type == evego.Buy && ord.Price > bestBuy {
 			bestBuy = ord.Price
 			buyInfo = makeOrderInfo(db, &ord)
@@ -202,7 +202,7 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 			if err != nil {
 				continue
 			}
-			item = summarizeOrders(db, orders, dbItem)
+			item = summarizeOrders(db, *orders, dbItem)
 			respItems[item.ItemName] = item
 		}
 		respJSON, _ := json.Marshal(respItems)
