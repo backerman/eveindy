@@ -11,13 +11,13 @@
             <th class="col-sm-2" scope="col">
               Key ID
             </th>
-            <th class="col-sm-6" scope="col">
+            <th class="col-sm-4" scope="col">
               Characters
             </th>
             <th class="col-sm-3" scope="col">
               Label
             </th>
-            <th class="col-sm-1" scope="col">
+            <th class="col-sm-3" scope="col">
               Actions
             </th>
           </tr>
@@ -36,6 +36,9 @@
             </td>
             <td ng-bind="key.label"></td>
             <td>
+              <button type="button" class="btn btn-sm btn-default"
+              name="delete-key-{{key.id}}"
+              ng-click="ctrl.refreshKey(key)">Refresh</button>
               <button type="button" class="btn btn-sm btn-danger"
               name="delete-key-{{key.id}}"
               ng-click="ctrl.deleteKey(key.id)">Delete</button>

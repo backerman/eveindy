@@ -54,4 +54,9 @@ angular.module 'eveindy'
             @newkey = {}
             # Ignore nonexistent FormController (for tests)
             @forms.newkey?.$setPristine()
+
+      refreshKey: (key) =>
+        @Server.refreshApiKey key
+          .then (response) ->
+            key.characters = response.data.characters
   ]

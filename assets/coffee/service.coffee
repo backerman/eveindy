@@ -82,6 +82,9 @@ angular.module 'eveindy'
       addApiKey: (key) ->
         @$http.post "/apikeys/add", key
 
+      refreshApiKey: (key) ->
+        @$http.post "/apikeys/refresh", key
+
       logoutSessions: () =>
         @$http.post "/logout"
           .then (response) =>

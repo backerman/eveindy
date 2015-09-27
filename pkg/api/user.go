@@ -29,9 +29,49 @@ import (
 	"github.com/zenazn/goji/web"
 )
 
+// unmarshalKey attempts to unmarshal an XML api key as passed by the client.
+// It returns the key iff successful, or a non-nil error otherwise.
+func unmarshalKey(r *http.Request, w http.ResponseWriter) (*db.XMLAPIKey, error) {
+	keyJSON, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Unable to read key", http.StatusBadRequest)
+		w.Write([]byte(`{"status": "Error"}`))
+		return nil, err
+	}
+	key := db.XMLAPIKey{}
+	err = json.Unmarshal(keyJSON, &key)
+	if err != nil {
+		http.Error(w, "Unable to unmarshal key", http.StatusBadRequest)
+		w.Write([]byte(`{"status": "Error"}`))
+		return nil, err
+	}
+	return &key, nil
+}
+
 // XMLAPIKeysHandlers returns web handler functions that provide information on
 // the user's API keys that have been registered with this application.
-func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, delete, add web.HandlerFunc) {
+func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, delete, add, refresh web.HandlerFunc) {
+	// charRefresh refreshes the characters associated with an API key and returns
+	// the current list of characters via the passed responseWriter.
+	charRefresh := func(s *db.Session, key *db.XMLAPIKey, w http.ResponseWriter) {
+		toons, err := localdb.GetAPICharacters(s.User, *key)
+		if err != nil {
+			http.Error(w, "Database connection error (add characters)", http.StatusInternalServerError)
+			w.Write([]byte(`{"status": "Error"}`))
+			return
+		}
+		response := struct {
+			Status     string            `json:"status"`
+			Characters []evego.Character `json:"characters"`
+		}{
+			Status:     "OK",
+			Characters: toons,
+		}
+		responseJSON, err := json.Marshal(response)
+		w.Write(responseJSON)
+		return
+	}
+
 	list = func(c web.C, w http.ResponseWriter, r *http.Request) {
 		s := sess.GetSession(&c, w, r)
 		userKeys, err := localdb.APIKeys(s.User)
@@ -76,45 +116,40 @@ func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, dele
 			return
 		}
 		s := sess.GetSession(&c, w, r)
-		keyJSON, err := ioutil.ReadAll(r.Body)
+		key, err := unmarshalKey(r, w)
 		if err != nil {
-			http.Error(w, "Unable to read key", http.StatusBadRequest)
-			w.Write([]byte(`{"status": "Error"}`))
-			return
-		}
-		key := db.XMLAPIKey{}
-		err = json.Unmarshal(keyJSON, &key)
-		if err != nil {
-			http.Error(w, "Unable to unmarshal key", http.StatusBadRequest)
-			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 		// Ensure that this key is added under the session's user's account.
 		key.User = s.User
 
-		err = localdb.AddAPIKey(key)
+		err = localdb.AddAPIKey(*key)
 		if err != nil {
 			http.Error(w, "Database connection error (add key)", http.StatusInternalServerError)
 			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
 
-		// Get this account's characters.
-		toons, err := localdb.GetAPICharacters(s.User, key)
-		if err != nil {
-			http.Error(w, "Database connection error (add characters)", http.StatusInternalServerError)
+		charRefresh(s, key, w)
+		return
+	}
+
+	refresh = func(c web.C, w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "This function must be called with the POST method",
+				http.StatusMethodNotAllowed)
 			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
-		response := struct {
-			Status     string            `json:"status"`
-			Characters []evego.Character `json:"characters"`
-		}{
-			Status:     "OK",
-			Characters: toons,
+		s := sess.GetSession(&c, w, r)
+		key, err := unmarshalKey(r, w)
+		if err != nil {
+			return
 		}
-		responseJSON, err := json.Marshal(response)
-		w.Write(responseJSON)
+
+		// Ensure that this key is added under the session's user's account.
+		key.User = s.User
+		charRefresh(s, key, w)
 		return
 	}
 
