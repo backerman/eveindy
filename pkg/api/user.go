@@ -60,6 +60,15 @@ func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, dele
 			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
+		for _, toon := range toons {
+			// Update skills for this character.
+			err = localdb.GetAPISkills(*key, toon.ID)
+			if err != nil {
+				http.Error(w, "Database connection error (add skills)", http.StatusInternalServerError)
+				w.Write([]byte(`{"status": "Error"}`))
+				return
+			}
+		}
 		response := struct {
 			Status     string            `json:"status"`
 			Characters []evego.Character `json:"characters"`
