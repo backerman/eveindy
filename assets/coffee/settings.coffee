@@ -13,14 +13,14 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .controller 'SettingsCtrl', [ 'Server', '$scope'
+  .controller 'SettingsCtrl', [ 'Session', '$scope'
     class SettingsCtrl
-      constructor: (@Server, @$scope) ->
+      constructor: (@Session, @$scope) ->
         @apikeys = {}
         @newkey = {}
         @forms = {}
         @$scope.$on 'login-status', @_updateLoginStatus
-        if @Server.authenticated
+        if @Session.authenticated
           @authenticated = true
           @getApiKeys()
 
@@ -34,29 +34,18 @@ angular.module 'eveindy'
           @apikeys = []
 
       getApiKeys: () ->
-        @Server.apiForUser()
-          .then (response) =>
-            @apikeys = response.data
+        @apikeys = @Session.apikeys
 
       deleteKey: (keyID) =>
-        @Server.deleteApiKey keyID
-          .then (response) =>
-            # We don't actually care about the response; just drop the key
-            # from our model.
-            @apikeys = @apikeys.filter (key) ->
-              key.id != keyID
+        @Session.deleteKey keyID
 
       addKey: () =>
-        @Server.addApiKey @newkey
+        @Session.addKey @newkey
           .then (response) =>
-            @newkey.characters = response.data.characters
-            @apikeys.push @newkey
             @newkey = {}
             # Ignore nonexistent FormController (for tests)
             @forms.newkey?.$setPristine()
 
       refreshKey: (key) =>
-        @Server.refreshApiKey key
-          .then (response) ->
-            key.characters = response.data.characters
+        @Session.refreshKey key
   ]

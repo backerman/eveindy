@@ -79,7 +79,7 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
 		c.RedirectURL, evesso.PublicData)
 	goji.Get("/crestcallback", api.CRESTCallbackListener(localdb, auth, sessionizer))
 	goji.Get("/authenticate", api.AuthenticateHandler(auth, sessionizer))
-	goji.Get("/session", api.SessionInfo(auth, sessionizer))
+	goji.Get("/session", api.SessionInfo(auth, sessionizer, localdb))
 	goji.Post("/logout", api.LogoutHandler(localdb, auth, sessionizer))
 
 	// API keys

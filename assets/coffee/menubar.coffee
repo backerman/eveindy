@@ -13,9 +13,9 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .controller 'MenubarCtrl', [ '$scope', 'Server', '$route',
+  .controller 'MenubarCtrl', [ 'Session', '$scope', '$route'
     class MenubarCtrl
-      constructor: (@$scope, @Server, @$route) ->
+      constructor: (@Session, @$scope, @$route) ->
         @$scope.$on '$routeChangeSuccess', @updateMenubar
         @$scope.$on '$routeChangeStart', @preventNullRoute
         @$scope.$on 'login-status', @_updateLoginStatus
@@ -23,6 +23,7 @@ angular.module 'eveindy'
         @authenticated = false
         @$route.reload()
 
+      # Keep track of authentication status for our login/out button.
       _updateLoginStatus: (_, newStatus) =>
         @authenticated = newStatus
 
@@ -42,5 +43,5 @@ angular.module 'eveindy'
           evt.preventDefault()
 
       logout: () =>
-        @Server.logoutSessions()
+        @Session.logoutSessions()
       ]

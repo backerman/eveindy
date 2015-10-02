@@ -30,15 +30,16 @@ import (
 )
 
 type sessionInfo struct {
-	Authenticated bool      `json:"authenticated"`
-	OAuthURL      string    `json:"oauthURL"`
-	CharName      string    `json:"characterName,omitempty"`
-	OAuthExpiry   time.Time `json:"oauthExpiresAt,omitempty"`
+	Authenticated bool           `json:"authenticated"`
+	OAuthURL      string         `json:"oauthURL"`
+	CharName      string         `json:"characterName,omitempty"`
+	OAuthExpiry   time.Time      `json:"oauthExpiresAt,omitempty"`
+	APIKeys       []db.XMLAPIKey `json:"apiKeys"`
 }
 
 // SessionInfo returns a web handler function that returns information about the
 // current session.
-func SessionInfo(auth evesso.Authenticator, sess server.Sessionizer) web.HandlerFunc {
+func SessionInfo(auth evesso.Authenticator, sess server.Sessionizer, localdb db.LocalDB) web.HandlerFunc {
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
 		curSession := sess.GetSession(&c, w, r)
 		returnInfo := sessionInfo{
@@ -47,6 +48,15 @@ func SessionInfo(auth evesso.Authenticator, sess server.Sessionizer) web.Handler
 		}
 		if curSession.Token != nil {
 			returnInfo.OAuthExpiry = curSession.Token.Expiry
+		}
+		if curSession.User != 0 {
+			// We're authenticated - also pass in the API keys registered to this
+			// user.
+			keys, err := localdb.APIKeys(curSession.User)
+			if err != nil {
+				log.Fatalf("Error - unable to retrieve API keys from database.")
+			}
+			returnInfo.APIKeys = keys
 		}
 		returnJSON, _ := json.Marshal(&returnInfo)
 		w.Write(returnJSON)
