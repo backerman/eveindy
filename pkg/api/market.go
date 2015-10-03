@@ -145,19 +145,19 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 		contentType := r.Header.Get("Content-Type")
 		contentType, _, err := mime.ParseMediaType(contentType)
 		if err != nil {
-			http.Error(w, "Bad request content type", http.StatusBadRequest)
-			w.Write([]byte(`{"status": "Error"}`))
+			http.Error(w, `{"status": "Error", "error": "Bad request content type"}`,
+				http.StatusBadRequest)
 			return
 		}
 		if contentType != "application/json" {
-			http.Error(w, "Request must be of type application/json", http.StatusUnsupportedMediaType)
-			w.Write([]byte(`{"status": "Error"}`))
+			http.Error(w, `{"status": "Error", "error": "Request must be of type application/json"}`,
+				http.StatusUnsupportedMediaType)
 			return
 		}
 		reqBody, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, "Unable to process request body", http.StatusBadRequest)
-			w.Write([]byte(`{"status": "Error"}`))
+			http.Error(w, `{"status": "Error", "error": "Unable to process request body"}`,
+				http.StatusBadRequest)
 			return
 		}
 		var req []queryItem
@@ -179,8 +179,8 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 				// Not a station; should be an outpost.
 				station, err = xmlAPI.OutpostForID(stationID)
 				if err != nil {
-					http.Error(w, fmt.Sprintf("Unable to identify location: %v", err), http.StatusBadRequest)
-					w.Write([]byte(`{"status": "Error"}`))
+					http.Error(w, `{"status": "Error", "error": "Unable to identify location"}`,
+						http.StatusBadRequest)
 					return
 				}
 			}
@@ -200,7 +200,9 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 				orders, err = mkt.OrdersForItem(dbItem, loc, evego.AllOrders)
 			}
 			if err != nil {
-				continue
+				http.Error(w, `{"status": "Error", "error": "Unable to retrieve order information"}`,
+					http.StatusInternalServerError)
+				return
 			}
 			item = summarizeOrders(db, *orders, dbItem)
 			respItems[item.ItemName] = item
