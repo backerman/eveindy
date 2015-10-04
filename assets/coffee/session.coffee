@@ -73,8 +73,9 @@ angular.module 'eveindy'
 
       # List the characters available for this user.
       availableCharacters: () ->
-        @apikeys.reduce (chars, key) ->
+        reduceFn = (chars, key) ->
           if key.characters then [chars..., key.characters...] else chars
+        @apikeys.reduce reduceFn, []
 
       standing: (character, corporation) ->
         42
