@@ -42,12 +42,16 @@ midpointCalc = (item, mult) ->
     else undefined
 
 angular.module 'eveindy'
-  .controller 'ReprocessCtrl',['Server', 'numberFilter', '$timeout', '$sce',
+  .controller 'ReprocessCtrl', [
+    'Server', 'Session', '$scope', 'numberFilter', '$timeout', '$sce',
     class ReprocessCtrl
-      constructor: (@Server, @numberFilter, @$timeout, @$sce) ->
+      constructor: (
+              @Server, @Session, @$scope, @numberFilter, @$timeout, @$sce) ->
         @standing = 0.0
         @taxRate = 0.0
         @scrapSkill = 0
+        @$scope.$on 'login-status', @_updateLoginStatus
+        @_updateLoginStatus()
         @priceCalc = "midpoint"
         @priceCalcFn = midpointCalc
         @mineralValue = "imputed"
@@ -59,6 +63,10 @@ angular.module 'eveindy'
           .then (response) =>
             @jitaPrices = response.data
             @recalculateMineralPrices()
+
+      _updateLoginStatus: () ->
+        @authenticated = @Session.authenticated
+        @chars = @Session.availableCharacters()
 
       getStations: (search) ->
         @Server.getAutocomplete(search)
@@ -78,10 +86,25 @@ angular.module 'eveindy'
       locationSelected: (loc) ->
         @corporationName = loc.owner
         @stationID = loc.id
+        @stationOwnerID = loc.ownerID
         @stationType = if loc.isOutpost then "player" else "npc"
         @reprocessingEfficiency = loc.reprocessingEfficiency
+        if @stationType is "npc"
+          @selectedToon = @chars[0]
+          @characterSelected()
 
-        if !loc.isOutpost then @updateTaxRate()
+      # Character selection has changed.
+      characterSelected: () ->
+        id = @selectedToon.id
+        @scrapSkill = @selectedToon.skills.filter( (s) ->
+          console.log "Checking", s.name
+          s.name is "Scrapmetal Processing"
+          )?[0]?.level || 0
+        console.log "Scrap skill is", @scrapSkill
+        @Server.getEffectiveStandings id, @stationOwnerID
+          .then (response) =>
+            @standing = response.data.standing
+            @updateTaxRate()
 
       # Update mineral value calculation method.
       updatePriceCalc: () ->

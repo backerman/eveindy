@@ -18,11 +18,13 @@ limitations under the License.
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/backerman/evego"
+	"github.com/jmoiron/sqlx"
 )
 
 func (d *dbInterface) APIKeys(userID int) ([]XMLAPIKey, error) {
@@ -156,4 +158,75 @@ func (d *dbInterface) GetAPISkills(key XMLAPIKey, charID int) error {
 		}
 	}
 	return tx.Commit()
+}
+
+func (d *dbInterface) GetAPIStandings(key XMLAPIKey, charID int) error {
+	k := &evego.XMLKey{
+		KeyID:            key.ID,
+		VerificationCode: key.VerificationCode,
+	}
+	standings, err := d.xmlAPI.CharacterStandings(k, charID)
+	if err != nil {
+		return err
+	}
+	tx, err := d.db.Beginx()
+	if err != nil {
+		return err
+	}
+	// Clear standings before inserting the API's information.
+	_, err = d.apiKeyClearCorpStandingsStmt.Exec(charID)
+	if err != nil {
+		return err
+	}
+	_, err = d.apiKeyClearFacStandingsStmt.Exec(charID)
+	if err != nil {
+		return err
+	}
+	var insertStmt *sqlx.Stmt
+	for _, standing := range standings {
+		switch standing.EntityType {
+		case evego.NPCCorporation:
+			insertStmt = d.apiKeyInsertCorpStandingsStmt
+		case evego.NPCFaction:
+			insertStmt = d.apiKeyInsertFacStandingsStmt
+		default:
+			// Agent standings - we don't handle those, so skip.
+			continue
+		}
+		_, err := insertStmt.Exec(charID, standing.ID, standing.Standing)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	return tx.Commit()
+}
+
+func (d *dbInterface) CharacterStandings(userID, charID, corpID int) (corpStanding, factionStanding sql.NullFloat64, err error) {
+	err = d.getStandingsStmt.QueryRow(userID, charID, corpID).Scan(&corpStanding, &factionStanding)
+	return
+}
+
+func (d *dbInterface) CharacterSkill(userID, charID, skillID int) (int, error) {
+	var skillLevel int
+	err := d.getSkillStmt.QueryRow(userID, charID, skillID).Scan(&skillLevel)
+	return skillLevel, err
+}
+
+func (d *dbInterface) CharacterSkillGroup(userID, charID, skillGroupID int) ([]evego.Skill, error) {
+	skills := make([]evego.Skill, 0, 20)
+	rows, err := d.getSkillGroupStmt.Unsafe().Queryx(userID, charID, skillGroupID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		skill := evego.Skill{}
+		err = rows.StructScan(&skill)
+		if err != nil {
+			return nil, err
+		}
+		skills = append(skills, skill)
+	}
+	return skills, nil
 }

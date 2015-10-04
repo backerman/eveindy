@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Skill group for refining skills.
+RESOURCE_PROCESSING = 1218
+
 # The Session service is a single repository for storing the user's session
 # information.
 angular.module 'eveindy'
@@ -25,6 +28,7 @@ angular.module 'eveindy'
             @authenticated = response.data.authenticated
             if @authenticated
               @apikeys = response.data.apiKeys
+              @_getSkills()
             @$rootScope.$broadcast('login-status', @authenticated)
 
         # Put function on window to be called by authentication success screen.
@@ -37,13 +41,16 @@ angular.module 'eveindy'
         @Server.logout
           .then (response) =>
             @authenticated = false
+            @apikeys = []
             @$rootScope.$broadcast('login-status', @authenticated)
 
-      # Get the current application user's API keys and store them locally.
-      _getAPIKeys: () ->
-        @Server.apiForUser()
-          .then (response) =>
-            @apikeys = response.data
+      # Get skills for the current characters.
+      _getSkills: () ->
+        for c in @availableCharacters()
+          do (c) =>
+            @Server.getSkills(c.id, RESOURCE_PROCESSING)
+              .then (response) ->
+                c.skills = response.data
 
       # Broadcast API key change notification.
       _keysUpdated: () ->
@@ -69,6 +76,7 @@ angular.module 'eveindy'
         @Server.refreshApiKey key
           .then (response) =>
             key.characters = response.data.characters
+            @_getSkills()
             @_keysUpdated()
 
       # List the characters available for this user.

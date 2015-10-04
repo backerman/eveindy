@@ -116,11 +116,12 @@ productionTasks = lazypipe()
 
 gulp.task 'scripts', ['lint'], ->
   merge2(gulp.src config.coffeeSrc
-    .pipe sourcemaps.init()
+#    .pipe sourcemaps.init()
     .pipe coffee()
     .on 'error', notify.onError (err) ->
       err.message
-    .pipe sourcemaps.write())
+#    .pipe sourcemaps.write()
+    )
     .pipe concat config.jsDest
     .pipe gulp.dest config.dest
 

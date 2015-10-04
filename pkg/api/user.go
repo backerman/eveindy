@@ -56,18 +56,27 @@ func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, dele
 	charRefresh := func(s *db.Session, key *db.XMLAPIKey, w http.ResponseWriter) {
 		toons, err := localdb.GetAPICharacters(s.User, *key)
 		if err != nil {
-			http.Error(w, "Database connection error (add characters)", http.StatusInternalServerError)
-			w.Write([]byte(`{"status": "Error"}`))
+			http.Error(w, `{"status": "Error", "error": "Database connection error (add characters)"}`,
+				http.StatusInternalServerError)
 			return
 		}
 		for _, toon := range toons {
 			// Update skills for this character.
 			err = localdb.GetAPISkills(*key, toon.ID)
 			if err != nil {
-				http.Error(w, "Database connection error (add skills)", http.StatusInternalServerError)
-				w.Write([]byte(`{"status": "Error"}`))
+				http.Error(w, `{"status": "Error", "error": "Database connection error (add skills)"}`,
+					http.StatusInternalServerError)
 				return
 			}
+
+			// Update standings.
+			err = localdb.GetAPIStandings(*key, toon.ID)
+			if err != nil {
+				http.Error(w, `{"status": "Error", "error": "Database connection error (add standings)"}`,
+					http.StatusInternalServerError)
+				return
+			}
+
 		}
 		response := struct {
 			Status     string            `json:"status"`

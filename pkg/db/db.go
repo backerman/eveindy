@@ -29,18 +29,25 @@ import (
 )
 
 type dbInterface struct {
-	db                    *sqlx.DB
-	getSessionStmt        *sqlx.Stmt
-	getAPIKeysStmt        *sqlx.Stmt
-	addAPIKeyStmt         *sqlx.Stmt
-	deleteAPIKeyStmt      *sqlx.Stmt
-	setTokenStmt          *sqlx.Stmt
-	logoutSessionStmt     *sqlx.Stmt
-	apiKeyInsertToonStmt  *sqlx.Stmt
-	apiKeyListToonsStmt   *sqlx.Stmt
-	apiKeyInsertSkillStmt *sqlx.Stmt
-	apiKeyClearSkillsStmt *sqlx.Stmt
-	deleteToonsStmt       *sqlx.Stmt
+	db                            *sqlx.DB
+	getSessionStmt                *sqlx.Stmt
+	getAPIKeysStmt                *sqlx.Stmt
+	addAPIKeyStmt                 *sqlx.Stmt
+	deleteAPIKeyStmt              *sqlx.Stmt
+	setTokenStmt                  *sqlx.Stmt
+	logoutSessionStmt             *sqlx.Stmt
+	apiKeyInsertToonStmt          *sqlx.Stmt
+	apiKeyListToonsStmt           *sqlx.Stmt
+	apiKeyInsertSkillStmt         *sqlx.Stmt
+	apiKeyClearSkillsStmt         *sqlx.Stmt
+	getSkillStmt                  *sqlx.Stmt
+	getSkillGroupStmt             *sqlx.Stmt
+	apiKeyClearCorpStandingsStmt  *sqlx.Stmt
+	apiKeyClearFacStandingsStmt   *sqlx.Stmt
+	apiKeyInsertCorpStandingsStmt *sqlx.Stmt
+	apiKeyInsertFacStandingsStmt  *sqlx.Stmt
+	getStandingsStmt              *sqlx.Stmt
+	deleteToonsStmt               *sqlx.Stmt
 
 	// Need access to EVE APIs.
 	xmlAPI evego.XMLAPI
@@ -78,6 +85,13 @@ func Interface(driver, resource string, xmlAPI evego.XMLAPI) (LocalDB, error) {
 		{&d.apiKeyListToonsStmt, apiKeyListToonsStmt},
 		{&d.apiKeyInsertSkillStmt, apiKeyInsertSkillStmt},
 		{&d.apiKeyClearSkillsStmt, apiKeyClearSkillsStmt},
+		{&d.getSkillStmt, getSkillStmt},
+		{&d.getSkillGroupStmt, getSkillGroupStmt},
+		{&d.apiKeyClearCorpStandingsStmt, apiKeyClearCorpStandingsStmt},
+		{&d.apiKeyClearFacStandingsStmt, apiKeyClearFacStandingsStmt},
+		{&d.apiKeyInsertCorpStandingsStmt, apiKeyInsertCorpStandingsStmt},
+		{&d.apiKeyInsertFacStandingsStmt, apiKeyInsertFacStandingsStmt},
+		{&d.getStandingsStmt, getStandingsStmt},
 		{&d.deleteToonsStmt, deleteToonsStmt},
 	}
 

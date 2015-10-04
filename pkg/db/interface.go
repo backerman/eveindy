@@ -18,6 +18,8 @@ limitations under the License.
 package db
 
 import (
+	"database/sql"
+
 	"github.com/backerman/evego"
 	"github.com/backerman/evego/pkg/evesso"
 	"golang.org/x/oauth2"
@@ -53,4 +55,19 @@ type LocalDB interface {
 
 	// GetAPISkills adds the skills on a character to the database.
 	GetAPISkills(key XMLAPIKey, charID int) error
+
+	// CharacterSkill returns the specified skill's level, or 0 if it has not
+	// been injected.
+	CharacterSkill(userID, charID, skillID int) (int, error)
+
+	// CharacterSkill returns the levels of all injected skills in the specified
+	// group.
+	CharacterSkillGroup(userID, charID, skillGroupID int) ([]evego.Skill, error)
+
+	// GetAPIStandings adds a character's standings with NPC entities to the database.
+	GetAPIStandings(key XMLAPIKey, charID int) error
+
+	// CharacterStandings queries a character's standings (corporation and faction)
+	// with an NPC corporation.
+	CharacterStandings(userID, charID, corpID int) (corpStanding, factionStanding sql.NullFloat64, err error)
 }

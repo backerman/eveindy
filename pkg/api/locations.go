@@ -52,6 +52,7 @@ type station struct {
 	Region                 string  `json:"region"`
 	Outpost                bool    `json:"isOutpost"`
 	Owner                  string  `json:"owner"`
+	OwnerID                int     `json:"ownerID"`
 	ReprocessingEfficiency float64 `json:"reprocessingEfficiency"`
 }
 
@@ -74,13 +75,14 @@ func AutocompleteSystems(db evego.Database) web.HandlerFunc {
 func stationFromAPI(db evego.Database, s *evego.Station, isOutpost bool) station {
 	system, _ := db.SolarSystemForID(s.SystemID)
 	stn := station{
-		Name:          s.Name,
-		ID:            s.ID,
-		SystemName:    system.Name,
-		Security:      system.Security,
-		Constellation: system.Constellation,
-		Region:        system.Region,
-		Owner:         s.Corporation,
+		Name:                   s.Name,
+		ID:                     s.ID,
+		SystemName:             system.Name,
+		Security:               system.Security,
+		Constellation:          system.Constellation,
+		Region:                 system.Region,
+		Owner:                  s.Corporation,
+		OwnerID:                s.CorporationID,
 		ReprocessingEfficiency: s.ReprocessingEfficiency,
 	}
 	if isOutpost {

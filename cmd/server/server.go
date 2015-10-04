@@ -89,6 +89,10 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
 	goji.Post("/apikeys/add", addHandler)
 	goji.Post("/apikeys/refresh", refreshHandler)
 
+	// Standings and skills
+	goji.Get("/standings/:charID/:npcCorpID", api.StandingsHandler(localdb, sessionizer))
+	goji.Get("/skills/:charID/group/:skillGroupID", api.SkillsHandler(localdb, sessionizer))
+
 	// Static assets
 	goji.Get("/*", assets)
 }

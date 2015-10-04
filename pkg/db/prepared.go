@@ -82,6 +82,66 @@ const (
 	VALUES ($1, $2, $3, $4)
 	`
 
+	// Get a character's specified skill (by ID); if the character hasn't injected
+	// this skill, return zero.
+	getSkillStmt = `
+	SELECT COALESCE(
+		(SELECT level
+		FROM   skills s
+		JOIN characters c ON c.id = s.charID
+		WHERE c.userID = $1 AND c.id = $2 AND s.id = $3), 0
+	)
+	`
+
+	// Get a character's skills of the specified group.
+	getSkillGroupStmt = `
+	SELECT t."typeName" "name", s.id typeID, g."groupName" "group", s.groupID,
+	       s.level, true published
+	FROM   skills s
+	JOIN   "invTypes" t on t."typeID" = s.id
+	JOIN   "invGroups" g on g."groupID" = s.groupID
+	JOIN   characters c ON c.id = s.charID
+	WHERE  c.userID = $1 AND c.id = $2 AND s.groupID = $3
+	`
+
+	apiKeyClearCorpStandingsStmt = `
+	DELETE FROM corpStandings
+	WHERE charid = $1
+	`
+
+	apiKeyClearFacStandingsStmt = `
+	DELETE FROM facStandings
+	WHERE charid = $1
+	`
+
+	apiKeyInsertCorpStandingsStmt = `
+	INSERT INTO corpStandings(charid, corp, standing)
+	VALUES ($1, $2, $3)
+	`
+
+	apiKeyInsertFacStandingsStmt = `
+	INSERT INTO facStandings(charid, faction, standing)
+	VALUES ($1, $2, $3)
+	`
+
+	// Get NPC corporation and faction standings for a character.
+	getStandingsStmt = `
+	WITH availableCharacters AS (
+	  SELECT id
+	  FROM   characters
+	  WHERE  userid = $1
+	)
+	SELECT    corp.standing corp_standing, fac.standing fac_standing
+	FROM      availableCharacters c, "crpNPCCorporations" npcCorps
+	LEFT JOIN corpStandings corp ON corp.corp = npcCorps."corporationID"
+	AND       corp.charID = $2
+	LEFT JOIN facStandings fac ON fac.faction = npcCorps."factionID"
+	AND       fac.charID = $2
+	WHERE     npcCorps."corporationID" = $3
+	AND       (c.id = corp.charID OR c.id = fac.charID
+             OR (corp.charID IS NULL AND fac.charID IS NULL));
+	`
+
 	// Delete all characters that either came from this API key or are in the
 	// provided list. (The former condition is required to handle the case where
 	// an API key previously, but no longer, provided access to a given character.)

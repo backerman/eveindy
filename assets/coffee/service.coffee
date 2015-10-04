@@ -75,6 +75,12 @@ angular.module 'eveindy'
       refreshApiKey: (key) ->
         @$http.post "/apikeys/refresh", key
 
+      getEffectiveStandings: (characterID, stationID) ->
+        @$http.get "/standings/#{characterID}/#{stationID}"
+
+      getSkills: (characterID, skillGroupID) ->
+        @$http.get "/skills/#{characterID}/group/#{skillGroupID}"
+
       logout: () ->
         @$http.post "/logout"
       ]
