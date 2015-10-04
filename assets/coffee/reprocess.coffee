@@ -70,8 +70,8 @@ angular.module 'eveindy'
 
       getStations: (search) ->
         @Server.getAutocomplete(search)
-          .then (response) ->
-            ((i) ->
+          .then (response) =>
+            ((i) =>
               i.class="security-" + switch
                 when i.security >= 0.5 then "high"
                 when i.security > 0.0 then "low"
@@ -79,6 +79,9 @@ angular.module 'eveindy'
               # Server uses 0..1; we use 0..100.
               # FIXME: Converted both here (autocomplete) and on server
               #   (reprocess). Pick one.
+              i.name = @$sce.trustAsHtml i.name
+              i.constellation = @$sce.trustAsHtml i.constellation
+              i.region = @$sce.trustAsHtml i.region
               i.reprocessingEfficiency *= 100
               i
             )(item) for item in response.data
