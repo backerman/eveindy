@@ -135,6 +135,36 @@ func summarizeOrders(db evego.Database, orders []evego.Order, dbItem *evego.Item
 	return result
 }
 
+func getItemPrices(
+	db evego.Database,
+	mkt evego.Market,
+	req *[]queryItem,
+	station *evego.Station,
+	loc string) (*map[string]responseItem, error) {
+	respItems := make(map[string]responseItem)
+	for _, i := range *req {
+		dbItem, err := db.ItemForName(i.ItemName)
+		if err != nil {
+			continue
+		}
+		var (
+			item   responseItem
+			orders *[]evego.Order
+		)
+		if station != nil {
+			orders, err = mkt.OrdersInStation(dbItem, station)
+		} else {
+			orders, err = mkt.OrdersForItem(dbItem, loc, evego.AllOrders)
+		}
+		if err != nil {
+			return nil, fmt.Errorf("Unable to retrieve order information")
+		}
+		item = summarizeOrders(db, *orders, dbItem)
+		respItems[item.ItemName] = item
+	}
+	return &respItems, nil
+}
+
 // ItemsMarketValue returns a handler that takes as input a JSON
 // array of items and their quantities, plus a specified station
 // or region, and computes the items' value.
@@ -167,7 +197,6 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 			w.Write([]byte(`{"status": "Error"}`))
 			return
 		}
-		respItems := make(map[string]responseItem)
 		loc := c.URLParams["location"]
 		stationIDStr, isStation := c.URLParams["id"]
 		var station *evego.Station
@@ -185,27 +214,11 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 				}
 			}
 		}
-		for _, i := range req {
-			dbItem, err := db.ItemForName(i.ItemName)
-			if err != nil {
-				continue
-			}
-			var (
-				item   responseItem
-				orders *[]evego.Order
-			)
-			if isStation {
-				orders, err = mkt.OrdersInStation(dbItem, station)
-			} else {
-				orders, err = mkt.OrdersForItem(dbItem, loc, evego.AllOrders)
-			}
-			if err != nil {
-				http.Error(w, `{"status": "Error", "error": "Unable to retrieve order information"}`,
-					http.StatusInternalServerError)
-				return
-			}
-			item = summarizeOrders(db, *orders, dbItem)
-			respItems[item.ItemName] = item
+		respItems, err := getItemPrices(db, mkt, &req, station, loc)
+		if err != nil {
+			http.Error(w, `{"status": "Error", "error": "Unable to retrieve order information"}`,
+				http.StatusBadRequest)
+			return
 		}
 		respJSON, _ := json.Marshal(respItems)
 		w.Write(respJSON)
