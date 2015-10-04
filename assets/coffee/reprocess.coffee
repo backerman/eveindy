@@ -97,10 +97,8 @@ angular.module 'eveindy'
       characterSelected: () ->
         id = @selectedToon.id
         @scrapSkill = @selectedToon.skills.filter( (s) ->
-          console.log "Checking", s.name
           s.name is "Scrapmetal Processing"
           )?[0]?.level || 0
-        console.log "Scrap skill is", @scrapSkill
         @Server.getEffectiveStandings id, @stationOwnerID
           .then (response) =>
             @standing = response.data.standing
