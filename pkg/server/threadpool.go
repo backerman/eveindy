@@ -17,32 +17,46 @@ limitations under the License.
 
 package server
 
+import (
+	"log"
+	"runtime"
+)
+
+// Create a global pool.
+var globalPool = StartPool(runtime.NumCPU())
+
+// Submit submits a job to the default (global) pool.
+func Submit(job func()) {
+	globalPool.Submit(job)
+}
+
 // ThreadPool distributes jobs to workers.
 type ThreadPool interface {
 	// Submit takes the job passed as input and schedules it for execution on an
 	// available goroutine.
-	Submit(Job)
+	Submit(func())
 
 	// Quit terminates the workers and then the threadpool.
 	Quit()
 }
 
 type threadPool struct {
-	workQueue   chan Job
-	workerQueue chan chan Job
+	workQueue   chan func()
+	workerQueue chan chan func()
 	quit        chan bool
 }
 
 // StartPool starts a new thread pool.
 func StartPool(numWorkers int) ThreadPool {
+	log.Printf("Starting a thread pool with %v workers", numWorkers)
+	workerQueue := make(chan chan func(), numWorkers)
 	p := threadPool{
-		workQueue:   make(chan Job, 100),
-		workerQueue: make(chan chan Job, numWorkers),
+		workQueue:   make(chan func(), 100),
+		workerQueue: workerQueue,
 		quit:        make(chan bool),
 	}
-	WorkerQueue := make(chan chan Job, numWorkers)
 	for i := 0; i < numWorkers; i++ {
-		worker := newWorker(i+1, WorkerQueue)
+		worker := newWorker(i+1, workerQueue)
 		worker.Start()
 	}
 
@@ -54,9 +68,11 @@ func StartPool(numWorkers int) ThreadPool {
 				// Received a job; dispatch it.
 				go func() {
 					worker := <-p.workerQueue
+					log.Printf("Got worker!")
 					worker <- job
 				}()
 			case <-p.quit:
+				log.Printf("Got quit request")
 				// DOME: kill all the workers.
 				return
 			}
@@ -66,7 +82,7 @@ func StartPool(numWorkers int) ThreadPool {
 	return &p
 }
 
-func (p *threadPool) Submit(job Job) {
+func (p *threadPool) Submit(job func()) {
 	p.workQueue <- job
 }
 
@@ -76,22 +92,19 @@ func (p *threadPool) Quit() {
 	}()
 }
 
-// Job is a background job that will be executed in a goroutine.
-type Job func()
-
 // Worker is our worker.
 type Worker struct {
 	ID          int
-	Work        chan Job
-	WorkerQueue chan chan Job
+	Work        chan func()
+	WorkerQueue chan chan func()
 	Quit        chan bool
 }
 
 // newWorker creates and returns a new worker.
-func newWorker(id int, workerQueue chan chan Job) Worker {
+func newWorker(id int, workerQueue chan chan func()) Worker {
 	return Worker{
 		ID:          id,
-		Work:        make(chan Job),
+		Work:        make(chan func()),
 		WorkerQueue: workerQueue,
 		Quit:        make(chan bool),
 	}

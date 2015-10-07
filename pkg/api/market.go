@@ -21,11 +21,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"mime"
 	"net/http"
 	"strconv"
+	"sync"
 
 	"github.com/backerman/evego"
+	"github.com/backerman/eveindy/pkg/server"
 	"github.com/zenazn/goji/web"
 )
 
@@ -222,5 +225,67 @@ func ItemsMarketValue(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) 
 		}
 		respJSON, _ := json.Marshal(respItems)
 		w.Write(respJSON)
+	}
+}
+
+// Go only provides a float min, so do our own for ints.
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// ReprocessOutputValues returns a web handler function that generates a list of
+// possible output from reprocessing, along with the Jita sell and buy price of each.
+func ReprocessOutputValues(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) web.HandlerFunc {
+	return func(c web.C, w http.ResponseWriter, r *http.Request) {
+		items, err := db.ReprocessOutputMaterials()
+		if err != nil {
+			http.Error(w, `{"status": "Error", "error": "Unable to retrieve item information"}`,
+				http.StatusBadRequest)
+			return
+		}
+		jita, err := db.StationForID(60003760) // Jita IV - Moon 4 - Caldari Navy Assembly Plant
+		// Run the jobs in background.
+		var wg sync.WaitGroup
+		results := make(map[string]responseItem)
+		batch := make(chan responseItem, 50)
+		go func() {
+			i := 0
+			for r := range batch {
+				i++
+				results[r.ItemName] = r
+			}
+		}()
+		for i := 0; i < len(items)/20; i++ {
+			wg.Add(1)
+			// Shadow the outer i
+			func(i int) {
+				server.Submit(func() {
+					defer wg.Done()
+					groupLen := min(20, len(items)-20*i)
+					req := make([]queryItem, 0, groupLen)
+					for j := 0; j < groupLen; j++ {
+						req = append(req, queryItem{Quantity: 1, ItemName: items[(20*i)+j].Name})
+					}
+					res, err := getItemPrices(db, mkt, &req, jita, "")
+					if err != nil {
+						log.Printf("Error getting bulk prices in goroutine")
+						return
+					}
+					k := 0
+					for _, r := range *res {
+						k++
+						batch <- r
+					}
+				})
+			}(i)
+		}
+		wg.Wait()
+		// Send quit signal.
+		close(batch)
+		resultsJSON, err := json.Marshal(results)
+		w.Write(resultsJSON)
 	}
 }

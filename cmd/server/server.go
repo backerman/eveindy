@@ -73,6 +73,8 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
 	goji.Post("/market/region/:location", marketHandler)
 	goji.Post("/market/system/:location", marketHandler)
 	goji.Post("/market/station/:id", marketHandler)
+	goji.Get("/market/jita", api.ReprocessOutputValues(sde, eveCentral, xmlAPI))
+
 	goji.Post("/reprocess", api.ReprocessItems(sde))
 	// SSO!
 	auth := evesso.MakeAuthenticator(evesso.Endpoint, c.ClientID, c.ClientSecret,
