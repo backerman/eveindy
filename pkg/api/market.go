@@ -258,7 +258,12 @@ func ReprocessOutputValues(db evego.Database, mkt evego.Market, xmlAPI evego.XML
 				results[r.ItemName] = r
 			}
 		}()
-		for i := 0; i < len(items)/20; i++ {
+		numLoops := len(items) / 20
+		if len(items)%20 != 0 {
+			// Integer math is a floor.
+			numLoops++
+		}
+		for i := 0; i < numLoops; i++ {
 			wg.Add(1)
 			// Shadow the outer i
 			func(i int) {

@@ -68,11 +68,9 @@ func StartPool(numWorkers int) ThreadPool {
 				// Received a job; dispatch it.
 				go func() {
 					worker := <-p.workerQueue
-					log.Printf("Got worker!")
 					worker <- job
 				}()
 			case <-p.quit:
-				log.Printf("Got quit request")
 				// DOME: kill all the workers.
 				return
 			}
