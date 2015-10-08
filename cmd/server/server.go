@@ -37,9 +37,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zenazn/goji"
-	// Register SQLite3 and PgSQL drivers
+	// Register PgSQL driver
 	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var c config
@@ -124,17 +123,6 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	}
 
 	sde := dbaccess.SQLDatabase(c.DbDriver, c.DbPath)
-	// if c.Dev {
-	// 	ts := httptest.NewServer(
-	// 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 			respFile, _ := os.Open("./conquerable-stations.xml")
-	// 			defer respFile.Close()
-	// 			responseBytes, _ := ioutil.ReadAll(respFile)
-	// 			responseBuf := bytes.NewBuffer(responseBytes)
-	// 			responseBuf.WriteTo(w)
-	// 		}))
-	// 	c.XMLAPIEndpoint = ts.URL
-	// }
 	var myCache evego.Cache
 	switch c.Cache {
 	case "inproc":
