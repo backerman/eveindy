@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/backerman/evego"
 	"github.com/backerman/eveindy/pkg/server"
@@ -236,10 +237,19 @@ func min(a, b int) int {
 	return b
 }
 
+const reprocessCacheKey = "reprocess-output-values"
+const reprocessCacheTTL = time.Hour
+
 // ReprocessOutputValues returns a web handler function that generates a list of
 // possible output from reprocessing, along with the Jita sell and buy price of each.
-func ReprocessOutputValues(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI) web.HandlerFunc {
+func ReprocessOutputValues(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI, cache evego.Cache) web.HandlerFunc {
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
+		// Check cached and use that instead if it's available.
+		cached, found := cache.Get(reprocessCacheKey)
+		if found {
+			w.Write(cached)
+			return
+		}
 		items, err := db.ReprocessOutputMaterials()
 		if err != nil {
 			http.Error(w, `{"status": "Error", "error": "Unable to retrieve item information"}`,
@@ -291,6 +301,8 @@ func ReprocessOutputValues(db evego.Database, mkt evego.Market, xmlAPI evego.XML
 		// Send quit signal.
 		close(batch)
 		resultsJSON, err := json.Marshal(results)
+		// Write output to cache as well.
+		cache.Put(reprocessCacheKey, resultsJSON, time.Now().Add(reprocessCacheTTL))
 		w.Write(resultsJSON)
 	}
 }

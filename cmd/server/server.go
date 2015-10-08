@@ -59,7 +59,7 @@ type config struct {
 }
 
 func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
-	eveCentral evego.Market, sessionizer server.Sessionizer) {
+	eveCentral evego.Market, sessionizer server.Sessionizer, cache evego.Cache) {
 	assets := http.FileServer(http.Dir("dist"))
 	bower := http.FileServer(http.Dir("bower_components"))
 	if c.Dev {
@@ -73,7 +73,7 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
 	goji.Post("/market/region/:location", marketHandler)
 	goji.Post("/market/system/:location", marketHandler)
 	goji.Post("/market/station/:id", marketHandler)
-	goji.Get("/market/jita", api.ReprocessOutputValues(sde, eveCentral, xmlAPI))
+	goji.Get("/market/jita", api.ReprocessOutputValues(sde, eveCentral, xmlAPI, cache))
 
 	goji.Post("/reprocess", api.ReprocessItems(sde))
 	// SSO!
@@ -173,7 +173,7 @@ func mainCommand(cmd *cobra.Command, args []string) {
 
 	sessionizer := server.GetSessionizer(c.CookieDomain, c.CookiePath, !c.Dev, localdb)
 
-	setRoutes(sde, localdb, xmlAPI, eveCentralMarket, sessionizer)
+	setRoutes(sde, localdb, xmlAPI, eveCentralMarket, sessionizer, myCache)
 	// We like magic, but fix the magic some.
 	bindArg := fmt.Sprintf("-bind=%s", c.Bind)
 	if len(os.Args) > 1 {
