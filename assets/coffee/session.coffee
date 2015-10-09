@@ -23,26 +23,29 @@ angular.module 'eveindy'
       constructor: (@Server, @$rootScope, @$window) ->
         @apikeys = []
         @authenticated = false
+        @_getSessionStatus()
+
+        # Put function on window to be called by authentication success screen.
+        @$window.hasAuthenticated = () =>
+          @$rootScope.$apply () =>
+            @_getSessionStatus()
+
+      logout: () ->
+        @Server.logout()
+          .then (response) =>
+            @authenticated = false
+            @apikeys = []
+            @$rootScope.$broadcast('login-status', @authenticated)
+
+      # Get session status (authenticated, API keys)
+      _getSessionStatus: () ->
         @Server.getLoginStatus()
           .then (response) =>
             @authenticated = response.data.authenticated
             if @authenticated
               @apikeys = response.data.apiKeys
               @_getSkills()
-            @$rootScope.$broadcast('login-status', @authenticated)
-
-        # Put function on window to be called by authentication success screen.
-        @$window.hasAuthenticated = () =>
-          @$rootScope.$apply () =>
-            @authenticated = true
-            @$rootScope.$broadcast('login-status', true)
-
-      logout: () ->
-        @Server.logout
-          .then (response) =>
-            @authenticated = false
-            @apikeys = []
-            @$rootScope.$broadcast('login-status', @authenticated)
+            @_keysUpdated()
 
       # Get skills for the current characters.
       _getSkills: () ->

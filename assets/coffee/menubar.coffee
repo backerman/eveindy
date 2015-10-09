@@ -43,5 +43,5 @@ angular.module 'eveindy'
           evt.preventDefault()
 
       logout: () =>
-        @Session.logoutSessions()
+        @Session.logout()
       ]
