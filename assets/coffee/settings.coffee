@@ -25,13 +25,8 @@ angular.module 'eveindy'
           @getApiKeys()
 
       _updateLoginStatus: (_, isLoggedIn) =>
-        if isLoggedIn
-          @authenticated = true
-          @getApiKeys()
-        else
-          # Logged out - clear keys
-          @authenticated = false
-          @apikeys = []
+        @authenticated = isLoggedIn
+        @getApiKeys()
 
       getApiKeys: () ->
         @apikeys = @Session.apikeys

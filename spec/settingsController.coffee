@@ -16,19 +16,13 @@ describe 'Controller: SettingsCtrl', () ->
   beforeEach () -> module 'eveindy'
   ctrl = undefined
   serverService = undefined
+  sessionService = undefined
   apiKeys = undefined
   scope = undefined
 
   beforeEach () ->
-    inject ($controller, Server, $rootScope) ->
+    inject (Server, $rootScope) ->
       scope = $rootScope.$new()
-      apiKeys = fixture.load('apiKeys.json')
-      spyOn Server, 'apiForUser'
-        .and.returnValue
-          then: (callback) ->
-            response =
-              data: JSON.parse JSON.stringify apiKeys
-            callback response
       spyOn Server, 'deleteApiKey'
         .and.callFake (keyid) ->
           then: (callback) ->
@@ -42,15 +36,44 @@ describe 'Controller: SettingsCtrl', () ->
               data:
                 status: 'OK'
                 characters: []
+            # then is being chained, so we need to ensure it also returns
+            # a fake promise.
+            then: (cb) ->
+              cb()
+
+      spyOn Server, 'getLoginStatus'
+        .and.callFake () ->
+          then: (callback) ->
+            # fixture.load only loads a given file once - so make sure each test
+            # has its own API keys to isolate individual tests.
+            sessionInfo = JSON.parse JSON.stringify fixture.load('session.json')
+            response =
+              data: sessionInfo
+            callback response
+            then: (cb) ->
+              cb()
+
+      spyOn Server, 'logout'
+        .and.returnValue
+          then: (callback) ->
+            callback
+              status: 'OK'
+
+      spyOn Server, 'getSkills'
+        .and.returnValue
+          then: (callback) ->
+            callback []
 
       serverService = Server
+
+  beforeEach () ->
+    inject ($controller, Session) ->
+      sessionService = Session
       ctrl = $controller 'SettingsCtrl',
         $scope: scope
-      scope.$broadcast('login-status', true)
+        Session: sessionService
 
   it 'should get a user\'s API keys', () ->
-    expect(serverService.apiForUser).toHaveBeenCalled()
-    expect(serverService.apiForUser.calls.count()).toEqual 1
     expect((k.id for k in ctrl.apikeys).sort()).toEqual [123456, 234567, 345678]
 
   it 'should remove a deleted key from its local model', () ->
@@ -59,6 +82,7 @@ describe 'Controller: SettingsCtrl', () ->
     expect(ctrl.apikeys.length).toEqual 2
 
   it 'should add keys to the user\'s account', () ->
+    expect(ctrl.apikeys.length).toEqual 3
     ctrl.newkey =
       id: 666
       userid: 101
@@ -70,11 +94,11 @@ describe 'Controller: SettingsCtrl', () ->
     expect(ctrl.newkey).toEqual {}
 
   it 'should correctly handle login', () ->
-    ctrl._updateLoginStatus "", true
+    sessionService._getSessionStatus()
     expect(ctrl.authenticated).toBeTruthy()
     expect(ctrl.apikeys.length).toEqual 3
 
   it 'should correctly handle logout', () ->
-    ctrl._updateLoginStatus "", false
+    sessionService.logout()
     expect(ctrl.authenticated).toBeFalsy()
     expect(ctrl.apikeys.length).toEqual 0

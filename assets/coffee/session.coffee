@@ -45,6 +45,8 @@ angular.module 'eveindy'
             if @authenticated
               @apikeys = response.data.apiKeys
               @_getSkills()
+            else
+              @apikeys = []
             @_keysUpdated()
 
       # Get skills for the current characters.

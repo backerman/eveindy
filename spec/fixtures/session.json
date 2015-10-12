@@ -1,0 +1,43 @@
+{
+  "authenticated": true,
+  "oauthURL": "https://login.eveonline.com/oauth/authorize?access_type=online&client_id=foo&redirect_uri=http%3A%2F%2Flocalhost%2F&response_type=code&scope=publicData&state=massachusetts",
+  "oauthExpiresAt": "2015-10-09T20:01:31.734517861-04:00",
+  "apiKeys": [
+    {
+      "userid": 101,
+      "id": 123456,
+      "vcode": "abc123abc123",
+      "label": "Test key 1",
+      "characters": [
+        {
+          "name": "Arjun Kansene",
+          "id": 94319654,
+          "corporation": "Center for Advanced Studies",
+          "corporationID": 1000169,
+          "alliance": "",
+          "allianceID": 0
+        },
+        {
+          "name": "All reps on Cain",
+          "id": 123456,
+          "corporation": "Yes, this is test data",
+          "corporationID": 78910,
+          "alliance": "Some Alliance",
+          "allianceID": 494949
+        }
+      ]
+    },
+    {
+      "userid": 101,
+      "id": 234567,
+      "vcode": "bcdbcdbcd345543",
+      "label": "Test key 1"
+    },
+    {
+      "userid": 101,
+      "id": 345678,
+      "vcode": "0123456789abcdefg",
+      "label": "Test key 1"
+    }
+  ]
+}

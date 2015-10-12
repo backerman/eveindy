@@ -29,8 +29,9 @@ describe 'Controller: ReproController', () ->
         fn()
 
     inject ($controller, Server, _$rootScope_) ->
-      $scope = _$rootScope_
+      $scope = _$rootScope_.$new()
       jitaMinerals = fixture.load('jitaMinerals.json')
+      # Hook calls on our Server to return static information.
       spyOn Server, 'getJitaPrices'
         .and.returnValue
           then: (callback) ->
@@ -70,8 +71,17 @@ describe 'Controller: ReproController', () ->
               data: reprocessOutput
             callback response
 
+      sessionInfo = fixture.load('session.json')
+      spyOn Server, 'getLoginStatus'
+        .and.returnValue
+          then: (callback) ->
+            response =
+              data: sessionInfo
+            callback response
+
       serverService = Server
-      ctrl = $controller 'ReprocessCtrl'
+      ctrl = $controller 'ReprocessCtrl',
+        $scope: $scope
 
   it 'should get Jita mineral prices', () ->
     expect(serverService.getJitaPrices).toHaveBeenCalled()
@@ -154,7 +164,11 @@ describe 'Controller: ReproController', () ->
       systemName: "Mirilene"
       class: "security-high"
 
+    sessionInfo = fixture.load('session.json')
+    ctrl.selectedToon = sessionInfo.apiKeys[0].characters[0]
+    ctrl.selectedToon.skills = []
     ctrl.locationSelected(testStation)
+
     expect(ctrl.corporationName).toEqual 'Expert Distribution'
     expect(ctrl.stationID).toEqual 60002479
     expect(ctrl.stationType).toEqual 'npc'
