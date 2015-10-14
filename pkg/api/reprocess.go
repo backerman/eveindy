@@ -20,6 +20,7 @@ package api
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"math"
 	"mime"
 	"net/http"
@@ -41,9 +42,18 @@ type reproQuery struct {
 	Items           []reproItem `json:"items"`
 }
 
+type reproResults struct {
+	Items  map[string][]evego.InventoryLine `json:"items"`
+	Prices map[string]responseItem          `json:"prices"`
+}
+
 // ReprocessItems returns a handler function that takes as input an item list
 // and returns the reprocessing output of each inventory line.
-func ReprocessItems(db evego.Database) web.HandlerFunc {
+func ReprocessItems(db evego.Database, mkt evego.Market) web.HandlerFunc {
+	jita, err := db.StationForID(60003760) // Jita IV - Moon 4 - Caldari Navy Assembly Plant
+	if err != nil {
+		log.Fatalf("Seriously, guys, something's gone wrong with the database!")
+	}
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
 		contentType := r.Header.Get("Content-Type")
 		contentType, _, err := mime.ParseMediaType(contentType)
@@ -91,7 +101,33 @@ func ReprocessItems(db evego.Database) web.HandlerFunc {
 			}
 			results[item.Name] = itemResults
 		}
-		resultsJSON, _ := json.Marshal(results)
+		prices := make(map[string]responseItem)
+
+		// Loop over each item that was reprocessed.
+		for _, itemOut := range results {
+			// For each item in its component materials,
+			for _, item := range itemOut {
+				// Check if we already know its price in Jita
+				itemName := item.Item.Name
+				_, found := prices[itemName]
+				if !found {
+					// If not there, get its price.
+					myPrices, err := getItemPrices(db, mkt, &[]queryItem{{Quantity: 1, ItemName: itemName}}, jita, "")
+					if err != nil {
+						http.Error(w, `{"status": "Error", "error": "Unable to look up prices (reprocessing)"}`,
+							http.StatusInternalServerError)
+						return
+					}
+					prices[itemName] = (*myPrices)[itemName]
+				}
+			}
+		}
+
+		response := reproResults{
+			Items:  results,
+			Prices: prices,
+		}
+		resultsJSON, _ := json.Marshal(response)
 		w.Write(resultsJSON)
 	}
 }

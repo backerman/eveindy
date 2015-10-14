@@ -175,7 +175,7 @@ angular.module 'eveindy'
             @Server.reprocessItems \
               @reprocessingEfficiency, @taxRate, @scrapSkill, response.data
               .then (response) =>
-                @reprocessingOutput = response.data
+                @reprocessingOutput = response.data.items
                 @updateReprocessedValues(@reprocessingOutput)
 
       updateReprocessedValues: (response) ->
