@@ -59,7 +59,7 @@ angular.module 'eveindy'
         @imputed = {}
         # We have the separate array because it makes things easier in the view.
         @imputedArray = []
-        @Server.getJitaPrices reprocessOutput
+        @Server.getReprocessPrices()
           .then (response) =>
             @jitaPrices = response.data
             @recalculateMineralPrices()

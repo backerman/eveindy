@@ -21,15 +21,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"mime"
 	"net/http"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/backerman/evego"
-	"github.com/backerman/eveindy/pkg/server"
 	"github.com/zenazn/goji/web"
 )
 
@@ -243,6 +240,16 @@ const reprocessCacheTTL = time.Hour
 // ReprocessOutputValues returns a web handler function that generates a list of
 // possible output from reprocessing, along with the Jita sell and buy price of each.
 func ReprocessOutputValues(db evego.Database, mkt evego.Market, xmlAPI evego.XMLAPI, cache evego.Cache) web.HandlerFunc {
+	tickerboard := []queryItem{
+		{Quantity: 1, ItemName: "Tritanium"},
+		{Quantity: 1, ItemName: "Pyerite"},
+		{Quantity: 1, ItemName: "Mexallon"},
+		{Quantity: 1, ItemName: "Isogen"},
+		{Quantity: 1, ItemName: "Nocxium"},
+		{Quantity: 1, ItemName: "Megacyte"},
+		{Quantity: 1, ItemName: "Zydrine"},
+		{Quantity: 1, ItemName: "Megacyte"},
+	}
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// Check cached and use that instead if it's available.
 		cached, found := cache.Get(reprocessCacheKey)
@@ -250,56 +257,19 @@ func ReprocessOutputValues(db evego.Database, mkt evego.Market, xmlAPI evego.XML
 			w.Write(cached)
 			return
 		}
-		items, err := db.ReprocessOutputMaterials()
+		jita, err := db.StationForID(60003760) // Jita IV - Moon 4 - Caldari Navy Assembly Plant
 		if err != nil {
-			http.Error(w, `{"status": "Error", "error": "Unable to retrieve item information"}`,
-				http.StatusBadRequest)
+			http.Error(w, `{"status": "Error", "error": "Unable to retrieve ticker prices"}`,
+				http.StatusInternalServerError)
 			return
 		}
-		jita, err := db.StationForID(60003760) // Jita IV - Moon 4 - Caldari Navy Assembly Plant
-		// Run the jobs in background.
-		var wg sync.WaitGroup
-		results := make(map[string]responseItem)
-		batch := make(chan responseItem, 50)
-		go func() {
-			i := 0
-			for r := range batch {
-				i++
-				results[r.ItemName] = r
-			}
-		}()
-		numLoops := len(items) / 20
-		if len(items)%20 != 0 {
-			// Integer math is a floor.
-			numLoops++
+		results, err := getItemPrices(db, mkt, &tickerboard, jita, "")
+		if err != nil {
+			http.Error(w, `{"status": "Error", "error": "Unable to retrieve ticker prices"}`,
+				http.StatusInternalServerError)
+			return
 		}
-		for i := 0; i < numLoops; i++ {
-			wg.Add(1)
-			// Shadow the outer i
-			func(i int) {
-				server.Submit(func() {
-					defer wg.Done()
-					groupLen := min(20, len(items)-20*i)
-					req := make([]queryItem, 0, groupLen)
-					for j := 0; j < groupLen; j++ {
-						req = append(req, queryItem{Quantity: 1, ItemName: items[(20*i)+j].Name})
-					}
-					res, err := getItemPrices(db, mkt, &req, jita, "")
-					if err != nil {
-						log.Printf("Error getting bulk prices in goroutine")
-						return
-					}
-					k := 0
-					for _, r := range *res {
-						k++
-						batch <- r
-					}
-				})
-			}(i)
-		}
-		wg.Wait()
-		// Send quit signal.
-		close(batch)
+
 		resultsJSON, err := json.Marshal(results)
 		// Write output to cache as well.
 		cache.Put(reprocessCacheKey, resultsJSON, time.Now().Add(reprocessCacheTTL))

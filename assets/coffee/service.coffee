@@ -39,6 +39,10 @@ angular.module 'eveindy'
       getJitaPrices: (itemNames) ->
         @getLocalPrices jitaID, itemNames
 
+      # Special-purpose endpoint just for the minerals summary.
+      getReprocessPrices: () ->
+        @$http.get "/market/jita"
+
       getLocalPrices: (stationID, itemNames) ->
         do (query = @_queryFromItemList itemNames) =>
           @$http.post "/market/station/" + encodeURIComponent(stationID), query
