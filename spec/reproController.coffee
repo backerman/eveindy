@@ -32,7 +32,7 @@ describe 'Controller: ReproController', () ->
       $scope = _$rootScope_.$new()
       jitaMinerals = fixture.load('jitaMinerals.json')
       # Hook calls on our Server to return static information.
-      spyOn Server, 'getJitaPrices'
+      spyOn Server, 'getReprocessPrices'
         .and.returnValue
           then: (callback) ->
             response =
@@ -84,8 +84,8 @@ describe 'Controller: ReproController', () ->
         $scope: $scope
 
   it 'should get Jita mineral prices', () ->
-    expect(serverService.getJitaPrices).toHaveBeenCalled()
-    expect(serverService.getJitaPrices.calls.count()).toEqual 1
+    expect(serverService.getReprocessPrices).toHaveBeenCalled()
+    expect(serverService.getReprocessPrices.calls.count()).toEqual 1
 
   it 'should populate the correct arrays', () ->
     expect(ctrl.jitaPrices).toEqual(jitaMinerals)

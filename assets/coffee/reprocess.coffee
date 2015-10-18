@@ -175,16 +175,20 @@ angular.module 'eveindy'
             @Server.reprocessItems \
               @reprocessingEfficiency, @taxRate, @scrapSkill, response.data
               .then (response) =>
-                @reprocessingOutput = response.data.items
+                @reprocessingOutput = response.data
                 @updateReprocessedValues(@reprocessingOutput)
 
       updateReprocessedValues: (response) ->
         for item in @inventory
-          result = response[item.Item.Name]
+          result = response.items[item.Item.Name]
           item.reproValue = 0
           if result?.length > 0
             for m in result
-              item.reproValue += m.Quantity * @imputed[m.Item.Name]
+              imputedCost = @imputed[m.Item.Name]
+              if !imputedCost
+                imputedCost = \
+                  @priceCalcFn response.prices[m.Item.Name], @reproMultiplier
+              item.reproValue += m.Quantity * imputedCost
           else
             item.noReprocess = true
 
