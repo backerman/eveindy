@@ -145,7 +145,7 @@ func (d *dbInterface) GetAPISkills(key XMLAPIKey, charID int) error {
 	if err != nil {
 		return err
 	}
-	_, err = d.apiKeyClearSkillsStmt.Exec(charID)
+	_, err = tx.Stmtx(d.apiKeyClearSkillsStmt).Exec(charID)
 	if err != nil {
 		return err
 	}
@@ -174,11 +174,11 @@ func (d *dbInterface) GetAPIStandings(key XMLAPIKey, charID int) error {
 		return err
 	}
 	// Clear standings before inserting the API's information.
-	_, err = d.apiKeyClearCorpStandingsStmt.Exec(charID)
+	_, err = tx.Stmtx(d.apiKeyClearCorpStandingsStmt).Exec(charID)
 	if err != nil {
 		return err
 	}
-	_, err = d.apiKeyClearFacStandingsStmt.Exec(charID)
+	_, err = tx.Stmtx(d.apiKeyClearFacStandingsStmt).Exec(charID)
 	if err != nil {
 		return err
 	}
@@ -193,6 +193,7 @@ func (d *dbInterface) GetAPIStandings(key XMLAPIKey, charID int) error {
 			// Agent standings - we don't handle those, so skip.
 			continue
 		}
+		insertStmt = tx.Stmtx(insertStmt)
 		_, err := insertStmt.Exec(charID, standing.ID, standing.Standing)
 		if err != nil {
 			tx.Rollback()
