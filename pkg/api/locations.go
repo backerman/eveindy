@@ -20,6 +20,7 @@ package api
 import (
 	"encoding/json"
 	"log"
+	"math"
 	"net/http"
 	"strings"
 
@@ -71,6 +72,15 @@ func AutocompleteSystems(db evego.Database) web.HandlerFunc {
 	}
 }
 
+// roundSecurity rounds the input to the closest 0.1.
+func roundSecurity(in float64) float64 {
+	i, f := math.Modf(in * 10.0)
+	if f < 0.5 {
+		return i / 10.0
+	}
+	return (i + 1.0) / 10.0
+}
+
 // Convert the station/outpost object provided by evego's API into a more
 // useful JSON object to be sent to the client.
 func stationFromAPI(db evego.Database, s *evego.Station, isOutpost bool) station {
@@ -79,12 +89,20 @@ func stationFromAPI(db evego.Database, s *evego.Station, isOutpost bool) station
 		Name:                   s.Name,
 		ID:                     s.ID,
 		SystemName:             system.Name,
-		Security:               system.Security,
 		Constellation:          system.Constellation,
 		Region:                 system.Region,
 		Owner:                  s.Corporation,
 		OwnerID:                s.CorporationID,
 		ReprocessingEfficiency: s.ReprocessingEfficiency,
+	}
+	// Calculate rounded security as displayed in client—see
+	// http://wiki.eveuniversity.org/System_Security for rules.
+	if system.Security > 0.05 || system.Security < 0.00 {
+		// high or low based on rounding.
+		stn.Security = roundSecurity(system.Security)
+	} else {
+		// lowsec, not nullsec—rounds up.
+		stn.Security = 0.1
 	}
 	if isOutpost {
 		stn.Outpost = true
