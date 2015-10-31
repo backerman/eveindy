@@ -97,7 +97,7 @@ func stationFromAPI(db evego.Database, s *evego.Station, isOutpost bool) station
 	}
 	// Calculate rounded security as displayed in client—see
 	// http://wiki.eveuniversity.org/System_Security for rules.
-	if system.Security > 0.05 || system.Security < 0.00 {
+	if system.Security >= 0.05 || system.Security < 0.00 {
 		// high or low based on rounding.
 		stn.Security = roundSecurity(system.Security)
 	} else {
