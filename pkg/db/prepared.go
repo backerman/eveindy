@@ -150,4 +150,29 @@ const (
 	WHERE userid = $1
 	AND   (apikey = $2 OR id = ANY ($3::int[]))
 	`
+
+	// Outpost list update
+
+	// Clear outposts.
+	// Not using TRUNCATE because it's not MVCC-safe.
+	clearOutpostsStmt = `
+	DELETE FROM outposts WHERE 1=1
+	`
+
+	// Insert outposts into the database.
+	insertOutpostsStmt = `
+	INSERT INTO outposts(stationName, stationID, systemID, corporationID, corporationName)
+	VALUES ($1, $2, $3, $4, $5)
+	`
+
+	// Search outposts/stations from the database
+	searchStationsStmt = `
+	SELECT   "stationName", "stationID", "solarSystemID", "corporationID", "corporationName",
+	         "constellationID", "regionID"
+	FROM     allStations o
+	JOIN     "mapSolarSystems" s USING("solarSystemID")
+	WHERE    LOWER("stationName") LIKE LOWER($1)
+	ORDER BY "stationName"
+	LIMIT    10
+	`
 )

@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/backerman/evego"
+	"github.com/backerman/eveindy/pkg/db"
 	"github.com/zenazn/goji/web"
 )
 
@@ -94,40 +95,22 @@ func stationFromAPI(db evego.Database, s *evego.Station, isOutpost bool) station
 	return stn
 }
 
-func autocompleteStations(db evego.Database, xmlAPI evego.XMLAPI, search string) *[]station {
+func autocompleteStations(sde evego.Database, db db.LocalDB, search string) *[]station {
 	// Use make to ensure that we actually have a slice rather than just a nil
 	// pointer.
 	results := make([]station, 0, 5)
 	search = strings.Replace(search, " ", "%", -1)
-	stations, _ := db.StationsForName("%" + search + "%")
-	outposts, _ := xmlAPI.OutpostsForName("%" + search + "%")
-
-	// Move stations from the API results to our output
-	// in alphabetical order. Do not return more than
-	// 10 results.
-	for len(stations) > 0 || len(outposts) > 0 {
-		var s evego.Station
+	stations, err := db.SearchStations(search)
+	if err != nil {
+		log.Printf("ERROR: Can't autocomplete stations: %v", err)
+	}
+	for _, s := range stations {
 		var isOutpost bool
-		numOutposts := len(outposts)
-		numStations := len(stations)
-		if numStations == 0 ||
-			(numOutposts > 0 && (stations)[0].Name > (outposts)[0].Name) {
-			s = (outposts)[0]
-			outposts = (outposts)[1:]
+		if s.ReprocessingEfficiency == 0.0 {
 			isOutpost = true
-		} else {
-			s = (stations)[0]
-			stations = (stations)[1:]
-			isOutpost = false
 		}
-
-		stn := stationFromAPI(db, &s, isOutpost)
+		stn := stationFromAPI(sde, &s, isOutpost)
 		results = append(results, stn)
-
-		// Stop here if maximum results count has been reached.
-		if len(results) == 10 {
-			break
-		}
 	}
 
 	return &results
@@ -135,12 +118,12 @@ func autocompleteStations(db evego.Database, xmlAPI evego.XMLAPI, search string)
 
 // AutocompleteStations returns a handler function that serves station
 // autocomplete requests.
-func AutocompleteStations(db evego.Database, xmlAPI evego.XMLAPI) web.HandlerFunc {
+func AutocompleteStations(sde evego.Database, db db.LocalDB, xmlAPI evego.XMLAPI) web.HandlerFunc {
 	return func(c web.C, w http.ResponseWriter, r *http.Request) {
 		query := c.URLParams["name"]
 		stations := &[]station{}
 		if len(query) >= 3 {
-			stations = autocompleteStations(db, xmlAPI, c.URLParams["name"])
+			stations = autocompleteStations(sde, db, c.URLParams["name"])
 		}
 		stationsJSON, _ := json.Marshal(*stations)
 		w.Write(stationsJSON)

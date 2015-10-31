@@ -19,6 +19,7 @@ limitations under the License.
 package db
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 
@@ -48,6 +49,9 @@ type dbInterface struct {
 	apiKeyInsertFacStandingsStmt  *sqlx.Stmt
 	getStandingsStmt              *sqlx.Stmt
 	deleteToonsStmt               *sqlx.Stmt
+	clearOutpostsStmt             *sqlx.Stmt
+	insertOutpostsStmt            *sqlx.Stmt
+	searchStationsStmt            *sqlx.Stmt
 
 	// Need access to EVE APIs.
 	xmlAPI evego.XMLAPI
@@ -93,6 +97,9 @@ func Interface(driver, resource string, xmlAPI evego.XMLAPI) (LocalDB, error) {
 		{&d.apiKeyInsertFacStandingsStmt, apiKeyInsertFacStandingsStmt},
 		{&d.getStandingsStmt, getStandingsStmt},
 		{&d.deleteToonsStmt, deleteToonsStmt},
+		{&d.clearOutpostsStmt, clearOutpostsStmt},
+		{&d.insertOutpostsStmt, insertOutpostsStmt},
+		{&d.searchStationsStmt, searchStationsStmt},
 	}
 
 	for _, s := range stmts {
@@ -155,4 +162,22 @@ func (d *dbInterface) LogoutSession(cookie string) error {
 	// TODO: Update table, remove login.
 	_, err := d.logoutSessionStmt.Exec(cookie)
 	return err
+}
+
+func (d *dbInterface) SearchStations(search string) ([]evego.Station, error) {
+	rows, err := d.searchStationsStmt.Queryx("%" + search + "%")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var stations []evego.Station
+	for rows.Next() {
+		station := evego.Station{}
+		rows.StructScan(&station)
+		stations = append(stations, station)
+	}
+	if len(stations) == 0 {
+		err = sql.ErrNoRows
+	}
+	return stations, err
 }

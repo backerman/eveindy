@@ -230,3 +230,24 @@ func (d *dbInterface) CharacterSkillGroup(userID, charID, skillGroupID int) ([]e
 	}
 	return skills, nil
 }
+
+func (d *dbInterface) RepopulateOutposts() error {
+	outpostList := d.xmlAPI.DumpOutposts()
+	tx, err := d.db.Beginx()
+	if err != nil {
+		return err
+	}
+	// clear existing
+	_, err = tx.Stmtx(d.clearOutpostsStmt).Exec()
+	if err != nil {
+		return err
+	}
+	insertStmt := tx.Stmtx(d.insertOutpostsStmt)
+	for _, o := range outpostList {
+		_, err = insertStmt.Exec(o.Name, o.ID, o.SystemID, o.CorporationID, o.Corporation)
+		if err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
+}

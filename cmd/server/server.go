@@ -65,7 +65,7 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
 		goji.Get("/bower_components/*", http.StripPrefix("/bower_components/", bower))
 	}
 	goji.Get("/autocomplete/system/:name", api.AutocompleteSystems(sde))
-	goji.Get("/autocomplete/station/:name", api.AutocompleteStations(sde, xmlAPI))
+	goji.Get("/autocomplete/station/:name", api.AutocompleteStations(sde, localdb, xmlAPI))
 	goji.Post("/pastebin", api.ParseItems(sde))
 	marketHandler := api.ItemsMarketValue(sde, eveCentral, xmlAPI)
 	// For now these do the same thing. That may change.
@@ -162,6 +162,12 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	sessionizer := server.GetSessionizer(c.CookieDomain, c.CookiePath, !c.Dev, localdb)
 
 	setRoutes(sde, localdb, xmlAPI, eveCentralMarket, sessionizer, myCache)
+
+	// Set up internal bits.
+
+	// Start background jobs.
+	server.StartJobs(localdb)
+
 	// We like magic, but fix the magic some.
 	bindArg := fmt.Sprintf("-bind=%s", c.Bind)
 	if len(os.Args) > 1 {

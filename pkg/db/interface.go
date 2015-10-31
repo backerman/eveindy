@@ -70,4 +70,11 @@ type LocalDB interface {
 	// CharacterStandings queries a character's standings (corporation and faction)
 	// with an NPC corporation.
 	CharacterStandings(userID, charID, corpID int) (corpStanding, factionStanding sql.NullFloat64, err error)
+
+	// RepopulateOutposts updates outpost information in the local database.
+	RepopulateOutposts() error
+
+	// SearchStations searches outpost and station names for the provided term,
+	// adding %s on either side.
+	SearchStations(search string) ([]evego.Station, error)
 }
