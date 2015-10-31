@@ -161,7 +161,11 @@ gulp.task 'download-outposts', (done) ->
       console.log "Outposts file already exists; not redownloading."
       done()
 
-gulp.task 'dev', ['set-development', 'download-outposts', 'default']
+gulp.task 'dev', [
+  'set-development'
+#  'download-outposts'
+  'default'
+]
 
 gulp.task 'watch', ['dev', 'gobuild'], ->
   # stolen from shorrockin/noted
