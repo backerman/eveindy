@@ -168,7 +168,7 @@ const (
 	// Search outposts/stations from the database
 	searchStationsStmt = `
 	SELECT   "stationName", "stationID", "solarSystemID", "corporationID", "corporationName",
-	         "constellationID", "regionID"
+	         "constellationID", "regionID", "reprocessingEfficiency"
 	FROM     allStations o
 	JOIN     "mapSolarSystems" s USING("solarSystemID")
 	WHERE    LOWER("stationName") LIKE LOWER($1)

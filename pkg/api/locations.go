@@ -18,6 +18,7 @@ limitations under the License.
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"math"
@@ -119,11 +120,11 @@ func autocompleteStations(sde evego.Database, db db.LocalDB, search string) *[]s
 	results := make([]station, 0, 5)
 	search = strings.Replace(search, " ", "%", -1)
 	stations, err := db.SearchStations(search)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		log.Printf("ERROR: Can't autocomplete stations: %v", err)
 	}
 	for _, s := range stations {
-		var isOutpost bool
+		isOutpost := false
 		if s.ReprocessingEfficiency == 0.0 {
 			isOutpost = true
 		}
