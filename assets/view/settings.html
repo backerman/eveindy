@@ -37,8 +37,10 @@
             <td ng-bind="key.label"></td>
             <td>
               <button type="button" class="btn btn-sm btn-default"
-              name="delete-key-{{key.id}}"
-              ng-click="ctrl.refreshKey(key)">Refresh</button>
+              name="refresh-key-{{key.id}}"
+              ng-class="{'processing': key.processing}"
+              ng-bind="key.refreshButton"
+              ng-click="ctrl.refreshKey(key)"></button>
               <button type="button" class="btn btn-sm btn-danger"
               name="delete-key-{{key.id}}"
               ng-click="ctrl.deleteKey(key.id)">Delete</button>

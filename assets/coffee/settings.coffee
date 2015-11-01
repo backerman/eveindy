@@ -21,12 +21,12 @@ angular.module 'eveindy'
         @forms = {}
         @$scope.$on 'login-status', @_updateLoginStatus
         if @Session.authenticated
-          @authenticated = true
-          @getApiKeys()
+          @_updateLoginStatus null, true
 
       _updateLoginStatus: (_, isLoggedIn) =>
         @authenticated = isLoggedIn
         @getApiKeys()
+        ((k) -> k.refreshButton = "Refresh")(key) for key in @apikeys
 
       getApiKeys: () ->
         @apikeys = @Session.apikeys
@@ -42,5 +42,10 @@ angular.module 'eveindy'
             @forms.newkey?.$setPristine()
 
       refreshKey: (key) =>
+        key.processing = true
+        key.refreshButton = "Refreshing…"
         @Session.refreshKey key
+          .then (_) ->
+            key.processing = false
+            key.refreshButton = "Refresh"
   ]
