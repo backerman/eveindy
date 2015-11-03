@@ -89,7 +89,4 @@ angular.module 'eveindy'
         reduceFn = (chars, key) ->
           if key.characters then [chars..., key.characters...] else chars
         @apikeys.reduce reduceFn, []
-
-      standing: (character, corporation) ->
-        42
   ]
