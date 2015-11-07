@@ -13,41 +13,26 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .controller 'SettingsCtrl', [ 'Session', '$scope'
-    class SettingsCtrl
+  .controller 'BlueprintsCtrl', [ 'Session', '$scope'
+    class BlueprintsCtrl
       constructor: (@Session, @$scope) ->
-        @apikeys = {}
-        @newkey = {}
-        @forms = {}
+        @characters = []
+        @selectedToon = null
         @$scope.$on 'login-status', @_updateLoginStatus
         if @Session.authenticated
           @_updateLoginStatus null, true
 
       _updateLoginStatus: (_, isLoggedIn) =>
         @authenticated = isLoggedIn
-        @getApiKeys()
-        ((k) -> k.refreshButton = "Refresh")(key) for key in @apikeys
+        @getCharacters()
+        @selectedToon = @characters[0] if !@selectedToon
 
-      getApiKeys: () ->
-        @apikeys = @Session.apikeys
+      _getBlueprints: (toon) ->
+        
 
-      deleteKey: (keyID) =>
-        @Session.deleteKey keyID
+      getCharacters: () ->
+        @characters = @Session.availableCharacters()
 
-      addKey: () =>
-        @Session.addKey @newkey
-          .then (response) =>
-            @newkey = {}
-            # Ignore nonexistent FormController (for tests)
-            @forms.newkey?.$setPristine()
-
-      refreshKey: (key) =>
-        key.processing = true
-        key.refreshButton = "Refreshing…"
-        @Session.refreshKey key
-          .then (_) ->
-            key.processing = false
-            key.refreshButton = "Refresh"
-          , (_) ->
-            console.log "Hey, an error happened!"
+      charactersSelected: () ->
+        _getBlueprints @selectedToon
   ]

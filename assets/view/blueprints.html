@@ -1,8 +1,35 @@
 <div class="row">
   <div class="col-md-8">
-    <p class="well">
-      The blueprint module will show up here.
-    </p>
+    <div class="form-group">
+      <label for="selectedToon">Character:</label>
+      <select class="form-control" name="toon"
+          ng-change="ctrl.characterSelected()" ng-model="ctrl.selectedToon"
+          ng-options="c.name for c in ctrl.characters | orderBy:'name'">
+      </select>
+    </div>
+    <div class="blueprints">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>
+              Type
+            </th>
+            <th>
+              Location
+            </th>
+            <th>
+              # Runs
+            </th>
+            <th>
+              ME
+            </th>
+            <th>
+              TE
+            </th>
+          </tr>
+        </thead>
+      </table>
+    </div>
   </div>
   <div class="col-md-4">
     <p>

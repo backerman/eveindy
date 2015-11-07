@@ -20,6 +20,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
@@ -251,4 +252,53 @@ func (d *dbInterface) RepopulateOutposts() error {
 		}
 	}
 	return tx.Commit()
+}
+
+func (d *dbInterface) GetBlueprints(key XMLAPIKey, charID int) error {
+	k := &evego.XMLKey{
+		KeyID:            key.ID,
+		VerificationCode: key.VerificationCode,
+	}
+	blueprints, err := d.xmlAPI.Blueprints(k, charID)
+	if err != nil {
+		return err
+	}
+	tx, err := d.db.Beginx()
+	if err != nil {
+		return err
+	}
+	// Clear standings before inserting the API's information.
+	_, err = tx.Stmtx(d.clearBlueprintsStmt).Exec(key.ID, charID)
+	if err != nil {
+		return err
+	}
+	insertStmt := tx.Stmtx(d.insertBlueprintStmt)
+	for _, bp := range blueprints {
+		_, err := insertStmt.Exec(key.ID, charID, bp.ItemID, bp.StationID, bp.TypeID,
+			bp.Quantity, bp.Flag, bp.MaterialEfficiency, bp.TimeEfficiency, bp.NumRuns,
+			bp.IsOriginal)
+		if err != nil {
+			log.Printf("Failed to insert blueprint %+v", bp)
+			tx.Rollback()
+			return err
+		}
+	}
+	return tx.Commit()
+}
+
+func (d *dbInterface) CharacterBlueprints(userID, charID int) ([]evego.BlueprintItem, error) {
+	rows, err := d.getBlueprintsStmt.Queryx(userID, charID)
+	if err != nil {
+		return nil, err
+	}
+	results := make([]evego.BlueprintItem, 0, 10)
+	for rows.Next() {
+		result := evego.BlueprintItem{}
+		err = rows.StructScan(&result)
+		if err != nil && err != sql.ErrNoRows {
+			return nil, err
+		}
+		results = append(results, result)
+	}
+	return results, nil
 }

@@ -77,4 +77,8 @@ type LocalDB interface {
 	// SearchStations searches outpost and station names for the provided term,
 	// adding %s on either side.
 	SearchStations(search string) ([]evego.Station, error)
+
+	// GetBlueprints retrieves a character's blueprints and adds them to the
+	// database.
+	GetBlueprints(key XMLAPIKey, charID int) error
 }

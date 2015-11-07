@@ -14,11 +14,10 @@
 
 -- blueprints: blueprints owned by users
 CREATE TABLE eveindy.blueprints (
-  userID integer NOT NULL,
   charID integer NOT NULL,
   apikey integer NOT NULL,
-  itemID integer NOT NULL,
-  locationID integer NOT NULL,
+  itemID bigint NOT NULL,
+  stationID integer NOT NULL,
   typeID integer NOT NULL,
   quantity integer NOT NULL,
   flag integer NOT NULL,
@@ -29,17 +28,12 @@ CREATE TABLE eveindy.blueprints (
 
   FOREIGN KEY (charID) REFERENCES eveindy.characters (id)
     ON DELETE CASCADE DEFERRABLE,
-  FOREIGN KEY (userID) REFERENCES eveindy.users (id)
-    ON DELETE CASCADE DEFERRABLE,
   FOREIGN KEY (apikey) REFERENCES eveindy.apikeys (id)
     ON DELETE CASCADE DEFERRABLE,
-  --  can't FK to a view!
-  -- FOREIGN KEY (locationID) REFERENCES allstations (stationID)
-  --   ON DELETE NO ACTION DEFERRABLE,
   FOREIGN KEY (typeID) REFERENCES "invTypes" ("typeID"),
   FOREIGN KEY (flag) REFERENCES "invFlags" ("flagID"),
   CHECK (quantity > 0),
-  CHECK (materialEfficiency BETWEEN 0 AND 10 AND materialEfficiency % 2 = 0),
+  CHECK (materialEfficiency BETWEEN 0 AND 10),
   CHECK (timeEfficiency BETWEEN 0 AND 20 AND timeEfficiency % 2 = 0),
   CHECK (isOriginal IS TRUE OR (numRuns IS NOT NULL AND numRuns > 0))
 );
@@ -49,8 +43,8 @@ CREATE OR REPLACE FUNCTION blueprints_insert_check() RETURNS TRIGGER AS $$
 DECLARE
   station integer;
 BEGIN
-  SELECT stationID from eveindy.allstations
-  WHERE  stationID = NEW.stationID
+  SELECT "stationID" from eveindy.allstations
+  WHERE  "stationID" = NEW.stationID
   INTO station;
   IF station IS NULL
   THEN

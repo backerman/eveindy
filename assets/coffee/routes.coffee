@@ -19,6 +19,7 @@ angular.module 'eveindy'
       controller: 'ReprocessCtrl as ctrl'
     .when '/blueprints',
       templateUrl: 'view/blueprints.html'
+      controller: 'BlueprintsCtrl as ctrl'
     .when '/settings',
       templateUrl: 'view/settings.html'
       controller: 'SettingsCtrl as ctrl'

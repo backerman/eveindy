@@ -20,6 +20,7 @@ package api
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -74,6 +75,15 @@ func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, dele
 			if err != nil {
 				http.Error(w, `{"status": "Error", "error": "Database connection error (add standings)"}`,
 					http.StatusInternalServerError)
+				return
+			}
+
+			// Update blueprints.
+			err = localdb.GetBlueprints(*key, toon.ID)
+			if err != nil {
+				http.Error(w, `{"status": "Error", "error": "Database connection error (add blueprints)"}`,
+					http.StatusInternalServerError)
+				log.Printf("Got error in GetBlueprints: %v", err)
 				return
 			}
 
