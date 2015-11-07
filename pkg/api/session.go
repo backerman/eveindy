@@ -109,23 +109,23 @@ func CRESTCallbackListener(localdb db.LocalDB, auth evesso.Authenticator, sess s
 		// Exchange it for a token.
 		tok, err := auth.Exchange(code)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			w.Write([]byte(`{"status": "Error"}`))
+			http.Error(w, `{"status": "Error"}`, http.StatusInternalServerError)
+			log.Printf("Error exchanging token: %v", err)
 			return
 		}
 		// Get character information.
 		charInfo, err := auth.CharacterInfo(tok)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			w.Write([]byte(`{"status": "Error"}`))
+			http.Error(w, `{"status": "Error"}`, http.StatusInternalServerError)
+			log.Printf("Error getting character information: %v; token was %+v", err, tok)
 			return
 		}
 
 		// Update session in database.
 		err = localdb.AuthenticateSession(s.Cookie, tok, charInfo)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			w.Write([]byte(`{"status": "Error"}`))
+			http.Error(w, `{"status": "Error"}`, http.StatusInternalServerError)
+			log.Printf("Unable to update session post-auth: %v; info was %+v", err, charInfo)
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

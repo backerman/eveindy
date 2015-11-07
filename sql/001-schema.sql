@@ -34,8 +34,8 @@ CREATE TABLE eveindy.characters (
   apikey integer REFERENCES eveindy.apikeys(id) ON DELETE CASCADE DEFERRABLE,
   name text NOT NULL UNIQUE,
   id integer NOT NULL UNIQUE,
-  corp text NOT NULL,
-  corpid integer NOT NULL,
+  corp text,
+  corpid integer,
   alliance text,
   allianceid integer
 );
