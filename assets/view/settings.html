@@ -3,6 +3,9 @@
     <p class="alert alert-info" ng-show="!ctrl.authenticated">
       To access account settings, please log in.
     </p>
+    <alert ng-repeat="alert in ctrl.alerts" type="{{alert.type}}" close="ctrl.closeAlert($index)">
+      {{alert.msg}}
+    </alert>
     <div ng-show="ctrl.authenticated">
       <h2>API keys</h2>
       <table class="table table-striped">

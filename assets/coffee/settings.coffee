@@ -19,6 +19,7 @@ angular.module 'eveindy'
         @apikeys = {}
         @newkey = {}
         @forms = {}
+        @alerts = []
         @$scope.$on 'login-status', @_updateLoginStatus
         if @Session.authenticated
           @_updateLoginStatus null, true
@@ -40,14 +41,28 @@ angular.module 'eveindy'
             @newkey = {}
             # Ignore nonexistent FormController (for tests)
             @forms.newkey?.$setPristine()
+          , (_) =>
+            @alerts.push
+              type: "danger"
+              msg: "Internal server error: unable to process key #{newkey.id}."
+            @newkey = {}
+            @forms.newkey?.$setPristine()
 
-      refreshKey: (key) =>
+      refreshKey: (key) ->
         key.processing = true
         key.refreshButton = "Refreshing…"
         @Session.refreshKey key
           .then (_) ->
             key.processing = false
             key.refreshButton = "Refresh"
-          , (_) ->
-            console.log "Hey, an error happened!"
+          , (_) =>
+            key.processing = false
+            key.refreshButton = "Refresh"
+            @alerts.push
+              type: "danger"
+              msg: "Internal server error: unable to process key #{key.id}."
+
+      closeAlert: (idx) ->
+        # Remove the specified alert from the array.
+        @alerts.splice(idx, 1)
   ]
