@@ -64,7 +64,7 @@ angular.module 'eveindy'
             @jitaPrices = response.data
             @recalculateMineralPrices()
 
-      _updateLoginStatus: () ->
+      _updateLoginStatus: () =>
         @authenticated = @Session.authenticated
         @chars = @Session.availableCharacters()
 
