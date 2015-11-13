@@ -206,4 +206,35 @@ const (
 	JOIN   availableCharacters a on a.id = b.charID
 	WHERE  charID = $2
 	`
+
+	// Assets
+
+	// Clear toon's assets.
+	clearAssetsStmt = `
+	DELETE FROM assets
+	WHERE apiKey = $1 AND charID = $2
+	`
+
+	// Insert an asset.
+	insertAssetStmt = `
+	INSERT INTO assets
+		(apiKey, charID, itemID, locationID, stationID, typeID, quantity, flag,
+		 unpackaged)
+	 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	`
+
+	// Get user's assets.
+	// Lowercase everything for sqlx.
+	getAssetsStmt = `
+	WITH availableCharacters AS (
+		SELECT id
+		FROM   characters
+		WHERE  userid = $1
+	)
+	SELECT apikey, charid, itemid, locationid, stationid, typeid, quantity, flag,
+	 			 unpackaged
+	FROM   assets b
+	JOIN   availableCharacters a on a.id = b.charID
+	WHERE  charID = $2
+	`
 )

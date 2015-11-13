@@ -81,4 +81,8 @@ type LocalDB interface {
 	// GetBlueprints retrieves a character's blueprints and adds them to the
 	// database.
 	GetBlueprints(key XMLAPIKey, charID int) error
+
+	// GetAssets retrieves a character's assets and adds them to the
+	// database.
+	GetAssets(key XMLAPIKey, charID int) error
 }

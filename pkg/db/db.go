@@ -55,6 +55,9 @@ type dbInterface struct {
 	clearBlueprintsStmt           *sqlx.Stmt
 	insertBlueprintStmt           *sqlx.Stmt
 	getBlueprintsStmt             *sqlx.Stmt
+	clearAssetsStmt               *sqlx.Stmt
+	insertAssetStmt               *sqlx.Stmt
+	getAssetsStmt                 *sqlx.Stmt
 
 	// Need access to EVE APIs.
 	xmlAPI evego.XMLAPI
@@ -106,6 +109,9 @@ func Interface(driver, resource string, xmlAPI evego.XMLAPI) (LocalDB, error) {
 		{&d.clearBlueprintsStmt, clearBlueprintsStmt},
 		{&d.insertBlueprintStmt, insertBlueprintStmt},
 		{&d.getBlueprintsStmt, getBlueprintsStmt},
+		{&d.clearAssetsStmt, clearAssetsStmt},
+		{&d.insertAssetStmt, insertAssetStmt},
+		{&d.getAssetsStmt, getAssetsStmt},
 	}
 
 	for _, s := range stmts {

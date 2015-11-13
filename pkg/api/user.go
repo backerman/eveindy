@@ -78,6 +78,15 @@ func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, dele
 				return
 			}
 
+			// Update assets.
+			err = localdb.GetAssets(*key, toon.ID)
+			if err != nil {
+				http.Error(w, `{"status": "Error", "error": "Database connection error (add assets)"}`,
+					http.StatusInternalServerError)
+				log.Printf("Got error in GetAssets: %v", err)
+				return
+			}
+
 			// Update blueprints.
 			err = localdb.GetBlueprints(*key, toon.ID)
 			if err != nil {

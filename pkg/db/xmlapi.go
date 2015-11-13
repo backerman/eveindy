@@ -302,3 +302,53 @@ func (d *dbInterface) CharacterBlueprints(userID, charID int) ([]evego.Blueprint
 	}
 	return results, nil
 }
+
+func (d *dbInterface) GetAssets(key XMLAPIKey, charID int) error {
+	k := &evego.XMLKey{
+		KeyID:            key.ID,
+		VerificationCode: key.VerificationCode,
+	}
+	// assetParent is a map of item IDs to their parent container.
+	assetParent := make(map[int]int)
+
+	assets, err := d.xmlAPI.Assets(k, charID)
+	if err != nil {
+		return err
+	}
+	tx, err := d.db.Beginx()
+	if err != nil {
+		return err
+	}
+	// Clear assets before inserting the API's information.
+	_, err = tx.Stmtx(d.clearAssetsStmt).Exec(key.ID, charID)
+	if err != nil {
+		return err
+	}
+	insertStmt := tx.Stmtx(d.insertAssetStmt)
+	// Set up queue of assets.
+	assetQueue := assets
+	var a evego.InventoryItem
+	for len(assetQueue) > 0 {
+		a, assetQueue = assetQueue[0], assetQueue[1:]
+		parentID, found := assetParent[a.ItemID]
+		if !found {
+			parentID = a.StationID
+		}
+		_, err := insertStmt.Exec(key.ID, charID, a.ItemID, parentID, a.StationID,
+			a.TypeID, a.Quantity, a.Flag, a.Unpackaged)
+		if err != nil {
+			log.Printf("Failed to insert asset %+v", a)
+			tx.Rollback()
+			return err
+		}
+		// If there are containers in this asset, prepend them to the queue.
+		if a.Contents != nil && len(a.Contents) > 0 {
+			// First, set their parents in our lookup map.
+			for _, item := range a.Contents {
+				assetParent[item.ItemID] = a.ItemID
+			}
+			assetQueue = append(a.Contents, assetQueue...)
+		}
+	}
+	return tx.Commit()
+}
