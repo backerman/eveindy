@@ -19,10 +19,12 @@ describe 'Controller: SettingsCtrl', () ->
   sessionService = undefined
   apiKeys = undefined
   scope = undefined
+  throwError = false
 
   beforeEach () ->
     inject (Server, $rootScope, $q) ->
       scope = $rootScope.$new()
+      throwError = false
       spyOn Server, 'deleteApiKey'
         .and.callFake (keyid) ->
           deferred = $q.defer()
@@ -34,10 +36,13 @@ describe 'Controller: SettingsCtrl', () ->
       spyOn Server, 'addApiKey'
         .and.callFake (key) ->
           deferred = $q.defer()
-          deferred.resolve
-            data:
-              status: 'OK'
-              characters: []
+          if throwError
+            deferred.reject 'ERROR! RUN!!!'
+          else
+            deferred.resolve
+              data:
+                status: 'OK'
+                characters: []
           deferred.promise
 
       spyOn Server, 'getLoginStatus'
@@ -97,6 +102,22 @@ describe 'Controller: SettingsCtrl', () ->
     expect(ctrl.apikeys.length).toEqual 4
     expect(k.id for k in ctrl.apikeys).toContain 666
     expect(ctrl.newkey).toEqual {}
+
+  it 'should handle failed API key adds', () ->
+    scope.$apply()
+    throwError = true
+    ctrl.newkey =
+      id: 666
+      userid: 101
+      vcode: "abcdefg"
+      label: "hijklmnop"
+    ctrl.addKey()
+    console.log 'Not yet applied.'
+    scope.$apply()
+    console.log 'Applied.'
+    expect(ctrl.alerts.length).toEqual 1
+    ctrl.closeAlert(0)
+    expect(ctrl.alerts.length).toEqual 0
 
   it 'should correctly handle login', () ->
     sessionService._getSessionStatus()

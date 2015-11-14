@@ -44,7 +44,7 @@ angular.module 'eveindy'
           , (_) =>
             @alerts.push
               type: "danger"
-              msg: "Internal server error: unable to process key #{newkey.id}."
+              msg: "Internal server error: unable to process key #{@newkey.id}."
             @newkey = {}
             @forms.newkey?.$setPristine()
 
