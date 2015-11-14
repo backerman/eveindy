@@ -17,6 +17,7 @@ angular.module 'eveindy'
     class BlueprintsCtrl
       constructor: (@Session, @$scope) ->
         @characters = []
+        @blueprints = []
         @selectedToon = null
         @$scope.$on 'login-status', @_updateLoginStatus
         if @Session.authenticated
@@ -25,14 +26,21 @@ angular.module 'eveindy'
       _updateLoginStatus: (_, isLoggedIn) =>
         @authenticated = isLoggedIn
         @getCharacters()
-        @selectedToon = @characters[0] if !@selectedToon
+        if !@selectedToon
+          @selectedToon = @characters[0]
+          @characterSelected()
 
       _getBlueprints: (toon) ->
-        
+        @Session.blueprints toon
+          .then (resp) =>
+            for bp in resp.blueprints
+              bp.NumRuns = '∞' if bp.IsOriginal
+              bp.Station = resp.stations[bp.StationID]
+            @blueprints = resp.blueprints
 
       getCharacters: () ->
         @characters = @Session.availableCharacters()
 
-      charactersSelected: () ->
-        _getBlueprints @selectedToon
+      characterSelected: () ->
+        @_getBlueprints @selectedToon
   ]

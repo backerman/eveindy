@@ -52,6 +52,7 @@ type dbInterface struct {
 	clearOutpostsStmt             *sqlx.Stmt
 	insertOutpostsStmt            *sqlx.Stmt
 	searchStationsStmt            *sqlx.Stmt
+	getStationStmt                *sqlx.Stmt
 	clearBlueprintsStmt           *sqlx.Stmt
 	insertBlueprintStmt           *sqlx.Stmt
 	getBlueprintsStmt             *sqlx.Stmt
@@ -106,6 +107,7 @@ func Interface(driver, resource string, xmlAPI evego.XMLAPI) (LocalDB, error) {
 		{&d.clearOutpostsStmt, clearOutpostsStmt},
 		{&d.insertOutpostsStmt, insertOutpostsStmt},
 		{&d.searchStationsStmt, searchStationsStmt},
+		{&d.getStationStmt, getStationStmt},
 		{&d.clearBlueprintsStmt, clearBlueprintsStmt},
 		{&d.insertBlueprintStmt, insertBlueprintStmt},
 		{&d.getBlueprintsStmt, getBlueprintsStmt},

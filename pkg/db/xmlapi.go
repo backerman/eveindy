@@ -254,6 +254,13 @@ func (d *dbInterface) RepopulateOutposts() error {
 	return tx.Commit()
 }
 
+func (d *dbInterface) StationForID(stationID int) (*evego.Station, error) {
+	stn := &evego.Station{}
+	row := d.getStationStmt.QueryRowx(stationID)
+	err := row.StructScan(stn)
+	return stn, err
+}
+
 func (d *dbInterface) GetBlueprints(key XMLAPIKey, charID int) error {
 	k := &evego.XMLKey{
 		KeyID:            key.ID,

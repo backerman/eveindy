@@ -25,11 +25,15 @@ CREATE TABLE eveindy.outposts (
 
 -- allstations: both outposts and stations, for foreign-key constraints
 CREATE OR REPLACE VIEW eveindy.allstations AS
-  SELECT "stationID", "stationName", "solarSystemID", "corporationID",
-         "itemName" "corporationName", "reprocessingEfficiency"
+  SELECT "stationID", "stationName", "solarSystemID", "constellationID",
+         "regionID", "corporationID", "itemName" "corporationName",
+         "reprocessingEfficiency"
   FROM   "staStations" s
   JOIN   "invNames" n ON n."itemID" = s."corporationID"
   UNION ALL
-  SELECT stationID, stationName, systemID, corporationID, corporationName,
+  SELECT stationID, stationName, systemID, "constellationID", "regionID",
+         corporationID, corporationName,
          0 :: double precision reprocessingEfficiency
-  FROM eveindy.outposts;
+  FROM eveindy.outposts o
+  JOIN "mapSolarSystems" s ON s."solarSystemID" = o.systemID
+  ;

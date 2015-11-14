@@ -87,4 +87,8 @@ angular.module 'eveindy'
 
       logout: () ->
         @$http.post "/logout"
+
+      # Blueprints!
+      getBlueprints: (characterID) ->
+        @$http.get "/blueprints/#{characterID}"
       ]

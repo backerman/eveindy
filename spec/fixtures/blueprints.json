@@ -1,0 +1,78 @@
+{
+  "blueprints": [
+    {
+      "ItemID": 1013593690156,
+      "LocationID": 0,
+      "StationID": 60013483,
+      "TypeID": 939,
+      "TypeName": "Navitas Blueprint",
+      "Quantity": 1,
+      "Flag": 4,
+      "TimeEfficiency": 14,
+      "MaterialEfficiency": 9,
+      "NumRuns": 4,
+      "IsOriginal": false
+    },
+    {
+      "ItemID": 1013606836651,
+      "LocationID": 0,
+      "StationID": 60013483,
+      "TypeID": 1137,
+      "TypeName": "Antimatter Charge S Blueprint",
+      "Quantity": 1,
+      "Flag": 4,
+      "TimeEfficiency": 14,
+      "MaterialEfficiency": 9,
+      "NumRuns": 170,
+      "IsOriginal": false
+    },
+    {
+      "ItemID": 1014094131291,
+      "LocationID": 0,
+      "StationID": 60013483,
+      "TypeID": 4410,
+      "TypeName": "Target Spectrum Breaker Blueprint",
+      "Quantity": 1,
+      "Flag": 4,
+      "TimeEfficiency": 0,
+      "MaterialEfficiency": 0,
+      "NumRuns": 3,
+      "IsOriginal": false
+    },
+    {
+      "ItemID": 1019087493865,
+      "LocationID": 0,
+      "StationID": 60010300,
+      "TypeID": 882,
+      "TypeName": "Depleted Uranium S Blueprint",
+      "Quantity": 1,
+      "Flag": 64,
+      "TimeEfficiency": 20,
+      "MaterialEfficiency": 10,
+      "NumRuns": -1,
+      "IsOriginal": true
+    }
+  ],
+  "stations": {
+    "60013483": {
+      "Name": "RF-GGF V - Intaki Syndicate Academy",
+      "ID": 60013483,
+      "SystemID": 30003333,
+      "ConstellationID": 20000485,
+      "RegionID": 10000041,
+      "CorporationID": 1000147,
+      "Corporation": "Intaki Syndicate",
+      "ReprocessingEfficiency": 0.5
+    },
+    "60010300": {
+      "Name": "Alentene VI - Moon 6 - Roden Shipyards Warehouse",
+      "ID": 60010300,
+      "SystemID": 30005304,
+      "ConstellationID": 20000776,
+      "RegionID": 10000068,
+      "CorporationID": 1000102,
+      "Corporation": "Roden Shipyards",
+      "ReprocessingEfficiency": 0.5
+    }
+  }
+}

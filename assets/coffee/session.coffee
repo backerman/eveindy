@@ -89,4 +89,10 @@ angular.module 'eveindy'
         reduceFn = (chars, key) ->
           if key.characters then [chars..., key.characters...] else chars
         @apikeys.reduce reduceFn, []
+
+      # Get a character's blueprints.
+      blueprints: (char) ->
+        @Server.getBlueprints char.id
+          .then (response) ->
+            response.data
   ]

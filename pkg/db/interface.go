@@ -78,6 +78,10 @@ type LocalDB interface {
 	// adding %s on either side.
 	SearchStations(search string) ([]evego.Station, error)
 
+	// StationForID gets the station or outpost corresponding to the passed
+	// ID.
+	StationForID(stationID int) (*evego.Station, error)
+
 	// GetBlueprints retrieves a character's blueprints and adds them to the
 	// database.
 	GetBlueprints(key XMLAPIKey, charID int) error
@@ -85,4 +89,8 @@ type LocalDB interface {
 	// GetAssets retrieves a character's assets and adds them to the
 	// database.
 	GetAssets(key XMLAPIKey, charID int) error
+
+	// CharacterBlueprints returns a character's blueprints from the local
+	// database.
+	CharacterBlueprints(userID, charID int) ([]evego.BlueprintItem, error)
 }

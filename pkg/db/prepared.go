@@ -170,10 +170,17 @@ const (
 	SELECT   "stationName", "stationID", "solarSystemID", "corporationID", "corporationName",
 	         "constellationID", "regionID", "reprocessingEfficiency"
 	FROM     allStations o
-	JOIN     "mapSolarSystems" s USING("solarSystemID")
 	WHERE    LOWER("stationName") LIKE LOWER($1)
 	ORDER BY "stationName"
 	LIMIT    10
+	`
+
+	// Get a specified station or outpost by ID.
+	getStationStmt = `
+	SELECT   "stationName", "stationID", "solarSystemID", "constellationID", "regionID",
+					 "corporationID", "corporationName", "reprocessingEfficiency"
+	FROM     allStations o
+	WHERE    "stationID" = $1
 	`
 
 	// Blueprints
@@ -200,10 +207,11 @@ const (
 		FROM   characters
 		WHERE  userid = $1
 	)
-	SELECT charid, itemid, stationid, typeid, quantity, flag,
+	SELECT itemid, stationid, typeid, "typeName" typename, quantity, flag,
 	 			 materialefficiency, timeefficiency, numruns, isoriginal
 	FROM   blueprints b
 	JOIN   availableCharacters a on a.id = b.charID
+	JOIN   "invTypes" t ON b.typeid = t."typeID"
 	WHERE  charID = $2
 	`
 
@@ -231,7 +239,7 @@ const (
 		FROM   characters
 		WHERE  userid = $1
 	)
-	SELECT apikey, charid, itemid, locationid, stationid, typeid, quantity, flag,
+	SELECT apikey, itemid, locationid, stationid, typeid, quantity, flag,
 	 			 unpackaged
 	FROM   assets b
 	JOIN   availableCharacters a on a.id = b.charID
