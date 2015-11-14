@@ -29,55 +29,31 @@ describe 'Controller: ReproController', () ->
         fn()
 
     inject ($controller, Server, _$rootScope_, $q) ->
+
+      # Hook a call on our Server to return static information.
+      fakeReturn = (serverMethod, jsonReturned) ->
+        spyOn Server, serverMethod
+          .and.callFake () ->
+            deferred = $q.defer()
+            deferred.resolve
+              data: JSON.parse JSON.stringify jsonReturned
+            deferred.promise
+
       scope = _$rootScope_.$new()
+
       jitaMinerals = fixture.load('jitaMinerals.json')
-      # Hook calls on our Server to return static information.
-      spyOn Server, 'getReprocessPrices'
-        .and.callFake () ->
-          deferred = $q.defer()
-          deferred.resolve
-            data: JSON.parse JSON.stringify jitaMinerals
-          deferred.promise
-
       autocomplete = fixture.load('autocomplete.json')
-      spyOn Server, 'getAutocomplete'
-        .and.callFake () ->
-          deferred = $q.defer()
-          deferred.resolve
-            data: JSON.parse JSON.stringify autocomplete
-          deferred.promise
-
       pastebinTest = fixture.load('pastebin.json')
-      spyOn Server, 'parsePastebin'
-        .and.callFake () ->
-          deferred = $q.defer()
-          deferred.resolve
-            data: JSON.parse JSON.stringify pastebinTest
-          deferred.promise
-
       marketOutput = fixture.load('marketOutput.json')
-      spyOn Server, 'searchStationMarket'
-        .and.callFake () ->
-          deferred = $q.defer()
-          deferred.resolve
-            data: JSON.parse JSON.stringify marketOutput
-          deferred.promise
-
       reprocessOutput = fixture.load('reprocessOutput.json')
-      spyOn Server, 'reprocessItems'
-        .and.callFake () ->
-          deferred = $q.defer()
-          deferred.resolve
-            data: JSON.parse JSON.stringify reprocessOutput
-          deferred.promise
-
       sessionInfo = fixture.load('session.json')
-      spyOn Server, 'getLoginStatus'
-        .and.callFake () ->
-          deferred = $q.defer()
-          deferred.resolve
-            data: JSON.parse JSON.stringify sessionInfo
-          deferred.promise
+
+      fakeReturn 'getReprocessPrices', jitaMinerals
+      fakeReturn 'getAutocomplete', autocomplete
+      fakeReturn 'parsePastebin', pastebinTest
+      fakeReturn 'searchStationMarket', marketOutput
+      fakeReturn 'reprocessItems', reprocessOutput
+      fakeReturn 'getLoginStatus', sessionInfo
 
       # getSkills and getEffectiveStandings will be called indirectly.
       spyOn Server, 'getSkills'
