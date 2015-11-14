@@ -18,6 +18,7 @@ CREATE TABLE eveindy.blueprints (
   apikey integer NOT NULL,
   itemID bigint NOT NULL,
   stationID integer NOT NULL,
+  locationID bigint NOT NULL,
   typeID integer NOT NULL,
   quantity integer NOT NULL,
   flag integer NOT NULL,
@@ -42,6 +43,7 @@ CREATE TABLE eveindy.blueprints (
 CREATE OR REPLACE FUNCTION blueprints_insert_check() RETURNS TRIGGER AS $$
 DECLARE
   station integer;
+  parent bigint;
 BEGIN
   SELECT "stationID" from eveindy.allstations
   WHERE  "stationID" = NEW.stationID
@@ -50,9 +52,20 @@ BEGIN
   THEN
     RAISE EXCEPTION 'location ID % is invalid', NEW.stationID;
   END IF;
+  IF NEW.stationID <> NEW.locationID
+  THEN
+    SELECT itemID from eveindy.assets
+    WHERE itemID = NEW.locationID
+    INTO parent;
+    IF parent IS NULL
+    THEN
+      RAISE EXCEPTION 'parent ID % is invalid', NEW.locationID;
+    END IF;
+  END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER blueprints_insert AFTER INSERT OR UPDATE ON eveindy.blueprints
+CREATE CONSTRAINT TRIGGER blueprints_insert AFTER INSERT OR UPDATE ON eveindy.blueprints
+INITIALLY DEFERRED
 FOR EACH ROW EXECUTE PROCEDURE blueprints_insert_check();

@@ -2,7 +2,7 @@
   "blueprints": [
     {
       "ItemID": 1013593690156,
-      "LocationID": 0,
+      "LocationID": 60013483,
       "StationID": 60013483,
       "TypeID": 939,
       "TypeName": "Navitas Blueprint",
@@ -15,7 +15,7 @@
     },
     {
       "ItemID": 1013606836651,
-      "LocationID": 0,
+      "LocationID": 60013483,
       "StationID": 60013483,
       "TypeID": 1137,
       "TypeName": "Antimatter Charge S Blueprint",
@@ -28,7 +28,7 @@
     },
     {
       "ItemID": 1014094131291,
-      "LocationID": 0,
+      "LocationID": 60013483,
       "StationID": 60013483,
       "TypeID": 4410,
       "TypeName": "Target Spectrum Breaker Blueprint",
@@ -41,7 +41,7 @@
     },
     {
       "ItemID": 1019087493865,
-      "LocationID": 0,
+      "LocationID": 60010300,
       "StationID": 60010300,
       "TypeID": 882,
       "TypeName": "Depleted Uranium S Blueprint",

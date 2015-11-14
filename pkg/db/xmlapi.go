@@ -281,9 +281,9 @@ func (d *dbInterface) GetBlueprints(key XMLAPIKey, charID int) error {
 	}
 	insertStmt := tx.Stmtx(d.insertBlueprintStmt)
 	for _, bp := range blueprints {
-		_, err := insertStmt.Exec(key.ID, charID, bp.ItemID, bp.StationID, bp.TypeID,
-			bp.Quantity, bp.Flag, bp.MaterialEfficiency, bp.TimeEfficiency, bp.NumRuns,
-			bp.IsOriginal)
+		_, err := insertStmt.Exec(key.ID, charID, bp.ItemID, bp.StationID, bp.LocationID,
+			bp.TypeID, bp.Quantity, bp.Flag, bp.MaterialEfficiency, bp.TimeEfficiency,
+			bp.NumRuns, bp.IsOriginal)
 		if err != nil {
 			log.Printf("Failed to insert blueprint %+v", bp)
 			tx.Rollback()

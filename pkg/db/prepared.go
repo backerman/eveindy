@@ -194,9 +194,9 @@ const (
 	// Insert a blueprint.
 	insertBlueprintStmt = `
 	INSERT INTO blueprints
-		(apiKey, charID, itemID, stationID, typeID, quantity, flag,
+		(apiKey, charID, itemID, stationID, locationID, typeID, quantity, flag,
 		 materialEfficiency, timeEfficiency, numRuns, isOriginal)
-	 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+	 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
 
 	// Get user's blueprints.
@@ -207,8 +207,8 @@ const (
 		FROM   characters
 		WHERE  userid = $1
 	)
-	SELECT itemid, stationid, typeid, "typeName" typename, quantity, flag,
-	 			 materialefficiency, timeefficiency, numruns, isoriginal
+	SELECT itemid, stationid, locationid, typeid, "typeName" typename, quantity,
+				 flag, materialefficiency, timeefficiency, numruns, isoriginal
 	FROM   blueprints b
 	JOIN   availableCharacters a on a.id = b.charID
 	JOIN   "invTypes" t ON b.typeid = t."typeID"
