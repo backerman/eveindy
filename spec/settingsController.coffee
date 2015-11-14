@@ -45,6 +45,19 @@ describe 'Controller: SettingsCtrl', () ->
                 characters: []
           deferred.promise
 
+      spyOn Server, 'refreshApiKey'
+        .and.callFake (key) ->
+          sessionInfo = JSON.parse JSON.stringify fixture.load 'session.json'
+          deferred = $q.defer()
+          if throwError
+            deferred.reject 'ERROR! RUN!!!'
+          else
+            deferred.resolve
+              data:
+                status: 'OK'
+                characters: sessionInfo.apiKeys[0].characters
+          deferred.promise
+
       spyOn Server, 'getLoginStatus'
         .and.callFake () ->
           deferred = $q.defer()
@@ -112,9 +125,7 @@ describe 'Controller: SettingsCtrl', () ->
       vcode: "abcdefg"
       label: "hijklmnop"
     ctrl.addKey()
-    console.log 'Not yet applied.'
     scope.$apply()
-    console.log 'Applied.'
     expect(ctrl.alerts.length).toEqual 1
     ctrl.closeAlert(0)
     expect(ctrl.alerts.length).toEqual 0
@@ -130,3 +141,20 @@ describe 'Controller: SettingsCtrl', () ->
     scope.$apply()
     expect(ctrl.authenticated).toBeFalsy()
     expect(ctrl.apikeys.length).toEqual 0
+
+  it 'should handle API key refresh', () ->
+    scope.$apply()
+    expect(ctrl.apikeys[0].characters.length).toEqual 2
+    ctrl.apikeys[0].characters = []
+    ctrl.refreshKey(ctrl.apikeys[0])
+    scope.$apply()
+    expect(ctrl.apikeys[0].characters.length).toEqual 2
+
+  it 'should handle API key refresh failure', () ->
+    scope.$apply()
+    throwError = true
+    ctrl.refreshKey(ctrl.apikeys[0])
+    scope.$apply()
+    expect(ctrl.alerts.length).toEqual 1
+    ctrl.closeAlert(0)
+    expect(ctrl.alerts.length).toEqual 0
