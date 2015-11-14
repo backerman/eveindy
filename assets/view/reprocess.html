@@ -1,7 +1,7 @@
 <!-- Reprocessing bits -->
 <div class="row">
   <div class="col-md-8">
-    <p class="well" collapse="ctrl.hidePasteInput">
+    <p class="well" uib-collapse="ctrl.hidePasteInput">
       Paste your cargo hold below.
     </p>
     <script type="text/ng-template" id="station.html">
@@ -16,12 +16,12 @@
       </a>
     </script>
     <form ng-submit="ctrl.submitPaste()"
-    collapse="ctrl.hidePasteInput" name="pastebinForm">
+    uib-collapse="ctrl.hidePasteInput" name="pastebinForm">
       <div class="form-group">
         <label for="inv_station">Where are you?</label>
         <input type="text" name="station" id="inv_station" size="20"
         placeholder="Enter a station name." ng-model="ctrl.location"
-        typeahead="stn as stn.name for stn in ctrl.getStations($viewValue)"
+        uib-typeahead="stn as stn.name for stn in ctrl.getStations($viewValue)"
         class="form-control" typeahead-wait-ms="50" typeahead-min-length="3"
         typeahead-template-url="station.html" typeahead-editable="false"
         typeahead-on-select="ctrl.locationSelected($item)" required
@@ -82,7 +82,7 @@
           You are at <strong ng-bind="ctrl.location.name"></strong>.
         </p>
       </div>
-      <div id="inv_status" collapse="!ctrl.searchingMarket" class="bg-info">
+      <div id="inv_status" uib-collapse="!ctrl.searchingMarket" class="bg-info">
         <p class="text-info">
           <span class="spinner spinner-xs spinner-inline"></span>
           Searching market; please wait.
@@ -109,7 +109,7 @@
           <tr ng-repeat="item in ctrl.inventory">
             <td ng-bind="item.Quantity"></td>
             <td ng-bind="item.Item.Name"></td>
-            <td class="isk" tooltip-html="item.buyInfo" tooltip-append-to-body="true" ng-bind="ctrl.formatPrice(item)"
+            <td class="isk" uib-tooltip-html="item.buyInfo" tooltip-append-to-body="true" ng-bind="ctrl.formatPrice(item)"
             ng-class="{'no-sale': item.noSale, 'better-price': item.buyPrice >= item.reproValue }"></td>
             <td class="isk" ng-bind="ctrl.formatRepro(item)"
             ng-class="{'no-sale': item.noReprocess, 'better-price': item.buyPrice <= item.reproValue }"></td>
@@ -124,15 +124,15 @@
         <label>Calculate reprocessed value using:</label>
         <div id="btn_pricecalc" class="btn-group">
           <button class="btn btn-default" ng-change="ctrl.updatePriceCalc()"
-            ng-model="ctrl.priceCalc" btn-radio="'buy'">
+            ng-model="ctrl.priceCalc" uib-btn-radio="'buy'">
             Buy
           </button>
           <button class="btn btn-default" ng-change="ctrl.updatePriceCalc()"
-            ng-model="ctrl.priceCalc" btn-radio="'midpoint'">
+            ng-model="ctrl.priceCalc" uib-btn-radio="'midpoint'">
             Midpoint
           </button>
           <button class="btn btn-default" ng-change="ctrl.updatePriceCalc()"
-            ng-model="ctrl.priceCalc" btn-radio="'sell'">
+            ng-model="ctrl.priceCalc" uib-btn-radio="'sell'">
             Sell
           </button>
         </div>
@@ -146,11 +146,11 @@
         ng-change="ctrl.recalculateMineralPrices()">
       </div>
     </div>
-    <p collapse="ctrl.imputedArray.length">
+    <p uib-collapse="ctrl.imputedArray.length">
       <span class="spinner spinner-xs spinner-inline"></span>
       Getting mineral prices...
     </p>
-    <p collapse="!ctrl.imputedArray.length">
+    <p uib-collapse="!ctrl.imputedArray.length">
       Imputed mineral prices (based on Jita {{ctrl.priceCalc}}):
       <table class="table table-striped">
         <tr ng-repeat="item in ctrl.imputedArray | orderBy:'name'">
