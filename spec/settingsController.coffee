@@ -21,48 +21,48 @@ describe 'Controller: SettingsCtrl', () ->
   scope = undefined
 
   beforeEach () ->
-    inject (Server, $rootScope) ->
+    inject (Server, $rootScope, $q) ->
       scope = $rootScope.$new()
       spyOn Server, 'deleteApiKey'
         .and.callFake (keyid) ->
-          then: (callback) ->
-            callback
+          deferred = $q.defer()
+          deferred.resolve
+            data:
               status: 'OK'
+          deferred.promise
 
       spyOn Server, 'addApiKey'
         .and.callFake (key) ->
-          then: (callback) ->
-            callback
-              data:
-                status: 'OK'
-                characters: []
-            # then is being chained, so we need to ensure it also returns
-            # a fake promise.
-            then: (cb) ->
-              cb()
+          deferred = $q.defer()
+          deferred.resolve
+            data:
+              status: 'OK'
+              characters: []
+          deferred.promise
 
       spyOn Server, 'getLoginStatus'
         .and.callFake () ->
-          then: (callback) ->
-            # fixture.load only loads a given file once - so make sure each test
-            # has its own API keys to isolate individual tests.
-            sessionInfo = JSON.parse JSON.stringify fixture.load('session.json')
-            response =
-              data: sessionInfo
-            callback response
-            then: (cb) ->
-              cb()
+          deferred = $q.defer()
+          # fixture.load only loads a given file once - so make sure each test
+          # has its own API keys to isolate individual tests.
+          sessionInfo = JSON.parse JSON.stringify fixture.load('session.json')
+          deferred.resolve
+            data: sessionInfo
+          deferred.promise
 
       spyOn Server, 'logout'
-        .and.returnValue
-          then: (callback) ->
-            callback
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data:
               status: 'OK'
+          deferred.promise
 
       spyOn Server, 'getSkills'
-        .and.returnValue
-          then: (callback) ->
-            callback []
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve []
+          deferred.promise
 
       serverService = Server
 
@@ -74,14 +74,18 @@ describe 'Controller: SettingsCtrl', () ->
         Session: sessionService
 
   it 'should get a user\'s API keys', () ->
+    # $apply() needs to be called to execute asynchronous methods.
+    scope.$apply()
     expect((k.id for k in ctrl.apikeys).sort()).toEqual [123456, 234567, 345678]
 
-  it 'should remove a deleted key from its local model', () ->
+  it 'should remove a deleted key from its local model', inject () ->
     ctrl.deleteKey 234567
+    scope.$apply()
     expect(k.id for k in ctrl.apikeys).not.toContain 234567
     expect(ctrl.apikeys.length).toEqual 2
 
   it 'should add keys to the user\'s account', () ->
+    scope.$apply()
     expect(ctrl.apikeys.length).toEqual 3
     ctrl.newkey =
       id: 666
@@ -89,16 +93,19 @@ describe 'Controller: SettingsCtrl', () ->
       vcode: "abcdefg"
       label: "hijklmnop"
     ctrl.addKey()
+    scope.$apply()
     expect(ctrl.apikeys.length).toEqual 4
     expect(k.id for k in ctrl.apikeys).toContain 666
     expect(ctrl.newkey).toEqual {}
 
   it 'should correctly handle login', () ->
     sessionService._getSessionStatus()
+    scope.$apply()
     expect(ctrl.authenticated).toBeTruthy()
     expect(ctrl.apikeys.length).toEqual 3
 
   it 'should correctly handle logout', () ->
     sessionService.logout()
+    scope.$apply()
     expect(ctrl.authenticated).toBeFalsy()
     expect(ctrl.apikeys.length).toEqual 0

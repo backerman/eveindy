@@ -18,7 +18,7 @@ describe 'Controller: ReproController', () ->
   serverService = undefined
   jitaMinerals = undefined
   pastebinTest = undefined
-  $scope = undefined
+  scope = undefined
 
   beforeEach () ->
     # $timeout is used in the code under test only because of a workaround
@@ -28,69 +28,88 @@ describe 'Controller: ReproController', () ->
       $provide.constant '$timeout', (fn) ->
         fn()
 
-    inject ($controller, Server, _$rootScope_) ->
-      $scope = _$rootScope_.$new()
+    inject ($controller, Server, _$rootScope_, $q) ->
+      scope = _$rootScope_.$new()
       jitaMinerals = fixture.load('jitaMinerals.json')
       # Hook calls on our Server to return static information.
       spyOn Server, 'getReprocessPrices'
-        .and.returnValue
-          then: (callback) ->
-            response =
-              data: JSON.parse JSON.stringify jitaMinerals
-            callback response
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data: JSON.parse JSON.stringify jitaMinerals
+          deferred.promise
 
       autocomplete = fixture.load('autocomplete.json')
       spyOn Server, 'getAutocomplete'
-        .and.returnValue
-          then: (callback) ->
-            response =
-              data: JSON.parse JSON.stringify autocomplete
-            callback response
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data: JSON.parse JSON.stringify autocomplete
+          deferred.promise
 
       pastebinTest = fixture.load('pastebin.json')
       spyOn Server, 'parsePastebin'
-        .and.returnValue
-          then: (callback) ->
-            response =
-              data: JSON.parse JSON.stringify pastebinTest
-            callback response
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data: JSON.parse JSON.stringify pastebinTest
+          deferred.promise
 
       marketOutput = fixture.load('marketOutput.json')
       spyOn Server, 'searchStationMarket'
-        .and.returnValue
-          then: (callback) ->
-            response =
-              data: JSON.parse JSON.stringify marketOutput
-            callback response
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data: JSON.parse JSON.stringify marketOutput
+          deferred.promise
 
       reprocessOutput = fixture.load('reprocessOutput.json')
       spyOn Server, 'reprocessItems'
-        .and.returnValue
-          then: (callback) ->
-            response =
-              data: reprocessOutput
-            callback response
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data: JSON.parse JSON.stringify reprocessOutput
+          deferred.promise
 
       sessionInfo = fixture.load('session.json')
       spyOn Server, 'getLoginStatus'
-        .and.returnValue
-          then: (callback) ->
-            response =
-              data: sessionInfo
-            callback response
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data: JSON.parse JSON.stringify sessionInfo
+          deferred.promise
+
+      # getSkills and getEffectiveStandings will be called indirectly.
+      spyOn Server, 'getSkills'
+        .and.callFake (charID, skillGroup) ->
+          deferred = $q.defer()
+          deferred.resolve
+            data: []
+          deferred.promise
+
+      spyOn Server, 'getEffectiveStandings'
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data:
+              standing: 0.00
+          deferred.promise
 
       serverService = Server
       ctrl = $controller 'ReprocessCtrl',
-        $scope: $scope
+        $scope: scope
 
   it 'should get Jita mineral prices', () ->
+    scope.$apply()
     expect(serverService.getReprocessPrices).toHaveBeenCalled()
     expect(serverService.getReprocessPrices.calls.count()).toEqual 1
 
   it 'should populate the correct arrays', () ->
+    scope.$apply()
     expect(ctrl.jitaPrices).toEqual(jitaMinerals)
 
   it 'should correctly calculate midpoint values', () ->
+    scope.$apply()
     midpoints =
       Isogen: 137.93
       Megacyte: 717.00
@@ -112,6 +131,7 @@ describe 'Controller: ReproController', () ->
       Zydrine: 400.01
     ctrl.priceCalc = 'buy'
     ctrl.updatePriceCalc()
+    scope.$apply()
     expect(ctrl.imputed).toEqual(buy)
 
   it 'should correctly calculate sell values', () ->
@@ -125,6 +145,7 @@ describe 'Controller: ReproController', () ->
       Zydrine: 414.20
     ctrl.priceCalc = 'sell'
     ctrl.updatePriceCalc()
+    scope.$apply()
     expect(ctrl.imputed).toEqual(sell)
 
   it 'should correctly calculate midpoint values with a multiplier', () ->
@@ -138,12 +159,16 @@ describe 'Controller: ReproController', () ->
       Pyerite: 122.15
       Tritanium: 58.55
       Zydrine: 4071.05
+    scope.$apply()
     expect(ctrl.imputed).toEqual(midpoints)
 
   it 'should process autocomplete results', () ->
     testSystem = 'Mir'
-    response = ctrl.getStations(testSystem)
-
+    response = []
+    ctrl.getStations(testSystem)
+      .then (result) ->
+        response = result
+    scope.$apply()
     expect(response[0].class).toEqual 'security-null'
     expect(response[0].reprocessingEfficiency).toEqual 50
     expect(response[1].class).toEqual 'security-low'
@@ -152,6 +177,7 @@ describe 'Controller: ReproController', () ->
     expect(response[7].reprocessingEfficiency).toEqual 30
 
   it 'should parse station information', () ->
+    scope.$apply()
     testStation =
       constellation: "Ambrye"
       id: 60002479
@@ -164,11 +190,8 @@ describe 'Controller: ReproController', () ->
       systemName: "Mirilene"
       class: "security-high"
 
-    sessionInfo = fixture.load('session.json')
-    ctrl.selectedToon = sessionInfo.apiKeys[0].characters[0]
-    ctrl.selectedToon.skills = []
     ctrl.locationSelected(testStation)
-
+    scope.$apply()
     expect(ctrl.corporationName).toEqual 'Expert Distribution'
     expect(ctrl.stationID).toEqual 60002479
     expect(ctrl.stationType).toEqual 'npc'
@@ -186,10 +209,12 @@ describe 'Controller: ReproController', () ->
       security: 0.779691
       systemName: "Mirilene"
       class: "security-high"
-
+    scope.$apply()
     ctrl.locationSelected(testStation)
+    scope.$apply()
     ctrl.standing = 0.00
     ctrl.updateTaxRate()
+    scope.$apply()
     expect(ctrl.taxRate).toEqual 5.00
 
     ctrl.standing = 3.00
@@ -213,8 +238,10 @@ describe 'Controller: ReproController', () ->
       systemName: "Mirilene"
       class: "security-high"
     ctrl.pastebin = "This is ignored so do whatever."
+    scope.$apply()
     ctrl.locationSelected(testStation)
     ctrl.submitPaste()
+    scope.$apply()
     # Create copy of inventory with only the bits we care about.
     myInventory = []
     for item in ctrl.inventory
