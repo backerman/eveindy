@@ -34,7 +34,7 @@
             <span class="icon-bar"></span>
           </button>
         </div>
-        <div class="collapse navbar-collapse" collapse="!isShown">
+        <div class="uib-collapse navbar-collapse" uib-collapse="!isShown">
           <ul class="nav navbar-nav">
             <li ng-class="{active: view==='reprocess'}" id="navReprocess">
               <a href="#/">Reprocess</a>
@@ -48,13 +48,13 @@
               <img src="image/EVE_SSO_Login_Buttons_Small_White.png"
               alt="Sign on (EVE SSO)" />
             </a></li>
-            <li class="dropdown" ng-show="mctrl.authenticated" dropdown>
-              <a href="#" class="dropdown-toggle" dropdown-toggle
+            <li class="dropdown" ng-show="mctrl.authenticated" uib-dropdown>
+              <a href="#" class="dropdown-toggle" uib-dropdown-toggle
                   role="button" aria-haspopup="true" aria-expanded="false">
                 <span class="glyphicon glyphicon-user"></span>
                 <span class="caret"</span>
               </a>
-              <ul class="dropdown-menu">
+              <ul class="uib-dropdown-menu">
                 <li><a href="#" ng-click="mctrl.logout()">Log out</a></li>
               </ul>
             </li>
