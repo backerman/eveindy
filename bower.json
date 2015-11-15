@@ -21,7 +21,8 @@
     "bootstrap": "~3.3.1",
     "angular-route": "~1.4.7",
     "angular-mocks": "~1.4.7",
-    "angular-bootstrap": "~0.14.3"
+    "angular-bootstrap": "~0.14.3",
+    "angular-datatables": "~0.5.1"
   },
   "devDependencies": {
     "less-elements": "*"

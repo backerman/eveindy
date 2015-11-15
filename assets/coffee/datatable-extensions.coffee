@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# N.B.: This file is where our modules are defined, and since the
-# CoffeeScript files are included in lexicographical order, nothing
-# should be named as to come before app.coffee.
+jQuery.extend jQuery.fn.dataTableExt.oSort,
+  "numeric-inf-pre": (a) ->
+    if a is '∞' then +Infinity else parseFloat a
 
-angular.module 'eveindy', [
-    'ui.bootstrap'
-    'ngRoute'
-    'datatables'
-    'datatables.bootstrap'
-  ]
+  "numeric-inf-asc": (a, b) ->
+    ((a < b) ? -1 : ((a > b) ? 1 : 0))
+
+  "numeric-inf-desc": (a, b) ->
+    ((a < b) ? 1 : ((a > b) ? -1 : 0))

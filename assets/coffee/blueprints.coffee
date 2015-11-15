@@ -13,12 +13,18 @@
 # limitations under the License.
 
 angular.module 'eveindy'
-  .controller 'BlueprintsCtrl', [ 'Session', '$scope'
+  .controller 'BlueprintsCtrl', [ 'Session', '$scope', 'DTOptionsBuilder'
     class BlueprintsCtrl
-      constructor: (@Session, @$scope) ->
+      constructor: (@Session, @$scope, @DTOptionsBuilder) ->
         @characters = []
         @blueprints = []
         @selectedToon = null
+        @dtOptions = @DTOptionsBuilder.newOptions()
+        @dtColumnDefs = [
+          type: 'numeric-inf'
+          targets: 2
+        ]
+
         @$scope.$on 'login-status', @_updateLoginStatus
         if @Session.authenticated
           @_updateLoginStatus null, true

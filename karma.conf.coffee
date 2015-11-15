@@ -23,10 +23,15 @@ module.exports = (config) ->
     jsonFixturesPreprocessor:
       variableName: '__json__'
     files: [
+      'bower_components/jquery/dist/jquery.js'
       'bower_components/angular/angular.js'
+      'bower_components/datatables/media/js/jquery.dataTables.js'
+      'bower_components/datatables/media/js/dataTables.bootstrap.js'
       'bower_components/angular-route/angular-route.js'
       'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
       'bower_components/angular-mocks/angular-mocks.js'
+      'bower_components/angular-datatables/dist/angular-datatables.js'
+      'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js'
       'assets/coffee/*.coffee'
       'spec/*.coffee'
       'spec/fixtures/*.json'

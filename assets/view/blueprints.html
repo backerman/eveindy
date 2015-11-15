@@ -8,24 +8,15 @@
       </select>
     </div>
     <div class="blueprints">
-      <table class="table table-striped">
+      <table class="table table-striped" datatable="ng" dt-options="ctrl.dtOptions"
+      dt-column-defs="ctrl.dtColumnDefs">
         <thead>
           <tr>
-            <th>
-              Type
-            </th>
-            <th>
-              Location
-            </th>
-            <th>
-              # Runs
-            </th>
-            <th>
-              ME
-            </th>
-            <th>
-              TE
-            </th>
+            <th>Type</th>
+            <th>Location</th>
+            <th># Runs</th>
+            <th>ME</th>
+            <th>TE</th>
           </tr>
         </thead>
         <tbody>
