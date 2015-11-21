@@ -126,16 +126,13 @@ gulp.task 'scripts', ['lint'], ->
     .pipe gulp.dest config.dest
 
 gulp.task 'html', ['less'], ->
-  assets = useref.assets()
   gulp.src config.htmlSrc
     # Parse template
     .pipe template {development: config.development}
     .on 'error', notify.onError (err) ->
       "Template error: #{err.message}"
-    .pipe assets
     # Minify iff in production
     .pipe gulpif !config.development, productionTasks()
-    .pipe assets.restore()
     .pipe useref()
     .pipe gulp.dest config.dest
 
