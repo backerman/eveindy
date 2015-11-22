@@ -183,38 +183,6 @@ const (
 	WHERE    "stationID" = $1
 	`
 
-	// Blueprints
-
-	// Clear toon's blueprints.
-	clearBlueprintsStmt = `
-	DELETE FROM blueprints
-	WHERE apiKey = $1 AND charID = $2
-	`
-
-	// Insert a blueprint.
-	insertBlueprintStmt = `
-	INSERT INTO blueprints
-		(apiKey, charID, itemID, stationID, locationID, typeID, quantity, flag,
-		 materialEfficiency, timeEfficiency, numRuns, isOriginal)
-	 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-	`
-
-	// Get user's blueprints.
-	// Lowercase everything for sqlx.
-	getBlueprintsStmt = `
-	WITH availableCharacters AS (
-		SELECT id
-		FROM   characters
-		WHERE  userid = $1
-	)
-	SELECT itemid, stationid, locationid, typeid, "typeName" typename, quantity,
-				 flag, materialefficiency, timeefficiency, numruns, isoriginal
-	FROM   blueprints b
-	JOIN   availableCharacters a on a.id = b.charID
-	JOIN   "invTypes" t ON b.typeid = t."typeID"
-	WHERE  charID = $2
-	`
-
 	// Assets
 
 	// Clear toon's assets.

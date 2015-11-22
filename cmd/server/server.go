@@ -94,9 +94,10 @@ func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
 	goji.Get("/standings/:charID/:npcCorpID", api.StandingsHandler(localdb, sessionizer))
 	goji.Get("/skills/:charID/group/:skillGroupID", api.SkillsHandler(localdb, sessionizer))
 
-	// Blueprints
+	// Blueprints and industry
 	_, getBPs := api.BlueprintsHandlers(localdb, sde, sessionizer)
 	goji.Get("/blueprints/:charID", getBPs)
+	goji.Get("/assets/unusedSalvage/:charID", api.UnusedSalvage(localdb, sde, sessionizer))
 
 	// Static assets
 	goji.Get("/*", assets)

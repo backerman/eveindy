@@ -91,4 +91,8 @@ angular.module 'eveindy'
       # Blueprints!
       getBlueprints: (characterID) ->
         @$http.get "/blueprints/#{characterID}"
+
+      # Industry!
+      getUnusedSalvage: (characterID) ->
+        @$http.get "/assets/unusedSalvage/#{characterID}"
       ]

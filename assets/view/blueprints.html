@@ -7,28 +7,48 @@
           ng-options="c.name for c in ctrl.characters | orderBy:'name'">
       </select>
     </div>
-    <div class="blueprints">
-      <table class="table table-striped" datatable="ng" dt-options="ctrl.dtOptions"
-      dt-column-defs="ctrl.dtColumnDefs">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Location</th>
-            <th># Runs</th>
-            <th>ME</th>
-            <th>TE</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="item in ctrl.blueprints">
-            <td ng-bind="item.TypeName"></td>
-            <td ng-bind="item.Station.Name"></td>
-            <td ng-bind="item.NumRuns"></td>
-            <td ng-bind="item.TimeEfficiency"></td>
-            <td ng-bind="item.MaterialEfficiency"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <uib-tabset>
+      <uib-tab heading="Blueprint inventory" active>
+        <table class="table table-striped" datatable="ng" dt-options="ctrl.dtOptions"
+        dt-column-defs="ctrl.dtColumnDefs">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Location</th>
+              <th># Runs</th>
+              <th>ME</th>
+              <th>TE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in ctrl.blueprints">
+              <td ng-bind="item.TypeName"></td>
+              <td ng-bind="item.Station.Name"></td>
+              <td ng-bind="item.NumRuns"></td>
+              <td ng-bind="item.TimeEfficiency"></td>
+              <td ng-bind="item.MaterialEfficiency"></td>
+            </tr>
+          </tbody>
+        </table>
+      </uib-tab>
+      <uib-tab heading="Salvage">
+        <table class="table table-striped" datatable="ng" dt-options="ctrl.dtOptions">
+          <thead>
+            <tr>
+              <th class="col-xs-1" scope="col">Qty.</th>
+              <th class="col-xs-4" scope="col">Type</th>
+              <th class="col-xs-7" scope="col">Station</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in ctrl.unusedSalvage">
+              <td class="col-xs-1" ng-bind="item.Quantity"></td>
+              <td class="col-xs-4" ng-bind="item.TypeName"></td>
+              <td class="col-xs-7" ng-bind="item.Station.Name"></td>
+            </tr>
+          </tbody>
+        </table>
+      </uib-tab>
+    </uib-tabset>
   </div>
 </div>

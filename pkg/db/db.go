@@ -59,6 +59,7 @@ type dbInterface struct {
 	clearAssetsStmt               *sqlx.Stmt
 	insertAssetStmt               *sqlx.Stmt
 	getAssetsStmt                 *sqlx.Stmt
+	unusedSalvageStmt             *sqlx.Stmt
 
 	// Need access to EVE APIs.
 	xmlAPI evego.XMLAPI
@@ -114,6 +115,7 @@ func Interface(driver, resource string, xmlAPI evego.XMLAPI) (LocalDB, error) {
 		{&d.clearAssetsStmt, clearAssetsStmt},
 		{&d.insertAssetStmt, insertAssetStmt},
 		{&d.getAssetsStmt, getAssetsStmt},
+		{&d.unusedSalvageStmt, unusedSalvageStmt},
 	}
 
 	for _, s := range stmts {

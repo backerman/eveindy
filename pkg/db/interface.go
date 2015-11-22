@@ -93,4 +93,8 @@ type LocalDB interface {
 	// CharacterBlueprints returns a character's blueprints from the local
 	// database.
 	CharacterBlueprints(userID, charID int) ([]evego.BlueprintItem, error)
+
+	// UnusedSalvage returns a character's salvage inventory that is not used
+	// by any blueprint he owns.
+	UnusedSalvage(userid, characterID int) ([]evego.InventoryItem, error)
 }

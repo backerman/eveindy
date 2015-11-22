@@ -95,4 +95,10 @@ angular.module 'eveindy'
         @Server.getBlueprints char.id
           .then (response) ->
             response.data
+
+      # Get a character's unused salvage drops.
+      unusedSalvage: (char) ->
+        @Server.getUnusedSalvage char.id
+          .then (response) ->
+            response.data
   ]

@@ -58,6 +58,17 @@ describe 'Controller: BlueprintsCtrl', () ->
           deferred.resolve []
           deferred.promise
 
+      # FIXME need real test data here
+      spyOn Server, 'getUnusedSalvage'
+        .and.callFake () ->
+          deferred = $q.defer()
+          deferred.resolve
+            data:
+              items: []
+              stations: {}
+              itemInfo: {}
+          deferred.promise
+
       serverService = Server
 
   beforeEach () ->

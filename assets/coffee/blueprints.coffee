@@ -18,8 +18,12 @@ angular.module 'eveindy'
       constructor: (@Session, @$scope, @DTOptionsBuilder) ->
         @characters = []
         @blueprints = []
+        @unusedSalvage = []
         @selectedToon = null
         @dtOptions = @DTOptionsBuilder.newOptions()
+          .withBootstrap()
+          .withOption('responsive', true)
+        console.log @dtOptions
         @dtColumnDefs = [
           type: 'numeric-inf'
           targets: 2
@@ -44,9 +48,18 @@ angular.module 'eveindy'
               bp.Station = resp.stations[bp.StationID]
             @blueprints = resp.blueprints
 
+      _getUnusedSalvage: (toon) ->
+        @Session.unusedSalvage toon
+          .then (resp) =>
+            for i in resp.items
+              i.Station = resp.stations[i.StationID]
+              i.TypeName = resp.itemInfo[i.TypeID].Name
+            @unusedSalvage = resp.items
+
       getCharacters: () ->
         @characters = @Session.availableCharacters()
 
       characterSelected: () ->
         @_getBlueprints @selectedToon
+        @_getUnusedSalvage @selectedToon
   ]
