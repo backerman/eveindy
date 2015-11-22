@@ -13,20 +13,20 @@
         dt-column-defs="ctrl.dtColumnDefs">
           <thead>
             <tr>
-              <th>Type</th>
-              <th>Location</th>
-              <th># Runs</th>
-              <th>ME</th>
-              <th>TE</th>
+              <th class="col-xs-4">Type</th>
+              <th class="col-xs-5">Location</th>
+              <th class="col-xs-1">Runs</th>
+              <th class="col-xs-1">ME</th>
+              <th class="col-xs-1">TE</th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="item in ctrl.blueprints">
-              <td ng-bind="item.TypeName"></td>
-              <td ng-bind="item.Station.Name"></td>
-              <td ng-bind="item.NumRuns"></td>
-              <td ng-bind="item.TimeEfficiency"></td>
-              <td ng-bind="item.MaterialEfficiency"></td>
+              <td class="col-xs-4" ng-bind="item.TypeName"></td>
+              <td class="col-xs-5" ng-bind="item.Station.Name"></td>
+              <td class="col-xs-1" ng-bind="item.NumRuns"></td>
+              <td class="col-xs-1" ng-bind="item.TimeEfficiency"></td>
+              <td class="col-xs-1" ng-bind="item.MaterialEfficiency"></td>
             </tr>
           </tbody>
         </table>
