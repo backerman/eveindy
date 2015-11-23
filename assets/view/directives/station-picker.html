@@ -1,0 +1,21 @@
+<script type="text/ng-template" id="station.html">
+  <a>
+    <span ng-class="match.model.class">&#x25fc;</span>
+    <span ng-bind-html="match.model.name"></span>
+    ({{ match.model.security | number:1 }})
+    &mdash;
+    <span ng-bind-html="match.model.constellation"></span>
+    &mdash;
+    <span ng-bind-html="match.model.region"></span>
+  </a>
+</script>
+<div class="form-group">
+  <label for="inv_station">Where are you?</label>
+  <input type="text" name="station" id="inv_station" size="20"
+  placeholder="Enter a station name." ng-model="location"
+  uib-typeahead="stn as stn.name for stn in getStations({prefix: $viewValue})"
+  class="form-control" typeahead-wait-ms="50" typeahead-min-length="3"
+  typeahead-template-url="station.html" typeahead-editable="false"
+  typeahead-on-select="locationSelected({station: $item})" required
+  autocomplete="off">
+</div>

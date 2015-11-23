@@ -4,29 +4,11 @@
     <p class="well" uib-collapse="ctrl.hidePasteInput">
       Paste your cargo hold below.
     </p>
-    <script type="text/ng-template" id="station.html">
-      <a>
-        <span ng-class="match.model.class">&#x25fc;</span>
-        <span ng-bind-html="match.model.name"></span>
-        ({{ match.model.security | number:1 }})
-        &mdash;
-        <span ng-bind-html="match.model.constellation"></span>
-        &mdash;
-        <span ng-bind-html="match.model.region"></span>
-      </a>
-    </script>
     <form ng-submit="ctrl.submitPaste()"
     uib-collapse="ctrl.hidePasteInput" name="pastebinForm">
-      <div class="form-group">
-        <label for="inv_station">Where are you?</label>
-        <input type="text" name="station" id="inv_station" size="20"
-        placeholder="Enter a station name." ng-model="ctrl.location"
-        uib-typeahead="stn as stn.name for stn in ctrl.getStations($viewValue)"
-        class="form-control" typeahead-wait-ms="50" typeahead-min-length="3"
-        typeahead-template-url="station.html" typeahead-editable="false"
-        typeahead-on-select="ctrl.locationSelected($item)" required
-        autocomplete="off">
-      </div>
+      <station-picker search="ctrl.getStations(prefix)" location="ctrl.location"
+      selected="ctrl.locationSelected(station)">
+      </station-picker>
       <div ng-show="ctrl.location">
         <div class="form-group" ng-show="ctrl.authenticated">
           <label for="selectedToon">Which character are you using?</label>
