@@ -102,10 +102,11 @@ angular.module 'eveindy'
         @scrapSkill = @selectedToon.skills.filter( (s) ->
           s.name is "Scrapmetal Processing"
           )?[0]?.level || 0
-        @Server.getEffectiveStandings id, @stationOwnerID
-          .then (response) =>
-            @standing = response.data.standing
-            @updateTaxRate()
+        if @stationType is "npc"
+          @Server.getEffectiveStandings id, @stationOwnerID
+            .then (response) =>
+              @standing = response.data.standing
+              @updateTaxRate()
 
       # Update mineral value calculation method.
       updatePriceCalc: () ->
