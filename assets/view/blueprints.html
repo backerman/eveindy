@@ -1,11 +1,17 @@
 <div class="row">
-  <div class="col-md-12">
-    <div class="form-group">
-      <label for="selectedToon">Character:</label>
-      <select class="form-control" name="toon"
-          ng-change="ctrl.characterSelected()" ng-model="ctrl.selectedToon"
-          ng-options="c.name for c in ctrl.characters | orderBy:'name'">
-      </select>
+  <div class="col-xs-12">
+    <div class="row toon-selector">
+      <div class="col-xs-12">
+        <div class="form-inline">
+          <div class="form-group">
+            <label for="selectedToon">Character:</label>
+            <select class="form-control" name="toon"
+                ng-change="ctrl.characterSelected()" ng-model="ctrl.selectedToon"
+                ng-options="c.name for c in ctrl.characters | orderBy:'name'">
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
     <uib-tabset>
       <uib-tab heading="Blueprint inventory" active>
