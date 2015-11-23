@@ -23,7 +23,6 @@ angular.module 'eveindy'
         @dtOptions = @DTOptionsBuilder.newOptions()
           .withBootstrap()
           .withOption('responsive', true)
-        console.log @dtOptions
         @dtColumnDefs = [
           type: 'numeric-inf'
           targets: 2
