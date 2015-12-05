@@ -1,0 +1,122 @@
+[
+  {
+    "name": "0-R5TS VI - Pointy Hat Mothball Facility",
+    "id": 61000943,
+    "systemName": "0-R5TS",
+    "security": -0.2,
+    "constellation": "OSJ7-I",
+    "region": "Vale of the Silent",
+    "isOutpost": true,
+    "owner": "LAWN HC",
+    "ownerID": 98391152,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen I - Moon 2 - Spacelane Patrol Logistic Support",
+    "id": 60004222,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Spacelane Patrol",
+    "ownerID": 1000041,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen II - Moon 3 - Expert Distribution Retail Center",
+    "id": 60002440,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Expert Distribution",
+    "ownerID": 1000023,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen III - Moon 16 - Spacelane Patrol Logistic Support",
+    "id": 60004213,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Spacelane Patrol",
+    "ownerID": 1000041,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen IV - Moon 13 - Nugoeihuvi Corporation Development Studio",
+    "id": 60001831,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Nugoeihuvi Corporation",
+    "ownerID": 1000017,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen IV - Moon 6 - Expert Distribution Retail Center",
+    "id": 60002437,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Expert Distribution",
+    "ownerID": 1000023,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen IV - Moon 8 - Sukuuvestaa Corporation Factory",
+    "id": 60002818,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Sukuuvestaa Corporation",
+    "ownerID": 1000025,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen V - Moon 12 - Internal Security Assembly Plant",
+    "id": 60003934,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Internal Security",
+    "ownerID": 1000036,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen V - Moon 16 - Sukuuvestaa Corporation Warehouse",
+    "id": 60002806,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Sukuuvestaa Corporation",
+    "ownerID": 1000025,
+    "reprocessingEfficiency": 0.5
+  },
+  {
+    "name": "Poinen V - Moon 26 - Internal Security Assembly Plant",
+    "id": 60003937,
+    "systemName": "Poinen",
+    "security": 0.6,
+    "constellation": "Onirvura",
+    "region": "The Forge",
+    "isOutpost": false,
+    "owner": "Internal Security",
+    "ownerID": 1000036,
+    "reprocessingEfficiency": 0.5
+  }
+]

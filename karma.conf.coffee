@@ -19,7 +19,7 @@ module.exports = (config) ->
     preprocessors:
       '**/*.coffee': 'coffee'
       '**/*.json': 'json_fixtures'
-      '**/*.html': 'html2js'
+      '**/*.html': 'ng-html2js'
     jsonFixturesPreprocessor:
       variableName: '__json__'
     files: [
@@ -32,10 +32,16 @@ module.exports = (config) ->
       'bower_components/angular-mocks/angular-mocks.js'
       'bower_components/angular-datatables/dist/angular-datatables.js'
       'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js'
-      'assets/coffee/*.coffee'
+      'assets/coffee/**/*.coffee'
       'spec/*.coffee'
       'spec/fixtures/*.json'
+      'assets/view/directives/*.html'
     ]
+
+    ngHtml2JsPreprocessor:
+      stripPrefix: 'assets/'
+      moduleName: 'directives_test'
+
     exclude: []
     port: 8080
     logLevel: config.LOG_INFO
