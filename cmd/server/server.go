@@ -122,6 +122,8 @@ func mainCommand(cmd *cobra.Command, args []string) {
 		log.Fatalf("Please set the ClientID, ClientSecret, and RedirectURL configuration " +
 			"options as registered with CCP.")
 	}
+	// workaround for viper bug
+	// c.Dev = viper.GetBool("Dev")
 
 	if c.Dev {
 		log.Printf("Configuration is: %+v", c)
@@ -191,13 +193,13 @@ func main() {
 		Short: "The server component of eveindy",
 		Run:   mainCommand,
 	}
-
 	// Configuration defaults
-
-	// When DevMode is true, server only listens on localhost and will serve
+	// When dev is true, server only listens on localhost and will serve
 	// external dependencies (e.g. AngularJS) from local disk instead of from
 	// a CDN.
-	viper.SetDefault("DevMode", false)
+	rootCmd.Flags().Bool("Dev", false, "Set development mode.")
+	rootCmd.Flags().String("Bind", ":8080", "The address and port to listen on.")
+	viper.SetDefault("Dev", false)
 	// DBDriver and DBPath are the database driver name and resource path
 	// as used by the Golang SQL library.
 	viper.SetDefault("DBDriver", "sqlite3")
@@ -230,10 +232,7 @@ func main() {
 	viper.SetEnvPrefix("EVEINDY")
 	viper.AutomaticEnv()
 
-	rootCmd.Flags().Bool("dev", false, "Set development mode.")
-	rootCmd.Flags().String("bind", ":8080", "The address and port to listen on.")
-
-	flags := []string{"dev", "bind"}
+	flags := []string{"Dev", "Bind"}
 	for _, flag := range flags {
 		viper.BindPFlag(flag, rootCmd.Flags().Lookup(flag))
 	}
