@@ -51,7 +51,7 @@ CREATE TABLE eveindy.skills (
 -- corpStandings: a character's standings with NPC corporations (before skills)
 CREATE TABLE eveindy.corpStandings (
   charid integer REFERENCES eveindy.characters(id) ON DELETE CASCADE DEFERRABLE,
-  corp integer REFERENCES "crpNPCCorporations"("corporationID"),
+  corp integer REFERENCES "crpNPCCorporations"("corporationID") DEFERRABLE,
   standing float NOT NULL CHECK (standing >= -10.0 AND standing <= 10.0),
   PRIMARY KEY (charid, corp)
 );
@@ -59,7 +59,7 @@ CREATE TABLE eveindy.corpStandings (
 -- facStandings: a character's standings with NPC factions (before skills)
 CREATE TABLE eveindy.facStandings (
   charid integer REFERENCES eveindy.characters(id) ON DELETE CASCADE DEFERRABLE,
-  faction integer REFERENCES "chrFactions"("factionID"),
+  faction integer REFERENCES "chrFactions"("factionID") DEFERRABLE,
   standing float NOT NULL CHECK (standing >= -10.0 AND standing <= 10.0),
   PRIMARY KEY (charid, faction)
 );
