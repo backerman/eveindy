@@ -27,8 +27,8 @@ CREATE TABLE eveindy.assets (
     ON DELETE CASCADE DEFERRABLE,
   FOREIGN KEY (apikey) REFERENCES eveindy.apikeys (id)
     ON DELETE CASCADE DEFERRABLE,
-  FOREIGN KEY (typeID) REFERENCES "invTypes" ("typeID"),
-  FOREIGN KEY (flag) REFERENCES "invFlags" ("flagID"),
+  FOREIGN KEY (typeID) REFERENCES "invTypes" ("typeID") DEFERRABLE,
+  FOREIGN KEY (flag) REFERENCES "invFlags" ("flagID") DEFERRABLE,
   CHECK (quantity > 0)
 );
 

@@ -43,8 +43,8 @@ CREATE TABLE eveindy.characters (
 -- skills: a character's trained skills
 CREATE TABLE eveindy.skills (
   charid integer NOT NULL REFERENCES eveindy.characters(id) ON DELETE CASCADE DEFERRABLE,
-  id integer NOT NULL REFERENCES "invTypes"("typeID"),
-  groupid integer NOT NULL REFERENCES "invGroups"("groupID"),
+  id integer NOT NULL REFERENCES "invTypes"("typeID") DEFERRABLE,
+  groupid integer NOT NULL REFERENCES "invGroups"("groupID") DEFERRABLE,
   level integer NOT NULL CHECK (level >= 0 AND level <= 5)
 );
 
