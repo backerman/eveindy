@@ -20,7 +20,7 @@ CREATE TABLE eveindy.outposts (
   corporationID integer NOT NULL,
   corporationName text NOT NULL,
   -- no reprocessing efficiency: this information is not publicly available
-  FOREIGN KEY (systemID) REFERENCES "mapSolarSystems" ("solarSystemID")
+  FOREIGN KEY (systemID) REFERENCES "mapSolarSystems" ("solarSystemID") DEFERRABLE
 );
 
 -- allstations: both outposts and stations, for foreign-key constraints
