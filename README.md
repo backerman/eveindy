@@ -80,6 +80,12 @@ COMMIT;
 
 ## Operation & Maintenance
 
+To update the local SDE copy, use the `sql/update_sde.py` script, e.g.:
+
+```
+update_sde.py /tmp/latest.dmp.bz2 myschema | psql -h somewhere mydatabase
+```
+
 ## License
 
 The contents of this repository are © 2014–5 Brad Ackerman and licensed under
