@@ -32,18 +32,22 @@ CREATE TABLE eveindy.assets (
   CHECK (quantity > 0)
 );
 
--- trigger on insert: ensure station is valid
--- can we guarantee everything has a valid container? depends on insert order.
+-- trigger on insert: ensure location is valid
 CREATE OR REPLACE FUNCTION assets_insert_check() RETURNS TRIGGER AS $$
 DECLARE
-  station integer;
+  location integer;
   parent integer;
 BEGIN
-  -- Ensure containing station exists.
-  SELECT "stationID" from eveindy.allstations
-  WHERE  "stationID" = NEW.stationID
-  INTO station;
-  IF station IS NULL
+  -- Ensure containing station or solar system exists.
+  SELECT COALESCE(
+    (SELECT "stationID" from eveindy.allstations
+    WHERE  "stationID" = NEW.stationID),
+    (SELECT "solarSystemID" from "mapSolarSystems"
+    WHERE  "solarSystemID" = NEW.stationID)
+  )
+  INTO location;
+
+  IF location IS NULL
   THEN
     RAISE EXCEPTION 'location ID % is invalid', NEW.stationID;
   END IF;
