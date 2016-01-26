@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"mime"
 	"net/http"
 	"strconv"
@@ -158,7 +159,7 @@ func getItemPrices(
 			orders, err = mkt.OrdersForItem(dbItem, loc, evego.AllOrders)
 		}
 		if err != nil {
-			return nil, fmt.Errorf("Unable to retrieve order information")
+			return nil, fmt.Errorf("Unable to retrieve order information for %v: %v", dbItem.Name, err)
 		}
 		item = summarizeOrders(db, *orders, dbItem)
 		respItems[item.ItemName] = item
@@ -261,12 +262,14 @@ func ReprocessOutputValues(db evego.Database, mkt evego.Market, xmlAPI evego.XML
 		if err != nil {
 			http.Error(w, `{"status": "Error", "error": "Unable to retrieve ticker prices"}`,
 				http.StatusInternalServerError)
+			log.Printf("Error looking up Jita station info (???): %v", err)
 			return
 		}
 		results, err := getItemPrices(db, mkt, &tickerboard, jita, "")
 		if err != nil {
 			http.Error(w, `{"status": "Error", "error": "Unable to retrieve ticker prices"}`,
 				http.StatusInternalServerError)
+			log.Printf("Error getting Jita item prices: %v", err)
 			return
 		}
 
