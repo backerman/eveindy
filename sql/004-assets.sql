@@ -68,4 +68,4 @@ $$ LANGUAGE plpgsql;
 
 CREATE CONSTRAINT TRIGGER assets_insert AFTER INSERT OR UPDATE ON eveindy.assets
 INITIALLY DEFERRED
-FOR EACH ROW EXECUTE PROCEDURE blueprints_insert_check();
+FOR EACH ROW EXECUTE PROCEDURE assets_insert_check();
