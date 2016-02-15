@@ -35,8 +35,8 @@ CREATE TABLE eveindy.assets (
 -- trigger on insert: ensure location is valid
 CREATE OR REPLACE FUNCTION assets_insert_check() RETURNS TRIGGER AS $$
 DECLARE
-  location integer;
-  parent integer;
+  location bigint;
+  parent bigint;
 BEGIN
   -- Ensure containing station or solar system exists.
   SELECT COALESCE(
