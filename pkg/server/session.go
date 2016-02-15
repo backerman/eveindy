@@ -49,8 +49,8 @@ func (s *sessionizer) setCookie(w http.ResponseWriter, cookie string) {
 		Value:   cookie,
 		Domain:  s.cookieDomain,
 		Path:    s.cookiePath,
-		Expires: time.Now().Add(168 * time.Hour), // 1 week
-		Secure:  s.isProduction,                  // HTTPS-only iff production system
+		Expires: time.Now().Add(24 * 30 * 3 * time.Hour), // 3 months
+		Secure:  s.isProduction,                          // HTTPS-only iff production system
 	}
 	http.SetCookie(w, sessionCookie)
 }
