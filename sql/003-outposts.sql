@@ -23,17 +23,24 @@ CREATE TABLE eveindy.outposts (
   FOREIGN KEY (systemID) REFERENCES "mapSolarSystems" ("solarSystemID") DEFERRABLE
 );
 
+CREATE INDEX outposts_stationid ON outposts (stationid);
+
 -- allstations: both outposts and stations, for foreign-key constraints
 CREATE OR REPLACE VIEW eveindy.allstations AS
-  SELECT "stationID", "stationName", "solarSystemID", "constellationID",
-         "regionID", "corporationID", "itemName" "corporationName",
-         "reprocessingEfficiency"
-  FROM   "staStations" s
-  JOIN   "invNames" n ON n."itemID" = s."corporationID"
-  UNION ALL
-  SELECT stationID, stationName, systemID, "constellationID", "regionID",
-         corporationID, corporationName,
-         0 :: double precision reprocessingEfficiency
-  FROM eveindy.outposts o
-  JOIN "mapSolarSystems" s ON s."solarSystemID" = o.systemID
-  ;
+  -- some sovnull stations aren't actually outposts so will appear in both
+  -- tables; we use COALESCE to merge them, preferring the conquerable stations
+  -- table.
+  SELECT COALESCE(o.stationID, s."stationID") "stationID",
+         COALESCE(o.stationName, s."stationName") "stationName",
+         ss."solarSystemID", ss."constellationID",
+         ss."regionID",
+         COALESCE(o.corporationID, s."corporationID") "corporationID",
+         COALESCE(o.corporationName, n."itemName") "corporationName",
+         COALESCE(s."reprocessingEfficiency", 0 :: double precision)
+            "reprocessingEfficiency"
+  FROM   outposts o
+  FULL OUTER JOIN "staStations" s
+  ON     o.stationID = s."stationID"
+  -- Add in map information and corporation name for NPC stations.
+  LEFT JOIN   "mapSolarSystems" ss USING ("solarSystemID")
+  LEFT JOIN "invNames" n ON s."corporationID" = n."itemID";
