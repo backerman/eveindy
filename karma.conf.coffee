@@ -32,6 +32,7 @@ module.exports = (config) ->
       'bower_components/angular-mocks/angular-mocks.js'
       'bower_components/angular-datatables/dist/angular-datatables.js'
       'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js'
+      'bower_components/angular-promise-buttons/dist/angular-promise-buttons.js'
       'assets/coffee/**/*.coffee'
       'spec/*.coffee'
       'spec/fixtures/*.json'

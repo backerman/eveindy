@@ -22,7 +22,8 @@
     "angular-route": "~1.4.7",
     "angular-mocks": "~1.4.7",
     "angular-bootstrap": "~0.14.3",
-    "angular-datatables": "~0.5.1"
+    "angular-datatables": "~0.5.1",
+    "angular-promise-buttons": "~0.1.10"
   },
   "devDependencies": {
     "less-elements": "*"

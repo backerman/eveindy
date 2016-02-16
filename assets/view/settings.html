@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-8">
+  <div class="col-md-9">
     <p class="alert alert-info" ng-show="!ctrl.authenticated">
       To access account settings, please log in.
     </p>
@@ -14,13 +14,13 @@
             <th class="col-sm-2" scope="col">
               Key ID
             </th>
-            <th class="col-sm-4" scope="col">
+            <th class="col-sm-3" scope="col">
               Characters
             </th>
-            <th class="col-sm-3" scope="col">
+            <th class="col-sm-2" scope="col">
               Label
             </th>
-            <th class="col-sm-3" scope="col">
+            <th class="col-sm-5" scope="col">
               Actions
             </th>
           </tr>
@@ -41,9 +41,8 @@
             <td>
               <button type="button" class="btn btn-sm btn-default"
               name="refresh-key-{{key.id}}"
-              ng-class="{'processing': key.processing}"
-              ng-bind="key.refreshButton"
-              ng-click="ctrl.refreshKey(key)"></button>
+              ng-click="ctrl.refreshKey(key)"
+              promise-btn>Refresh</button>
               <button type="button" class="btn btn-sm btn-danger"
               name="delete-key-{{key.id}}"
               ng-click="ctrl.deleteKey(key.id)">Delete</button>
@@ -68,12 +67,12 @@
           <input type="text" name="label" value="" ng-model="ctrl.newkey.label"
             class="form-control">
         </div>
-        <button name="newkey-add" class="btn btn-sm btn-default"
-        ng-click="ctrl.addKey()">Add</button>
+        <button type="button" name="newkey-add" class="btn btn-sm btn-default"
+        promise-btn ng-click="ctrl.addKey()">Add</button>
       </form>
     </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-3">
     <p>
       What should I do with the sidebar here?
     </p>

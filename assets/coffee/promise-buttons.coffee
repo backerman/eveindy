@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# N.B.: This file is where our modules are defined, and since the
-# CoffeeScript files are included in lexicographical order, nothing
-# should be named as to come before app.coffee.
-
-angular.module 'eveindy', [
-    'ui.bootstrap'
-    'ngRoute'
-    'datatables'
-    'datatables.bootstrap'
-    'angularPromiseButtons'
+angular.module 'eveindy'
+  .config ['angularPromiseButtonsProvider', (angularPromiseButtonsProvider) ->
+    angularPromiseButtonsProvider.extendConfig
+      spinnerTpl: '<span class="btn-spinner spinner-sm spinner-inline"></span>'
+      disableBtn: true
+      btnLoadingClass: 'is-loading'
+      addClassToCurrentBtnOnly: false
+      disableCurrentBtnOnly: false
   ]

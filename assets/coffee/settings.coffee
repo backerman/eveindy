@@ -27,7 +27,6 @@ angular.module 'eveindy'
       _updateLoginStatus: (_, isLoggedIn) =>
         @authenticated = isLoggedIn
         @getApiKeys()
-        ((k) -> k.refreshButton = "Refresh")(key) for key in @apikeys
 
       getApiKeys: () ->
         @apikeys = @Session.apikeys
@@ -49,15 +48,11 @@ angular.module 'eveindy'
             @forms.newkey?.$setPristine()
 
       refreshKey: (key) ->
-        key.processing = true
-        key.refreshButton = "Refreshing…"
         @Session.refreshKey key
           .then (_) ->
-            key.processing = false
-            key.refreshButton = "Refresh"
+            #we don't care
+            42
           , (_) =>
-            key.processing = false
-            key.refreshButton = "Refresh"
             @alerts.push
               type: "danger"
               msg: "Internal server error: unable to process key #{key.id}."
