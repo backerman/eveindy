@@ -320,15 +320,18 @@ func (d *dbInterface) GetAssets(key XMLAPIKey, charID int) error {
 
 	assets, err := d.xmlAPI.Assets(k, charID)
 	if err != nil {
+		log.Printf("Unable to obtain assets for character %v: %v", charID, err)
 		return err
 	}
 	tx, err := d.db.Beginx()
 	if err != nil {
+		log.Printf("Unable to acquire transaction: %v", err)
 		return err
 	}
 	// Clear assets before inserting the API's information.
 	_, err = tx.Stmtx(d.clearAssetsStmt).Exec(key.ID, charID)
 	if err != nil {
+		log.Printf("Unable to clear assets for key %v, character %v", key.ID, charID)
 		return err
 	}
 	insertStmt := tx.Stmtx(d.insertAssetStmt)
