@@ -58,7 +58,13 @@ COMMIT;
 ```
 
 Create a new database (we use `eveindy`) and run the provided SQL (in the `sql`
-directory) to set it all up. You'll then need to configure this database's
+directory) to set it all up.
+
+```
+(echo "SET search_path TO eveindy,sde,public;" && cat *.sql) | psql -1 eveindy
+```
+
+You'll then need to configure this database's
 security using something like the following:
 
 ```
