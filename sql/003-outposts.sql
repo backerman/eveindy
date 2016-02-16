@@ -42,5 +42,6 @@ CREATE OR REPLACE VIEW eveindy.allstations AS
   FULL OUTER JOIN "staStations" s
   ON     o.stationID = s."stationID"
   -- Add in map information and corporation name for NPC stations.
-  LEFT JOIN   "mapSolarSystems" ss USING ("solarSystemID")
-  LEFT JOIN "invNames" n ON s."corporationID" = n."itemID";
+  LEFT JOIN "invNames" n ON s."corporationID" = n."itemID"
+  JOIN   "mapSolarSystems" ss
+  ON ss."solarSystemID" = COALESCE(o.systemID, s."solarSystemID");
