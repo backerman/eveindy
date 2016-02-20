@@ -94,7 +94,7 @@ update_sde.py /tmp/latest.dmp.bz2 myschema | psql -h somewhere mydatabase
 
 ## License
 
-The contents of this repository are © 2014–5 Brad Ackerman and licensed under
+The contents of this repository are © 2014–6 Brad Ackerman and licensed under
 the [Apache License 2.0][apache], the full text of which is in the LICENSE file.
 
 [apache]: http://www.apache.org/licenses/LICENSE-2.0
