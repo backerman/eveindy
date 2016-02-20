@@ -21,7 +21,7 @@ package db
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/backerman/evego"
 	"github.com/backerman/evego/pkg/evesso"

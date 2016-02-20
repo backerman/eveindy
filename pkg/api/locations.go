@@ -20,7 +20,7 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"math"
 	"net/http"
 	"strings"

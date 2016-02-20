@@ -19,7 +19,7 @@ package api
 
 import (
 	"encoding/json"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"net/http"
 	"time"
 

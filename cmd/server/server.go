@@ -18,7 +18,6 @@ limitations under the License.
 package main
 
 import (
-	"log"
 	"net"
 	"net/http"
 
@@ -31,6 +30,7 @@ import (
 	"github.com/backerman/eveindy/pkg/db"
 	"github.com/backerman/eveindy/pkg/server"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zenazn/goji/graceful"
@@ -135,8 +135,8 @@ func serve(mux *web.Mux, bindPort string) {
 	if err != nil {
 		log.Fatalf("Couldn't open socket on tcp6/%v: %v", bindPort, err)
 	}
-	graceful.PreHook(func() { log.Printf("Received signal, gracefully stopping.") })
-	graceful.PostHook(func() { log.Printf("Stopped.") })
+	graceful.PreHook(func() { log.Info("Received signal, gracefully stopping.") })
+	graceful.PostHook(func() { log.Info("Stopped.") })
 	err = graceful.Serve(listener, http.DefaultServeMux)
 	if err != nil {
 		log.Fatalf("Couldn't serve on tcp6/%v: %v", bindPort, err)

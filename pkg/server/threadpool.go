@@ -18,7 +18,7 @@ limitations under the License.
 package server
 
 import (
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"runtime"
 )
 

@@ -18,6 +18,7 @@ limitations under the License.
 package main
 
 import (
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -73,5 +74,6 @@ func main() {
 	for _, flag := range flags {
 		viper.BindPFlag(flag, rootCmd.Flags().Lookup(flag))
 	}
+	log.SetFormatter(&log.TextFormatter{ForceColors: true})
 	rootCmd.Execute()
 }

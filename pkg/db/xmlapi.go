@@ -20,7 +20,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"strconv"
 	"strings"
 

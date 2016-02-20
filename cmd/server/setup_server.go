@@ -18,6 +18,7 @@ limitations under the License.
 package main
 
 import (
+	"github.com/backerman/eveindy/pkg/server"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
 )
@@ -25,7 +26,7 @@ import (
 func newMux() *web.Mux {
 	mux := web.New()
 	mux.Use(middleware.RequestID)
-	mux.Use(middleware.Logger)
+	mux.Use(server.Logger)
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.AutomaticOptions)
 

@@ -21,7 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"mime"
 	"net/http"
 	"strconv"

@@ -20,7 +20,7 @@ package api
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"math"
 	"mime"
 	"net/http"
