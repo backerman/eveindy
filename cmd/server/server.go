@@ -20,17 +20,14 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/backerman/evego"
 	"github.com/backerman/evego/pkg/cache"
 	"github.com/backerman/evego/pkg/dbaccess"
 	"github.com/backerman/evego/pkg/eveapi"
-	"github.com/backerman/evego/pkg/evesso"
 	"github.com/backerman/evego/pkg/market"
 	"github.com/backerman/evego/pkg/routing"
-	"github.com/backerman/eveindy/pkg/api"
 	"github.com/backerman/eveindy/pkg/db"
 	"github.com/backerman/eveindy/pkg/server"
 
@@ -55,52 +52,6 @@ type config struct {
 	CookieDomain, CookiePath string
 	ClientID, ClientSecret   string
 	RedirectURL              string
-}
-
-func setRoutes(sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
-	eveCentral evego.Market, sessionizer server.Sessionizer, cache evego.Cache) {
-	assets := http.FileServer(http.Dir("dist"))
-	bower := http.FileServer(http.Dir("bower_components"))
-	if c.Dev {
-		goji.Get("/bower_components/*", http.StripPrefix("/bower_components/", bower))
-	}
-	goji.Get("/autocomplete/system/:name", api.AutocompleteSystems(sde))
-	goji.Get("/autocomplete/station/:name", api.AutocompleteStations(sde, localdb, xmlAPI))
-	goji.Post("/pastebin", api.ParseItems(sde))
-	marketHandler := api.ItemsMarketValue(sde, eveCentral, xmlAPI)
-	// For now these do the same thing. That may change.
-	goji.Post("/market/region/:location", marketHandler)
-	goji.Post("/market/system/:location", marketHandler)
-	goji.Post("/market/station/:id", marketHandler)
-	goji.Get("/market/jita", api.ReprocessOutputValues(sde, eveCentral, xmlAPI, cache))
-
-	goji.Post("/reprocess", api.ReprocessItems(sde, eveCentral))
-	// SSO!
-	auth := evesso.MakeAuthenticator(evesso.Endpoint, c.ClientID, c.ClientSecret,
-		c.RedirectURL, evesso.PublicData)
-	goji.Get("/crestcallback", api.CRESTCallbackListener(localdb, auth, sessionizer))
-	goji.Get("/authenticate", api.AuthenticateHandler(auth, sessionizer))
-	goji.Get("/session", api.SessionInfo(auth, sessionizer, localdb))
-	goji.Post("/logout", api.LogoutHandler(localdb, auth, sessionizer))
-
-	// API keys
-	listHandler, deleteHander, addHandler, refreshHandler := api.XMLAPIKeysHandlers(localdb, sessionizer)
-	goji.Get("/apikeys/list", listHandler)
-	goji.Post("/apikeys/delete/:keyid", deleteHander)
-	goji.Post("/apikeys/add", addHandler)
-	goji.Post("/apikeys/refresh", refreshHandler)
-
-	// Standings and skills
-	goji.Get("/standings/:charID/:npcCorpID", api.StandingsHandler(localdb, sessionizer))
-	goji.Get("/skills/:charID/group/:skillGroupID", api.SkillsHandler(localdb, sessionizer))
-
-	// Blueprints and industry
-	_, getBPs := api.BlueprintsHandlers(localdb, sde, sessionizer)
-	goji.Get("/blueprints/:charID", getBPs)
-	goji.Get("/assets/unusedSalvage/:charID", api.UnusedSalvage(localdb, sde, sessionizer))
-
-	// Static assets
-	goji.Get("/*", assets)
 }
 
 func mainCommand(cmd *cobra.Command, args []string) {
