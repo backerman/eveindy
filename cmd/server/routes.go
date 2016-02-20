@@ -30,11 +30,12 @@ import (
 
 func setRoutes(mux *web.Mux, sde evego.Database, localdb db.LocalDB, xmlAPI evego.XMLAPI,
 	eveCentral evego.Market, sessionizer server.Sessionizer, cache evego.Cache) {
-	assets := http.FileServer(http.Dir("dist"))
-	bower := http.FileServer(http.Dir("bower_components"))
+
 	if c.Dev {
+		bower := http.FileServer(http.Dir("bower_components"))
 		mux.Get("/bower_components/*", http.StripPrefix("/bower_components/", bower))
 	}
+
 	mux.Get("/autocomplete/system/:name", api.AutocompleteSystems(sde))
 	mux.Get("/autocomplete/station/:name", api.AutocompleteStations(sde, localdb, xmlAPI))
 	mux.Post("/pastebin", api.ParseItems(sde))
@@ -71,5 +72,6 @@ func setRoutes(mux *web.Mux, sde evego.Database, localdb db.LocalDB, xmlAPI eveg
 	mux.Get("/assets/unusedSalvage/:charID", api.UnusedSalvage(localdb, sde, sessionizer))
 
 	// Static assets
+	assets := http.FileServer(http.Dir("dist"))
 	mux.Get("/*", assets)
 }
