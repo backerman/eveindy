@@ -18,9 +18,9 @@ limitations under the License.
 package main
 
 import (
-	"fmt"
 	"log"
-	"os"
+	"net"
+	"net/http"
 
 	"github.com/backerman/evego"
 	"github.com/backerman/evego/pkg/cache"
@@ -33,7 +33,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/zenazn/goji"
+	"github.com/zenazn/goji/graceful"
+	"github.com/zenazn/goji/web"
 	// Register PgSQL driver
 	_ "github.com/lib/pq"
 )
@@ -75,10 +76,6 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	// workaround for viper bug
 	// c.Dev = viper.GetBool("Dev")
 
-	if c.Dev {
-		log.Printf("Configuration is: %+v", c)
-	}
-
 	sde := dbaccess.SQLDatabase(c.DbDriver, c.DbPath)
 	var myCache evego.Cache
 	switch c.Cache {
@@ -118,21 +115,31 @@ func mainCommand(cmd *cobra.Command, args []string) {
 
 	sessionizer := server.GetSessionizer(c.CookieDomain, c.CookiePath, !c.Dev, localdb)
 
-	setRoutes(sde, localdb, xmlAPI, eveCentralMarket, sessionizer, myCache)
+	mux := newMux()
+	setRoutes(mux, sde, localdb, xmlAPI, eveCentralMarket, sessionizer, myCache)
 
 	// Set up internal bits.
 
 	// Start background jobs.
 	server.StartJobs(localdb)
 
-	// We like magic, but fix the magic some.
-	bindArg := fmt.Sprintf("-bind=%s", c.Bind)
-	if len(os.Args) > 1 {
-		os.Args[1] = bindArg
-		os.Args = os.Args[:2]
-	} else {
-		os.Args = append(os.Args, bindArg)
-	}
+	serve(mux, c.Bind)
+}
 
-	goji.Serve()
+func serve(mux *web.Mux, bindPort string) {
+	// For now, this is completely lifted from goji's default handler.
+	http.Handle("/", mux)
+	log.Printf("Starting on tcp6/%v", bindPort)
+	graceful.HandleSignals()
+	listener, err := net.Listen("tcp6", bindPort)
+	if err != nil {
+		log.Fatalf("Couldn't open socket on tcp6/%v: %v", bindPort, err)
+	}
+	graceful.PreHook(func() { log.Printf("Received signal, gracefully stopping.") })
+	graceful.PostHook(func() { log.Printf("Stopped.") })
+	err = graceful.Serve(listener, http.DefaultServeMux)
+	if err != nil {
+		log.Fatalf("Couldn't serve on tcp6/%v: %v", bindPort, err)
+	}
+	graceful.Wait()
 }
