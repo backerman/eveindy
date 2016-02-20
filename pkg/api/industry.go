@@ -56,6 +56,12 @@ func UnusedSalvage(localdb db.LocalDB, sde evego.Database, sess server.Sessioniz
 				stn, err := localdb.StationForID(item.StationID)
 				if err == nil {
 					stations[strconv.Itoa(item.StationID)] = stn
+				} else {
+					// This should really not friggin' happen.
+					http.Error(w, `{"status": "Error", "error": "Unable to look up station/outpost."}`,
+						http.StatusInternalServerError)
+					log.Printf("Unable to look up station/outpost ID %v: %v", item.StationID, err)
+					return
 				}
 			}
 			typeIDStr := strconv.Itoa(item.TypeID)
