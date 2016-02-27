@@ -164,7 +164,7 @@ gulp.task 'dev', [
   'default'
 ]
 
-gulp.task 'watch', ['dev', 'gobuild'], ->
+gulp.task 'watch', ['dev'], ->
   # stolen from shorrockin/noted
   # https://github.com/shorrockin/noted/blob/master/gulp/tasks/watch.coffee
   server = null
@@ -198,4 +198,4 @@ gulp.task 'watch', ['dev', 'gobuild'], ->
 
   startServer()
 
-gulp.task 'default', ['html', 'scripts', 'images']
+gulp.task 'default', ['html', 'scripts', 'images', 'gobuild']
