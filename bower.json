@@ -25,7 +25,5 @@
     "angular-datatables": "~0.5.1",
     "angular-promise-buttons": "~0.1.10"
   },
-  "devDependencies": {
-    "less-elements": "*"
-  }
+  "devDependencies": {}
 }
