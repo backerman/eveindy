@@ -86,11 +86,8 @@ COMMIT;
 
 ## Operation & Maintenance
 
-To update the local SDE copy, use the `sql/update_sde.py` script, e.g.:
-
-```
-update_sde.py /tmp/latest.dmp.bz2 myschema | psql -h somewhere mydatabase
-```
+To update the local SDE copy, use the `update_sde.py` script in [evego][eg]
+following the instructions in that project's README file.
 
 ## License
 
@@ -98,3 +95,4 @@ The contents of this repository are © 2014–6 Brad Ackerman and licensed under
 the [Apache License 2.0][apache], the full text of which is in the LICENSE file.
 
 [apache]: http://www.apache.org/licenses/LICENSE-2.0
+[ei]: https://github.com/backerman/evego
