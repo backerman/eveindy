@@ -82,13 +82,9 @@ type LocalDB interface {
 	// ID.
 	StationForID(stationID int) (*evego.Station, error)
 
-	// GetBlueprints retrieves a character's blueprints and adds them to the
-	// database.
-	GetBlueprints(key XMLAPIKey, charID int) error
-
-	// GetAssets retrieves a character's assets and adds them to the
-	// database.
-	GetAssets(key XMLAPIKey, charID int) error
+	// GetAssetsBlueprints retrieves a character's assets and blueprints, and
+	// adds them to the database.
+	GetAssetsBlueprints(key XMLAPIKey, charID int) error
 
 	// CharacterBlueprints returns a character's blueprints from the local
 	// database.

@@ -19,9 +19,10 @@ package api
 
 import (
 	"encoding/json"
-	log "github.com/Sirupsen/logrus"
 	"net/http"
 	"strconv"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/backerman/evego"
 	"github.com/backerman/eveindy/pkg/db"
@@ -60,7 +61,7 @@ func BlueprintsHandlers(localdb db.LocalDB, sde evego.Database, sess server.Sess
 			}
 		}
 
-		err = localdb.GetBlueprints(*myKey, charID)
+		err = localdb.GetAssetsBlueprints(*myKey, charID)
 		if err != nil {
 			http.Error(w, `{"status": "Error", "error": "Ouch"}`,
 				http.StatusInternalServerError)

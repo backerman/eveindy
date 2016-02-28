@@ -20,9 +20,10 @@ package api
 import (
 	"encoding/json"
 	"io/ioutil"
-	log "github.com/Sirupsen/logrus"
 	"net/http"
 	"strconv"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/backerman/evego"
 	"github.com/backerman/eveindy/pkg/db"
@@ -78,21 +79,12 @@ func XMLAPIKeysHandlers(localdb db.LocalDB, sess server.Sessionizer) (list, dele
 				return
 			}
 
-			// Update assets.
-			err = localdb.GetAssets(*key, toon.ID)
+			// Update assets and blueprints.
+			err = localdb.GetAssetsBlueprints(*key, toon.ID)
 			if err != nil {
 				http.Error(w, `{"status": "Error", "error": "Database connection error (add assets)"}`,
 					http.StatusInternalServerError)
 				log.Printf("Got error in GetAssets: %v", err)
-				return
-			}
-
-			// Update blueprints.
-			err = localdb.GetBlueprints(*key, toon.ID)
-			if err != nil {
-				http.Error(w, `{"status": "Error", "error": "Database connection error (add blueprints)"}`,
-					http.StatusInternalServerError)
-				log.Printf("Got error in GetBlueprints: %v", err)
 				return
 			}
 

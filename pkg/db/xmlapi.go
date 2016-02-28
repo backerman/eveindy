@@ -20,9 +20,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
 	"strconv"
 	"strings"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/backerman/evego"
 	"github.com/jmoiron/sqlx"
@@ -261,38 +262,6 @@ func (d *dbInterface) StationForID(stationID int) (*evego.Station, error) {
 	return stn, err
 }
 
-func (d *dbInterface) GetBlueprints(key XMLAPIKey, charID int) error {
-	k := &evego.XMLKey{
-		KeyID:            key.ID,
-		VerificationCode: key.VerificationCode,
-	}
-	blueprints, err := d.xmlAPI.Blueprints(k, charID)
-	if err != nil {
-		return err
-	}
-	tx, err := d.db.Beginx()
-	if err != nil {
-		return err
-	}
-	// Clear standings before inserting the API's information.
-	_, err = tx.Stmtx(d.clearBlueprintsStmt).Exec(key.ID, charID)
-	if err != nil {
-		return err
-	}
-	insertStmt := tx.Stmtx(d.insertBlueprintStmt)
-	for _, bp := range blueprints {
-		_, err := insertStmt.Exec(key.ID, charID, bp.ItemID, bp.StationID, bp.LocationID,
-			bp.TypeID, bp.Quantity, bp.Flag, bp.MaterialEfficiency, bp.TimeEfficiency,
-			bp.NumRuns, bp.IsOriginal)
-		if err != nil {
-			log.Printf("Failed to insert blueprint %+v", bp)
-			tx.Rollback()
-			return err
-		}
-	}
-	return tx.Commit()
-}
-
 func (d *dbInterface) CharacterBlueprints(userID, charID int) ([]evego.BlueprintItem, error) {
 	rows, err := d.getBlueprintsStmt.Queryx(userID, charID)
 	if err != nil {
@@ -310,7 +279,7 @@ func (d *dbInterface) CharacterBlueprints(userID, charID int) ([]evego.Blueprint
 	return results, nil
 }
 
-func (d *dbInterface) GetAssets(key XMLAPIKey, charID int) error {
+func (d *dbInterface) GetAssetsBlueprints(key XMLAPIKey, charID int) error {
 	k := &evego.XMLKey{
 		KeyID:            key.ID,
 		VerificationCode: key.VerificationCode,
@@ -360,5 +329,31 @@ func (d *dbInterface) GetAssets(key XMLAPIKey, charID int) error {
 			assetQueue = append(a.Contents, assetQueue...)
 		}
 	}
+
+	blueprints, err := d.xmlAPI.Blueprints(k, charID, assets)
+	if err != nil {
+		return err
+	}
+	if err != nil {
+		return err
+	}
+	// Clear blueprints before inserting the API's information.
+	_, err = tx.Stmtx(d.clearBlueprintsStmt).Exec(key.ID, charID)
+	if err != nil {
+		return err
+	}
+
+	insertStmt = tx.Stmtx(d.insertBlueprintStmt)
+	for _, bp := range blueprints {
+		_, err := insertStmt.Exec(key.ID, charID, bp.ItemID, bp.StationID, bp.LocationID,
+			bp.TypeID, bp.Quantity, bp.Flag, bp.MaterialEfficiency, bp.TimeEfficiency,
+			bp.NumRuns, bp.IsOriginal)
+		if err != nil {
+			log.Printf("Failed to insert blueprint %+v", bp)
+			tx.Rollback()
+			return err
+		}
+	}
+
 	return tx.Commit()
 }
