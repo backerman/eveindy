@@ -14,6 +14,7 @@
 
 # Plugins we use
 bower = require 'gulp-bower'
+cleancss = require 'gulp-clean-css'
 coffee = require 'gulp-coffee'
 coffeelint = require 'gulp-coffeelint'
 concat = require 'gulp-concat'
@@ -27,7 +28,6 @@ lazypipe = require 'lazypipe'
 less = require 'gulp-less'
 lessPluginAutoPrefix = require 'less-plugin-autoprefix'
 merge2 = require 'merge2'
-minifycss = require 'gulp-minify-css'
 ngAnnotate = require 'gulp-ng-annotate'
 notifier = require 'node-notifier'
 notify = require 'gulp-notify'
@@ -90,7 +90,6 @@ gulp.task 'less', ->
     .pipe sourcemaps.init()
     .pipe less {plugins: autoprefix}
     .pipe sourcemaps.write()
-    .pipe gulpif !config.development, minifycss()
     .pipe gulp.dest config.temp+'/css'
 
 gulp.task 'lint', ->
@@ -127,6 +126,11 @@ gulp.task 'html', ['less'], ->
     # Minify iff in production
     .pipe gulpif ((file) ->
       !config.development && file.extname is '.html'), htmlmin { }
+    .pipe gulpif ((file) ->
+      !config.development && file.extname is '.js'), jsProd()
+    .pipe gulpif ((file) ->
+      !config.development && file.extname is '.css'), cleancss
+        keepSpecialComments: 0
     .pipe gulp.dest config.dest
 
 gulp.task 'images', ->
