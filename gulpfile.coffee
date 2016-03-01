@@ -22,12 +22,12 @@ fs = require 'fs'
 gulp = require 'gulp'
 gulpif = require 'gulp-if'
 gutil = require 'gulp-util'
+htmlmin = require 'gulp-htmlmin'
 lazypipe = require 'lazypipe'
 less = require 'gulp-less'
 lessPluginAutoPrefix = require 'less-plugin-autoprefix'
 merge2 = require 'merge2'
 minifycss = require 'gulp-minify-css'
-minifyhtml = require 'gulp-minify-html'
 ngAnnotate = require 'gulp-ng-annotate'
 notifier = require 'node-notifier'
 notify = require 'gulp-notify'
@@ -90,6 +90,7 @@ gulp.task 'less', ->
     .pipe sourcemaps.init()
     .pipe less {plugins: autoprefix}
     .pipe sourcemaps.write()
+    .pipe gulpif !config.development, minifycss()
     .pipe gulp.dest config.temp+'/css'
 
 gulp.task 'lint', ->
@@ -104,16 +105,6 @@ jsProd = lazypipe()
   .pipe ngAnnotate
   .pipe uglify
 
-productionTasks = lazypipe()
-  .pipe ->
-    # FIXME: what about coffee?
-    gulpif '*.js', jsProd()
-  .pipe ->
-    gulpif '*.css', minifycss()
-  .pipe ->
-    # FIXME: doesn't actually do this
-    gulpif '*.html', minifyhtml {empty: true}
-
 gulp.task 'scripts', ['lint'], ->
   merge2(gulp.src config.coffeeSrc
 #    .pipe sourcemaps.init()
@@ -122,6 +113,7 @@ gulp.task 'scripts', ['lint'], ->
       err.message
 #    .pipe sourcemaps.write()
     )
+    .pipe gulpif !config.development, jsProd()
     .pipe concat config.jsDest
     .pipe gulp.dest config.dest
 
@@ -131,9 +123,10 @@ gulp.task 'html', ['less'], ->
     .pipe template {development: config.development}
     .on 'error', notify.onError (err) ->
       "Template error: #{err.message}"
-    # Minify iff in production
-    .pipe gulpif !config.development, productionTasks()
     .pipe useref()
+    # Minify iff in production
+    .pipe gulpif ((file) ->
+      !config.development && file.extname is '.html'), htmlmin { }
     .pipe gulp.dest config.dest
 
 gulp.task 'images', ->

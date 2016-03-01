@@ -14,9 +14,9 @@
       href="/bower_components/bootstrap/dist/css/bootstrap-theme.css">
     <% } else { %>
       <link rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
       <link rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
     <% } %>
     <!-- build:css(temp) css/site.css -->
     <link rev="stylesheet" href="css/site.css">
@@ -50,13 +50,13 @@
               <img src="image/EVE_SSO_Login_Buttons_Small_White.png"
               alt="Sign on (EVE SSO)" />
             </a></li>
-            <li class="dropdown" ng-show="mctrl.authenticated" uib-dropdown>
-              <a href="#" class="dropdown-toggle" uib-dropdown-toggle
+            <li ng-show="mctrl.authenticated" uib-dropdown>
+              <a href="#" uib-dropdown-toggle
                   role="button" aria-haspopup="true" aria-expanded="false">
                 <span class="glyphicon glyphicon-user"></span>
                 <span class="caret"</span>
               </a>
-              <ul class="uib-dropdown-menu">
+              <ul uib-dropdown-menu>
                 <li><a href="#" ng-click="mctrl.logout()">Log out</a></li>
               </ul>
             </li>
@@ -82,9 +82,9 @@
       <script src="../bower_components/jquery/dist/jquery.js"></script>
       <script src="../bower_components/angular/angular.js"></script>
     <% } else { %>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
     <script
-      src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+      src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <% } %>
     <!-- build:js js/thirdparty.js -->
     <script src="../bower_components/datatables/media/js/jquery.dataTables.js"></script>
