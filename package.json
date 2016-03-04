@@ -39,10 +39,12 @@
     "karma-jasmine": "^0.3.6",
     "karma-json-fixtures-preprocessor": "0.0.6",
     "karma-ng-html2js-preprocessor": "^0.2.0",
+    "karma-phantomjs-launcher": "^1.0.0",
     "lazypipe": "^1.0.1",
     "less-plugin-autoprefix": "^1.4.2",
     "merge-stream": "^1.0.0",
     "merge2": "^1.0.1",
+    "phantomjs-prebuilt": "^2.1.4",
     "request": "^2.58.0"
   },
   "dependencies": {
