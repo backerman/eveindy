@@ -30,6 +30,7 @@ describe 'Directive: stationPicker', () ->
 
   beforeEach () ->
     module 'eveindy'
+    module 'controller_test'
     module 'directives_test'
     inject ($compile, $rootScope, $sniffer, $timeout) ->
       compile = $compile

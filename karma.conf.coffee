@@ -36,12 +36,16 @@ module.exports = (config) ->
       'assets/coffee/**/*.coffee'
       'spec/*.coffee'
       'spec/fixtures/*.json'
-      'assets/view/directives/*.html'
+      'assets/view/**/*.html'
     ]
 
     ngHtml2JsPreprocessor:
       stripPrefix: 'assets/'
-      moduleName: 'directives_test'
+      moduleName: (htmlPath, originalPath) ->
+        if htmlPath.includes 'directives'
+          'directives_test'
+        else
+          'controller_test'
 
     exclude: []
     port: 8080

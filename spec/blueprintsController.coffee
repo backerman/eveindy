@@ -13,7 +13,9 @@
 # limitations under the License.
 
 describe 'Controller: BlueprintsCtrl', () ->
-  beforeEach () -> module 'eveindy'
+  beforeEach () ->
+    module 'eveindy'
+    module 'controller_test'
   ctrl = undefined
   serverService = undefined
   sessionService = undefined

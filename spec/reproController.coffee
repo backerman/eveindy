@@ -13,7 +13,9 @@
 # limitations under the License.
 
 describe 'Controller: ReproController', () ->
-  beforeEach () -> module 'eveindy'
+  beforeEach () ->
+    module 'eveindy'
+    module 'controller_test'
   ctrl = undefined
   serverService = undefined
   jitaMinerals = undefined
