@@ -45,6 +45,7 @@ type config struct {
 	Dev                      bool
 	DbDriver, DbPath         string
 	Bind                     string
+	BindProtocol             string
 	XMLAPIEndpoint           string
 	Router                   string
 	Cache                    string
@@ -123,23 +124,23 @@ func mainCommand(cmd *cobra.Command, args []string) {
 	// Start background jobs.
 	server.StartJobs(localdb)
 
-	serve(mux, c.Bind)
+	serve(mux, c.BindProtocol, c.Bind)
 }
 
-func serve(mux *web.Mux, bindPort string) {
+func serve(mux *web.Mux, bindProtocol, bindPort string) {
 	// For now, this is completely lifted from goji's default handler.
 	http.Handle("/", mux)
-	log.Printf("Starting on tcp6/%v", bindPort)
+	log.Printf("Starting on %v/%v", bindProtocol, bindPort)
 	graceful.HandleSignals()
-	listener, err := net.Listen("tcp6", bindPort)
+	listener, err := net.Listen(bindProtocol, bindPort)
 	if err != nil {
-		log.Fatalf("Couldn't open socket on tcp6/%v: %v", bindPort, err)
+		log.Fatalf("Couldn't open socket on %v/%v: %v", bindProtocol, bindPort, err)
 	}
 	graceful.PreHook(func() { log.Info("Received signal, gracefully stopping.") })
 	graceful.PostHook(func() { log.Info("Stopped.") })
 	err = graceful.Serve(listener, http.DefaultServeMux)
 	if err != nil {
-		log.Fatalf("Couldn't serve on tcp6/%v: %v", bindPort, err)
+		log.Fatalf("Couldn't serve on %v/%v: %v", bindProtocol, bindPort, err)
 	}
 	graceful.Wait()
 }

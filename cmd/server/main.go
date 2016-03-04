@@ -37,13 +37,13 @@ func main() {
 	// a CDN.
 	rootCmd.Flags().Bool("Dev", false, "Set development mode.")
 	rootCmd.Flags().String("Bind", ":8080", "The address and port to listen on.")
+	rootCmd.Flags().String("BindProtocol", "tcp", "The protocol to listen on (choose tcp, tcp4, or tcp6).")
 	viper.SetDefault("Dev", false)
 	// DBDriver and DBPath are the database driver name and resource path
 	// as used by the Golang SQL library.
 	viper.SetDefault("DBDriver", "sqlite3")
 	// DBPath has no default. You must set it.
 	// viper.SetDefault("DBPath", "")
-	viper.SetDefault("Bind", "*:8080")
 	viper.SetDefault("XMLAPIEndpoint", "https://api.eveonline.com")
 	// Routing
 	// Router: either "evecentral" or "sql".
@@ -70,7 +70,7 @@ func main() {
 	viper.SetEnvPrefix("EVEINDY")
 	viper.AutomaticEnv()
 
-	flags := []string{"Dev", "Bind"}
+	flags := []string{"Dev", "Bind", "BindProtocol"}
 	for _, flag := range flags {
 		viper.BindPFlag(flag, rootCmd.Flags().Lookup(flag))
 	}
