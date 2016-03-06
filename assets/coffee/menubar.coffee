@@ -17,7 +17,7 @@ angular.module 'eveindy'
     class MenubarCtrl
       constructor: (@Session, @$scope, @$route) ->
         @$scope.$on '$routeChangeSuccess', @updateMenubar
-        @$scope.$on '$routeChangeStart', @preventNullRoute
+        # @$scope.$on '$routeChangeStart', @preventNullRoute
         @$scope.$on 'login-status', @_updateLoginStatus
         @$scope.view = "reprocess"
         @authenticated = false
