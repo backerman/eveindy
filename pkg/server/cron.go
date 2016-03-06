@@ -18,8 +18,9 @@ limitations under the License.
 package server
 
 import (
-	log "github.com/Sirupsen/logrus"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/backerman/eveindy/pkg/db"
 	"github.com/robfig/cron"
@@ -57,6 +58,6 @@ func updateOutposts(localdb db.LocalDB) {
 		log.Printf("Error updating outposts: %v", err)
 	} else {
 		duration := time.Now().Sub(start)
-		log.Printf("Finished outpost update in %.0f ms", duration.Seconds()*100.0)
+		log.Printf("Finished outpost update in %.0f ms", duration.Seconds()*1000.0)
 	}
 }
