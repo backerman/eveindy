@@ -15,8 +15,8 @@
     </div>
     <uib-tabset>
       <uib-tab heading="Blueprint inventory" active select="shown = 1">
-        <table class="table table-striped" datatable="ng" dt-options="ctrl.dtOptions"
-        dt-column-defs="ctrl.dtColumnDefs" ng-if="shown===1">
+        <table class="table table-striped" datatable="ng" dt-options="ctrl.dtOptions_bps"
+        dt-column-defs="ctrl.dtColumnDefs_bps" ng-if="shown===1">
           <thead>
             <tr>
               <th class="col-xs-4">Type</th>
@@ -31,14 +31,14 @@
               <td class="col-xs-4" ng-bind="item.TypeName"></td>
               <td class="col-xs-5" ng-bind="item.Station.Name"></td>
               <td class="col-xs-1" ng-bind="item.NumRuns"></td>
-              <td class="col-xs-1" ng-bind="item.TimeEfficiency"></td>
               <td class="col-xs-1" ng-bind="item.MaterialEfficiency"></td>
+              <td class="col-xs-1" ng-bind="item.TimeEfficiency"></td>
             </tr>
           </tbody>
         </table>
       </uib-tab>
-      <uib-tab heading="Salvage" select="shown = 2">
-        <table class="table table-striped" datatable="ng" dt-options="ctrl.dtOptions" ng-if="shown===2">
+      <uib-tab heading="Salvage w/o blueprint" select="shown = 2">
+        <table class="table table-striped" datatable="ng" dt-options="ctrl.dtOptions_salvage" ng-if="shown===2">
           <thead>
             <tr>
               <th class="col-xs-1" scope="col">Qty.</th>

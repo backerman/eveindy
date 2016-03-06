@@ -20,13 +20,24 @@ angular.module 'eveindy'
         @blueprints = []
         @unusedSalvage = []
         @selectedToon = null
-        @dtOptions = @DTOptionsBuilder.newOptions()
+        @dtOptions_bps = @DTOptionsBuilder.newOptions()
           .withBootstrap()
           .withOption('responsive', true)
-        @dtColumnDefs = [
+          .withOption('order', [
+            [0, 'asc']
+            [1, 'asc']
+            [3, 'desc']
+            [4, 'desc']
+            [2, 'desc']
+          ])
+        @dtColumnDefs_bps = [
           type: 'numeric-inf'
           targets: 2
         ]
+        @dtOptions_salvage = @DTOptionsBuilder.newOptions()
+          .withBootstrap()
+          .withOption('responsive', true)
+          .withOption('order', [[1, 'asc'], [2, 'asc'], [0, 'asc']])
 
         @$scope.$on 'login-status', @_updateLoginStatus
         if @Session.authenticated
