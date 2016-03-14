@@ -3,13 +3,9 @@
     <div class="row toon-selector">
       <div class="col-xs-12">
         <div class="form-inline">
-          <div class="form-group">
-            <label for="selectedToon">Character:</label>
-            <select class="form-control" name="toon"
-                ng-change="ctrl.characterSelected()" ng-model="ctrl.selectedToon"
-                ng-options="c.name for c in ctrl.characters | orderBy:'name'">
-            </select>
-          </div>
+          <char-picker characters="ctrl.characters"
+            changed="ctrl.characterSelected()"
+            char-selected="ctrl.selectedToon">
         </div>
       </div>
     </div>
