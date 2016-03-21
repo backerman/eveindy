@@ -18,6 +18,7 @@ angular.module 'eveindy'
   .directive 'charPicker', ['$timeout', ($timeout) ->
     templateUrl: 'view/directives/char-picker.html'
     restrict: 'E'
+    transclude: true
     scope:
       characters: '='
       name: '@'

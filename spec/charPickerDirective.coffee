@@ -60,6 +60,8 @@ describe 'Directive: charPicker', () ->
         """
          <char-picker characters="characters"
             char-selected="selectedToon">
+            This is a label.
+         </char-picker>
         """) scope
 
       scope.$digest()
@@ -100,3 +102,13 @@ describe 'Directive: charPicker', () ->
       .get 0
       .getAttribute 'name'
     expect(myDefaultName).toBe 'selectedToon'
+
+  it 'should set the default label text.', () ->
+    myLabel = element.find 'label'
+      .text()
+    expect(myLabel.trim()).toBe 'Character:'
+
+  it 'should include label text if provided.', () ->
+    myLabel = element2.find 'label'
+      .text()
+    expect(myLabel.trim()).toBe 'This is a label.'

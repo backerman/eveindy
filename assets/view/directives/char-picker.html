@@ -1,5 +1,5 @@
 <div class="form-group">
-  <label for="{{name}}">Character:</label>
+  <label for="{{name}}" ng-transclude>Character:</label>
   <select class="form-control" name="{{name}}"
       ng-change="selectionChanged({character: $item})" ng-model="selectedCharacter"
       ng-options="c.name for c in characters | orderBy:'name' track by c.id">
