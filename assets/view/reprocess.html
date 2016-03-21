@@ -10,13 +10,11 @@
       selected="ctrl.locationSelected(station)">
       </station-picker>
       <div ng-show="ctrl.location">
-        <div class="form-group" ng-show="ctrl.authenticated">
-          <label for="selectedToon">Which character are you using?</label>
-          <select class="form-control" name="selectedToon"
-              ng-change="ctrl.characterSelected()" ng-model="ctrl.selectedToon"
-              ng-options="c.name for c in ctrl.chars | orderBy:'name'">
-          </select>
-        </div>
+        <char-picker ng-show="ctrl.authenticated" characters="ctrl.chars"
+          changed="ctrl.characterSelected()"
+          char-selected="ctrl.selectedToon">
+          Which character are you using?
+        </char-picker>
         <div ng-switch="ctrl.stationType">
           <div class="form-group" ng-switch-when="npc">
             <label for="inv_standing">
