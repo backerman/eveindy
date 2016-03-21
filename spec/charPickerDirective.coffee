@@ -16,7 +16,7 @@ angular.module 'eveindy'
   .config ($sceProvider) ->
     $sceProvider.enabled false
 
-describe 'Directive: stationPicker', () ->
+describe 'Directive: charPicker', () ->
   compile = null
   timeout = null
 
@@ -26,6 +26,7 @@ describe 'Directive: stationPicker', () ->
 
   beforeEach () ->
     module 'eveindy'
+    module 'controller_test'
     module 'directives_test'
     inject ($compile, $rootScope, $timeout, $sniffer) ->
       compile = $compile
