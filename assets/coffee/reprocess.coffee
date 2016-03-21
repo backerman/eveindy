@@ -179,6 +179,10 @@ angular.module 'eveindy'
                 @reprocessingOutput = response.data
                 @updateReprocessedValues(@reprocessingOutput)
 
+      clearInventory: () ->
+        @hidePasteInput = false
+        @pastebin = ""
+        @inventory = []
       updateReprocessedValues: (response) ->
         for item in @inventory
           result = response.items[item.Item.Name]

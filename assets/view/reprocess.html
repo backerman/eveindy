@@ -58,6 +58,12 @@
     </form>
     <div id="inv_results">
       <div id="inv_results_info" ng-show="pastebinForm.$submitted">
+        <button type="button" class="btn btn-default btn-sm pull-right"
+          ng-show="ctrl.hidePasteInput" name="clear"
+          ng-click="ctrl.clearInventory()">
+          <span class="glyphicon glyphicon-remove-circle"/>
+          Clear
+        </button>
         <p>
           You are at <strong ng-bind="ctrl.location.name"></strong>.
         </p>
