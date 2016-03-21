@@ -67,6 +67,7 @@ angular.module 'eveindy'
       _updateLoginStatus: () =>
         @authenticated = @Session.authenticated
         @chars = @Session.availableCharacters()
+        @selectedToon = @chars[0] if @authenticated
 
       getStations: (search) ->
         @Server.getAutocomplete(search)
@@ -92,9 +93,7 @@ angular.module 'eveindy'
         @stationOwnerID = loc.ownerID
         @stationType = if loc.isOutpost then "player" else "npc"
         @reprocessingEfficiency = loc.reprocessingEfficiency
-        if @stationType is "npc"
-          @selectedToon = @chars[0]
-          @characterSelected()
+        @characterSelected()
 
       # Character selection has changed.
       characterSelected: () ->
@@ -107,6 +106,10 @@ angular.module 'eveindy'
             .then (response) =>
               @standing = response.data.standing
               @updateTaxRate()
+        else
+          # Taxes at outposts are not available from the public API, so guess.
+          @standing = 0.00
+          @updateTaxRate()
 
       # Update mineral value calculation method.
       updatePriceCalc: () ->
